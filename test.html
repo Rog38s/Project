@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ข้าวเหนียวมะม่วง</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .navbar {
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .navbar img.logo {
+            height: 70px;
+        }
+        .navbar .search-box {
+            width: 300px;
+            margin: 0 20px;
+            display: flex;
+            align-items: center;
+            border-radius: 20px;
+            padding: 5px 10px;
+        }
+        .navbar .nav-links {
+            display: flex;
+            align-items: center;
+        }
+        .navbar .nav-links a {
+            text-decoration: none;
+            color: #000;
+            margin-left: 20px; 
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        .navbar .nav-links img.icon {
+            margin-right: 5px;
+            height: 24px;
+        }
+        .navbar .nav-links a.login {
+            color: red;
+        }
+        /* Recipe styles */
+        .recipe-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .recipe-image {
+            flex: 1;
+            max-width: 45%;
+            margin-right: 20px;
+        }
+        .recipe-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        .recipe-details {
+            flex: 1;
+            max-width: 45%;
+        }
+        .recipe-details h1 {
+            color: #ff9900;
+            margin-bottom: 10px;
+        }
+        .recipe-details .rating {
+            margin-bottom: 10px;
+        }
+        .recipe-details .rating span {
+            color: gold;
+            font-size: 18px;
+        }
+        .recipe-details h2 {
+            color: #333;
+            margin-top: 20px;
+        }
+        .recipe-details ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .recipe-details ul li {
+            margin-bottom: 10px;
+        }
+        .steps {
+            flex: 1;
+            max-width: 100%;
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .steps h2 {
+            color: #ff9900;
+        }
+        .steps p {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <!-- Logo -->
+        <img src="img\logo.png" alt="Logo" class="logo">
+        
+        <!-- Search Box -->
+        <div class="search-box">
+            <input type="text" placeholder="ค้นหา">
+        </div>
+        
+        <!-- Navigation Links -->
+        <div class="nav-links">
+            <a href="#"><img src="img\homeicon.png" alt="หน้าแรก" class="icon">หน้าแรก</a>
+            <a href="#"><img src="img\foodicon.png" alt="สูตรอาหารคาว" class="icon">สูตรอาหารคาว</a>
+            <a href="#"><img src="img\desserticon.png" alt="สูตรของหวาน" class="icon">สูตรของหวาน</a>
+            <a href="#"><img src="img\recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='login.html'">แนะนำสูตร</a>
+            <a href="#" class="login"><img src="img\usericon.png" alt="เข้าสู่ระบบ" class="icon" onclick="location.href='login'">เข้าสู่ระบบ</a>
+        </div>
+    </div>
+
+    <!-- Recipe Content -->
+    <div class="recipe-container">
+        <!-- Image Section -->
+        <div class="recipe-image">
+            <img src="img\ข้าวเหนียวมะม่วง.png" alt="ข้าวเหนียวมะม่วง">
+        </div>
+
+        <!-- Details Section -->
+        <div class="recipe-details">
+            <h1>ข้าวเหนียวมะม่วง</h1>
+            
+            <div class="rating">
+                <span>⭐⭐⭐⭐⭐</span>
+                <p>โดย Admin เมื่อ 03/05/2567</p>
+            </div>
+
+            <h2>วัตถุดิบ</h2>
+            <ul>
+                <li>1. ข้าวเหนียวเขี้ยวงู 1 กิโลกรัม</li>
+                <li>2. น้ำตาลทรายขาว 2 ช้อนโต๊ะ</li>
+                <li>3. กะทิ 100% 750 มิลลิลิตร</li>
+                <li>4. เกลือ 1 ช้อนชา</li>
+                <li>5. ใบเตยสำหรับจัดเสิร์ฟ</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Steps Section -->
+    <div class="steps">
+        <h2>วิธีทำ</h2>
+        <p><strong>STEP 1:</strong> นึ่งข้าวเหนียว</p>
+        <p>แช่ข้าวเหนียวเขี้ยวงูในน้ำประมาณ 1 ชั่วโมง จากนั้นนำไปนึ่งจนสุก</p>
+
+        <p><strong>STEP 2:</strong> มูนข้าวเหนียว</p>
+        <p>นำน้ำกะทิ เกลือ และน้ำตาลผสมกัน เทลงบนข้าวเหนียวที่นึ่งแล้ว คลุกเคล้าให้เข้ากัน</p>
+
+        <p><strong>STEP 3:</strong> เสิร์ฟพร้อมมะม่วง</p>
+        <p>เสิร์ฟข้าวเหนียวมูนกับมะม่วงสุกและน้ำกะทิราดด้านบน พร้อมเสิร์ฟ!</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .navbar {
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .navbar img.logo {
+            height: 70px;
+        }
+        .navbar .search-box {
+            width: 300px;
+            margin: 0 20px;
+            display: flex;
+            align-items: center;
+            border-radius: 20px;
+            padding: 5px 10px;
+        }
+        .navbar .nav-links {
+            display: flex;
+            align-items: center;
+        }
+        .navbar .nav-links a {
+            text-decoration: none;
+            color: #000;
+            margin-left: 20px; 
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        .navbar .nav-links img.icon {
+            margin-right: 5px;
+            height: 24px;
+        }
+        .navbar .nav-links a.logout {
+            color: red;
+        }
+        /* Form styling */
+        .form-container {
+            background-color: #fff;
+            width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .form-container h2 {
+            margin-bottom: 20px;
+            color: #666;
+        }
+        .form-container img {
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+            background-color: #eaeaea;
+            display: block;
+            margin: 0 auto;
+        }
+        .form-container input[type="file"] {
+            display: none;
+        }
+        .form-container label {
+            color: #007bff;
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .form-container input[type="text"],
+        .form-container input[type="email"],
+        .form-container input[type="password"] {
+            width: calc(50% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .form-container .btn {
+            width: calc(55% - 20px);
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+        }
+        .form-container .btn-blue {
+            background-color: #5bc0de;
+        }
+        .form-container .btn-orange {
+            background-color: #f0ad4e;
+        }
+        .form-container .btn-red {
+            background-color: #d9534f;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <!-- Logo -->
+        <img src="img\logo.png" alt="Logo" class="logo">
+        
+        <!-- Search Box -->
+        <div class="search-box">
+            <input type="text" placeholder="ค้นหา">
+        </div>
+        
+        <!-- Navigation Links -->
+        <div class="nav-links">
+            <a href="#"><img src="img\homeicon.png" alt="หน้าแรก" class="icon">หน้าแรก</a>
+            <a href="#"><img src="img\foodicon.png" alt="สูตรอาหารคาว" class="icon">สูตรอาหารคาว</a>
+            <a href="#"><img src="img\desserticon.png" alt="สูตรของหวาน" class="icon">สูตรของหวาน</a>
+            <a href="#"><img src="img\recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='recommend.html'">แนะนำสูตร</a>
+            <a href="#" class="logout"><img src="img\logout.png" alt="ลงชื่ออก" class="icon" onclick="location.href='index.html'"></a>
+        </div>
+    </div>
+
+    <!-- Form Section -->
+    <div class="form-container">
+        <h2>ข้อมูลสมาชิก</h2>
+        <img src="img\usericon.png" alt="User Profile Image">
+        <label for="file-upload">+ เลือกภาพ</label><br>
+        <input id="file-upload" type="file">
+        
+        <input type="text" placeholder="ชื่อ" value="">
+        <input type="email" placeholder="อีเมล" value="">
+        <input type="password" placeholder="รหัสผ่าน" value="********">
+        <input type="text" placeholder="เบอร์โทรศัพท์">
+        <input type="text" placeholder="เพศ">
+        <input type="text" placeholder="อายุ"><br>
+        
+        <button class="btn btn-blue">แก้ไขข้อมูลส่วนตัว</button><br>
+        <button class="btn btn-orange">เปลี่ยนรหัสผ่าน</button>
+        
+    </div>
+</body>
+</html>

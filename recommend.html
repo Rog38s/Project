@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thai Foods and Desserts</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #fdf6d2;
+        }
+        .navbar {
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .navbar img.logo {
+            height: 70px;
+        }
+        .navbar .search-box {
+            width: 300px;
+            margin: 0 20px;
+            display: flex;
+            align-items: center;
+            border-radius: 20px;
+            padding: 5px 10px;
+        }
+        .navbar .nav-links {
+            display: flex;
+            align-items: center;
+        }
+        .navbar .nav-links a {
+            text-decoration: none;
+            color: #000;
+            margin-left: 20px; 
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        .navbar .nav-links img.icon {
+            margin-right: 5px;
+            height: 24px;
+        }
+        .navbar .nav-links a.logout {
+            color: red;
+        }
+        .form-container {
+            background-color: #fff;
+            width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .form-container h2 {
+            margin-bottom: 20px;
+            color: #666;
+        }
+        .form-container input[type="text"],
+        .form-container textarea,
+        .form-container select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            display: inline-block;
+            font-size: 14px;
+        }
+        .form-container textarea {
+            height: 100px;
+            resize: none;
+        }
+        .form-container img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            margin: 10px 0;
+            background-color: #eaeaea;
+            display: block;
+            margin: 0 auto;
+        }
+        .form-container input[type="file"] {
+            display: none;
+        }
+        .form-container label.upload-label {
+            color: #007bff;
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .form-container .btn {
+            width: calc(50% - 10px);
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+        }
+        .form-container .btn-green {
+            background-color: #5cb85c;
+        }
+        .form-container .btn-red {
+            background-color: #ff6347;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <!-- Logo -->
+        <img src="img/logo.png" alt="Logo" class="logo">
+        
+        <!-- Search Box -->
+        <div class="search-box">
+            <input type="text" placeholder="ค้นหา">
+        </div>
+        
+        <!-- Navigation Links -->
+        <div class="nav-links">
+            <a href="#"><img src="img/homeicon.png" alt="หน้าแรก" class="icon">หน้าแรก</a>
+            <a href="#"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon">สูตรอาหารคาว</a>
+            <a href="#"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon">สูตรของหวาน</a>
+            <a href="#"><img src="img\recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='recommend.html'">แนะนำสูตร</a>
+            <a href="#" class="logout"><img src="img/logout.png" alt="ลงชื่อออก" class="icon"></a>
+        </div>
+    </div>
+
+    <!-- Form Section -->
+    <div class="form-container">
+        <h2>แนะนำสูตรอาหาร-ขนมไทย</h2>
+        <input type="text" placeholder="ชื่อเมนู">
+        <textarea id="ingredients" placeholder="วัตถุดิบ"></textarea>
+        <textarea id="steps" placeholder="วิธีการปรุง"></textarea><br>
+        
+        <label for="food-category">ประเภทของอาหาร</label><br>
+        <select id="food-category" style="width: 25%; float: center;"><br>
+            <option value="">กรุณาเลือก</option><br>
+            <option value="อาหารคาว">อาหารคาว</option><br>
+            <option value="ของหวาน">ของหวาน</option><br>
+        </select><br>
+        
+        <img src="img\image.png" alt="Upload Preview">
+        <label for="file-upload" class="upload-label">+เลือกภาพ</label><br>
+        <input type="file" id="file-upload">
+
+        <button class="btn btn-green">ส่งคำแนะนำสูตร</button><br>
+        <button class="btn btn-red" onclick="location.href='index.html'">ยกเลิก</button>
+        
+    </div>
+
+    <script>
+        // สำหรับช่อง "วัตถุดิบ"
+        const ingredientsTextarea = document.getElementById('ingredients');
+        ingredientsTextarea.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const lines = ingredientsTextarea.value.split('\n');
+                const newLineNumber = lines.length + 1;
+                ingredientsTextarea.value += '\n' + newLineNumber + '. ';
+            }
+        });
+        ingredientsTextarea.value = '1. ';
+
+        // สำหรับช่อง "วิธีการปรุง"
+        const stepsTextarea = document.getElementById('steps');
+        stepsTextarea.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const lines = stepsTextarea.value.split('\n');
+                const newLineNumber = lines.length + 1;
+                stepsTextarea.value += '\n' + newLineNumber + '. ';
+            }
+        });
+        stepsTextarea.value = '1. ';
+    </script>
+</body>
+</html>

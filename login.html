@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้าสู่ระบบ</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            background-color: #f4f4f4;
+            overflow: hidden; /* Prevent scrolling */
+        }
+
+        .sign-in-container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            background-color: #fff;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-column {
+            width: 55%;
+            background-image: url('img/สำรับไทย.jpg'); 
+            background-size: cover;
+            background-position: center;
+            height: 100%; /* Full height */
+        }
+        
+        .form-column {
+            width: 45%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo {
+            width: 150px;
+            margin-bottom: 20px;
+        }
+
+        .form-title {
+            color: #000;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        .form-input {
+            width: 100%;
+            max-width: 300px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .submit-button {
+            width: 100%;
+            max-width: 300px;
+            padding: 15px;
+            background-color: #87cefa;
+            color: #000;
+            font-weight: 700;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .submit-button:hover {
+            background-color: #6cb3de;
+        }
+
+        .forgot-password {
+            text-align: right;
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .forgot-password a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .green-button {
+            background-color: #90EE90;
+            margin-bottom: 10px;
+        }
+
+        .blue-button {
+            background-color: #ADD8E6;
+        }
+    </style>
+</head>
+<body>
+    <div class="sign-in-container">
+        <div class="image-column"></div>
+        <div class="form-column">
+            <img src="img/logo.png" alt="Company logo" class="logo"> <!-- Replace with your logo path -->
+            <h2 class="form-title">เข้าสู่ระบบ</h2>
+            <input type="email" class="form-input" placeholder="อีเมล" required>
+            <input type="password" class="form-input" placeholder="รหัสผ่าน" required>
+            <div class="forgot-password">
+                <a href="#">ลืมรหัสผ่าน?</a>
+            </div>
+            <button type="submit" class="submit-button green-button" onclick="location.href='main.html'">ลงชื่อเข้าใช้</button>
+            <button type="button" class="submit-button" onclick="location.href='register.html'">สมัครสมาชิก</button>
+        </div>
+    </div>
+</body>
+</html>
