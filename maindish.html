@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thai Foods and Desserts</title>
+    <title>สูตรอาหารคาว</title>
     <style>
         body {
             margin: 0;
@@ -201,11 +201,11 @@
         
         <!-- Navigation Links -->
         <div class="nav-links">
-            <a href="#"><img src="img/homeicon.png" alt="หน้าแรก" class="icon">หน้าแรก</a>
+            <a href="#"><img src="img/homeicon.png" alt="หน้าแรก" class="icon" onclick="location.href='main.html'">หน้าแรก</a>
             <a href="#"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='maindish.html'">สูตรอาหารคาว</a>
             <a href="#"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='dessert.html'">สูตรของหวาน</a>
-            <a href="#"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='login.html'">แนะนำสูตร</a>
-            <a href="#" class="login"><img src="img/usericon.png" alt="เข้าสู่ระบบ" class="icon" onclick="location.href='login.html'">เข้าสู่ระบบ</a>
+            <a href="#"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='recommend.html'">แนะนำสูตร</a>
+            <a href="#" class="login"><img src="img/logout.png" alt="ลงชื่อออก" class="icon" onclick="location.href='logout'">ลงชื่อออก</a>
         </div>
     </div>
 
@@ -220,7 +220,7 @@
 
             <!-- Text and recipe items (right side) -->
             <div class="text-container">
-                <h1>ใหม่และเป็นกระแส</h1><br>
+                <h1>สูตรอาหารคาวมาใหม่</h1><br>
 
                 <!-- New recipe 1 -->
                 <div class="recipe-item">
@@ -237,14 +237,15 @@
 
                 <!-- New recipe 2 -->
                 <div class="recipe-item">
-                    <img src="img/ข้าวเหนียวมะม่วง1.png" alt="ข้าวเหนียวมะม่วง">
+                    <img src="img/ข้าวแช่.png" alt="ข้าวเหนียวมะม่วง">
                     <div>
-                        <h2>ข้าวเหนียวมะม่วง</h2>
+                        <h2>ข้าวแช่</h2>
                         <p>⭐⭐⭐⭐⭐ 5.0</p>
                         <p>โดย Admin</p>
-                        <p>สูตรต้นตำรับสำหรับใครที่กำลังมองหาสูตรข้าวเหนียวมะม่วง หอมน้ำกะทิ ทำง่ายๆได้ที่บ้าน
-                            ส่วนผสม: มะม่วงสุก กะทิ ข้าวเหนียวมูน</p>
-                        <a href="reciep1">ดูวิธีทำเพิ่มเติม >></a>
+                        <p>อากาศร้อน ๆ ตอนบ่าย ๆ ดับด้วยข้าวแช่เย็น ๆ พร้อมกลิ่นมะลิอ่อน ๆ
+                            แสนจะชื่นใจ
+                            ส่วนผสม: ข้าว,ไข่,พริกหยวก</p>
+                        <a href="">ดูวิธีทำเพิ่มเติม >></a>
                     </div>
                 </div><br>
 
@@ -262,14 +263,13 @@
                 </div><br>
                 <!-- New recipe 1 -->
                 <div class="recipe-item">
-                    <img src="img/ข้าวแดกงา.png" alt="ข้าวแดกงา">
+                    <img src="img/แกงระแวงเนื้อ.png" alt="ข้าวแดกงา">
                     <div>
-                        <h2>ข้าวแดกงา</h2>
+                        <h2>แกงระแวงเนื้อ</h2>
                         <p>⭐⭐⭐⭐⭐ 5.0</p>
                         <p>โดย Admin</p>
-                        <p>“ข้าวแดกงา” เมนูขนมไทยโบราณ
-                            ที่เป็นการถนอนอาหารของคนสมัยก่อน เคี้ยวหนึบหนับหอมงาคั่วรับรองอร่อยโดนใจคนสมัยใหม่แน่นอน
-                            ส่วนผสม:ข้าวเหนียว,งาดำ,เกลือ</p>
+                        <p>แกงระแวงเนื้อ เมนูอาหารไทยโบราณ ที่ไว้ใจได้เลยว่าเด็ด
+                            ส่วนผสม: เนื้อวัว</p>
                         <a href="#">ดูวิธีทำเพิ่มเติม >></a>
                     </div>
                 </div><br>
@@ -323,49 +323,47 @@
                 </div><br>
             </div>
 
-            <!-- Popular Desserts -->
+            <!-- Popular Maindish -->
             <div class="category">
-                <h2>สูตรขนมยอดนิยม</h2>
+                <h2>สูตรอาหารคาวโบราณหากินยาก</h2>
 
-                <!-- Dessert 1 -->
+                <!-- maindish 1 -->
                 <div class="recipe-item">
-                    <img src="img\ขนมโคกะทิ.png" alt="ขนมโคกะทิ">
+                    <img src="img\จอแหร้ง.png" alt="จอแหร้ง">
                     <div>
-                        <h2>1.ขนมโคกะทิ</h2>
+                        <h2>1.จอแหร้ง</h2>
                         <p>⭐⭐⭐⭐⭐ 5.0</p>
                         <p>โดย Admin</p>
-                        <p>อยู่บ้านฟิน ๆ กิน “ขนมโคกะทิ” สูตรคุณยายขนมไทยโบราณที่ไม่ต้องไม่หากินที่ไหนไกล สามารถทำเองง่ายๆได้ที่บ้าน 
-                            ส่วนผสม: แป้ง กะทิ มะพร้าว </p>
+                        <p>เข้าครัวมาทำเมนูอาหารใต้โบราณกับเมนู “จอแหร้ง”เมนูพื้นบ้านจากจังหวัดพังงาถ้าอยากรู้ว่าหน้าตาและวิธีการทำเป็นอย่างไรก็มาดูกันเลย
+                            ส่วนผสม: กุ้ง, กะทิ</p>
                         <a href="#">ดูวิธีทำเพิ่มเติม >></a>
                     </div>
                 </div><br>
 
-                <!-- Dessert 2 -->
+                <!-- maindish 2 -->
                 <div class="recipe-item">
-                    <img src="img\ขนมพระพาย.png" alt="ขนมพระพาย">
+                    <img src="img\หลนเต้าเจี้ยว.png" alt="หลนเต้าเจี้ยว">
                     <div>
-                        <h2>2.ขนมพระพาย</h2>
+                        <h2>2.หลนเต้าเจี้ยว</h2>
                         <p> <span style="display: inline-block;">⭐⭐⭐⭐</span>
                             <span style="display: inline-block; margin-left: 10px;">4.0</span></p>
                         <p>โดย Admin</p>
-                        <p>เข้าครัวมาทำเมนูขนมไทยโบราณที่หารับ
-                            ประทานได้ยาก กับเมนู
-                            “ขนมพระพาย” ขนมไทยสีสันสดใส หน้าตาน่ารับประทาน
-                            ส่วนผสม: แป้ง ถั่วเขียวเลาะเปลือก</p>
+                        <p>ชวนมาโชว์สเน่ห์ปลายจวักกับเมนู “หลนเต้าเจี้ยว” เมนูอาหารไทยโบราณ
+                            ที่อร่อยโดนใจคนทุกวัยแน่นอน ถ้าพร้อมแล้วตามมาเข้าครัวเลย!
+                            ส่วนผสม: กะทิ, หมู, กุ้ง</p>
                         <a href="#">ดูวิธีทำเพิ่มเติม >></a>
                     </div>
                 </div><br>
 
-                <!-- Dessert 3 -->
+                <!-- maindish 3 -->
                 <div class="recipe-item">
-                    <img src="img\ขนมอินทนิล.png" alt="ขนมอินทนิล">
+                    <img src="img\แกงระแวงเนื้อ.png" alt="แกงระแวงเนื้อ">
                     <div>
-                        <h2>3.ขนมอินทนิล</h2>
+                        <h2>3.แกงระแวงเนื้อ</h2>
                         <p>⭐⭐⭐⭐⭐ 5.0</p>
                         <p>โดย Admin</p>
-                        <p>เข้าครัวมาทำ “ขนมอินทนิล” เมนูขนมไทยประยุกต์หากินได้ยาก เนื้อนุ่ม
-                            ละมุนลิ้น ถ้าพร้อมแล้วมาดูวิธีทำกันเลย
-                            ส่วนผสม: แป้งมันสำปะหลัง, กะทิ </p>
+                        <p>แกงระแวงเนื้อ เมนูอาหารไทยโบราณ ที่ไว้ใจได้เลยว่าเด็ด
+                            ส่วนผสม: เนื้อวัว</p>
                         <a href="#">ดูวิธีทำเพิ่มเติม >></a>
                     </div>
                 </div><br>
