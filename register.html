@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>สมัครสมาชิก</title>
+    
     <style>
         body {
             margin: 0;
@@ -82,16 +83,18 @@
         }
     </style>
 </head>
-<body>
+<body >
     <div class="sign-up-container">
         <div class="image-column"></div>
-        <div class="form-column">
+        <div class="form-column" >
+            <form class="form-column" action="connect_db.php" method="post">
             <img src="img/logo.png" alt="Company logo" class="logo"> <!-- Replace with your logo path -->
             <h2 class="form-title">สมัครสมาชิก</h2>
-            <input type="email" class="form-input" placeholder="อีเมล" required>
-            <input type="password" class="form-input" placeholder="รหัสผ่าน" required>
+            <input type="email" name="email" class="form-input" placeholder="อีเมล" required>
+            <input type="password" name="password" class="form-input" placeholder="รหัสผ่าน" required>
             <input type="password" class="form-input" placeholder="ยืนยันรหัสผ่าน" required>
-            <button type="submit" class="submit-button" onclick="location.href='main.html'">สมัครสมาชิก</button>
+            <button type="submit" class="submit-button" value="submit" onclick="location.href='main.html'" >สมัครสมาชิก</button>
+        </form>
         </div>
     </div>
 </body>
