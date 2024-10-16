@@ -83,18 +83,19 @@
         }
     </style>
 </head>
-<body >
+<body>
     <div class="sign-up-container">
         <div class="image-column"></div>
-        <div class="form-column" >
-            <form class="form-column" action="connect_db.php" method="post">
-            <img src="img/logo.png" alt="Company logo" class="logo"> <!-- Replace with your logo path -->
-            <h2 class="form-title">สมัครสมาชิก</h2>
-            <input type="email" name="email" class="form-input" placeholder="อีเมล" required>
-            <input type="password" name="password" class="form-input" placeholder="รหัสผ่าน" required>
-            <input type="password" class="form-input" placeholder="ยืนยันรหัสผ่าน" required>
-            <button type="submit" class="submit-button" value="submit" onclick="location.href='main.html'" >สมัครสมาชิก</button>
-        </form>
+        <div class="form-column">
+            <form class="form-column" action="register.php" method="post"> <!-- เปลี่ยน action เป็น register.php -->
+                <img src="img/logo.png" alt="Company logo" class="logo"> <!-- Replace with your logo path -->
+                <h2 class="form-title">สมัครสมาชิก</h2>
+                <input type="text" name="username" class="form-input" placeholder="ชื่อผู้ใช้" required> <!-- เพิ่มช่องชื่อผู้ใช้ -->
+                <input type="email" name="email" class="form-input" placeholder="อีเมล" required>
+                <input type="password" name="password" class="form-input" placeholder="รหัสผ่าน" required>
+                <input type="password" name="confirm_password" class="form-input" placeholder="ยืนยันรหัสผ่าน" required>
+                <button type="submit" class="submit-button">สมัครสมาชิก</button>
+            </form>
         </div>
     </div>
 </body>

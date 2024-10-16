@@ -51,6 +51,7 @@
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 30px;
+            text-align: center; /* Center title */
         }
 
         .form-input {
@@ -112,15 +113,17 @@
     <div class="sign-in-container">
         <div class="image-column"></div>
         <div class="form-column">
-            <img src="img/logo.png" alt="Company logo" class="logo"> <!-- Replace with your logo path -->
-            <h2 class="form-title">เข้าสู่ระบบ</h2>
-            <input type="email" class="form-input" placeholder="อีเมล" required>
-            <input type="password" class="form-input" placeholder="รหัสผ่าน" required>
-            <div class="forgot-password">
-                <a href="#">ลืมรหัสผ่าน?</a>
-            </div>
-            <button type="submit" class="submit-button green-button" onclick="location.href='main.html'">ลงชื่อเข้าใช้</button>
-            <button type="button" class="submit-button" onclick="location.href='register.html'">สมัครสมาชิก</button>
+            <form class="form-column" action="login.php" method="post"> <!-- จัดฟอร์มแบบตรงกลาง -->
+                <img src="img/logo.png" alt="Company logo" class="logo"> <!-- เพิ่มโลโก้ -->
+                <h2 class="form-title">เข้าสู่ระบบ</h2>
+                <input type="email" name="email" class="form-input" placeholder="อีเมล" required>
+                <input type="password" name="password" class="form-input" placeholder="รหัสผ่าน" required>
+                <div class="forgot-password">
+                    <a href="#">ลืมรหัสผ่าน?</a>
+                </div>
+                <button type="submit" class="submit-button green-button">ลงชื่อเข้าใช้</button>
+                <button type="button" class="submit-button blue-button" onclick="location.href='register.html'">สมัครสมาชิก</button>
+            </form>
         </div>
     </div>
 </body>
