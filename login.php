@@ -17,15 +17,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // ตรวจสอบรหัสผ่าน
         if (password_verify($password, $user['password'])) {
-            echo "เข้าสู่ระบบสำเร็จ"; // แจ้งเตือนเมื่อเข้าสู่ระบบสำเร็จ
+            echo "<script>alert('เข้าสู่ระบบสำเร็จ');</script>";
             // คุณสามารถเปลี่ยนไปยังหน้าหลักที่ต้องการได้ที่นี่
-            header("Location: main.html");
+            echo "<script>window.location.href = 'main.html';</script>";
             exit();
         } else {
-            echo "รหัสผ่านไม่ถูกต้อง"; // แจ้งเตือนเมื่อรหัสผ่านไม่ถูกต้อง
+            echo "<script>alert('รหัสผ่านไม่ถูกต้อง');</script>"; // แจ้งเตือนเมื่อรหัสผ่านไม่ถูกต้อง
         }
     } else {
-        echo "ไม่พบผู้ใช้"; // แจ้งเตือนเมื่อไม่พบผู้ใช้
+        echo "<script>alert('ไม่พบผู้ใช้');</script>"; // แจ้งเตือนเมื่อไม่พบผู้ใช้
     }
 }
 ?>
