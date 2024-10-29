@@ -1,4 +1,5 @@
 <?php
+session_start(); // เริ่มต้นเซสชัน
 include 'db_connection.php'; // เชื่อมต่อไฟล์ฐานข้อมูล
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -17,9 +18,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // ตรวจสอบรหัสผ่าน
         if (password_verify($password, $user['password'])) {
-            echo "<script>alert('เข้าสู่ระบบสำเร็จ');</script>";
-            // คุณสามารถเปลี่ยนไปยังหน้าหลักที่ต้องการได้ที่นี่
-            echo "<script>window.location.href = 'main.html';</script>";
+            // ตั้งค่าเซสชันเมื่อล็อกอินสำเร็จ
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
+
+            // เปลี่ยนไปยังหน้าหลักที่ต้องการ
+            header("Location: main.html");
             exit();
         } else {
             echo "<script>alert('รหัสผ่านไม่ถูกต้อง');</script>"; // แจ้งเตือนเมื่อรหัสผ่านไม่ถูกต้อง

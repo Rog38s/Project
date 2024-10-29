@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Account</title>
+    <title>Account Settings</title>
     <style>
         body {
             margin: 0;
@@ -48,6 +48,14 @@
         .navbar .nav-links a.logout {
             color: red;
         }
+        /* รูปโปรไฟล์ใน Navbar */
+        #navbar-profile-image {
+            border-radius: 50%; /* ทำให้รูปภาพเป็นวงกลม */
+            width: 36px; /* ความกว้างของรูปภาพ */
+            height: 36px; /* ความสูงของรูปภาพ */
+            object-fit: cover; /* ให้รูปภาพพอดีกับกรอบ */
+        }
+        /* Form styling */
         .form-container {
             background-color: #fff;
             width: 400px;
@@ -71,6 +79,9 @@
             display: block;
             margin: 0 auto;
         }
+        .form-container input[type="file"] {
+            display: none;
+        }
         .form-container label {
             color: #007bff;
             cursor: pointer;
@@ -78,17 +89,14 @@
             margin-bottom: 15px;
             font-weight: bold;
         }
-        .form-container .user-data {
-            width: 80%; /* ปรับขนาดช่องข้อมูลให้เล็กลง */
+        .form-container input[type="text"],
+        .form-container input[type="email"],
+        .form-container input[type="password"] {
+            width: calc(50% - 20px);
             padding: 10px;
-            margin: 10px auto; /* จัดกลาง */
+            margin: 10px 0;
             border-radius: 5px;
             border: 1px solid #ccc;
-            background-color: #fff;
-            display: flex; /* ใช้ flex สำหรับจัดการตำแหน่ง */
-            justify-content: space-between; /* จัดตำแหน่งข้อความให้ห่างกัน */
-            align-items: center; /* จัดแนวนอน */
-            text-align: left; /* จัดข้อความทางซ้าย */
         }
         .form-container .btn {
             width: calc(55% - 20px);
@@ -105,74 +113,86 @@
         .form-container .btn-orange {
             background-color: #f0ad4e;
         }
-        /* เพิ่มสไตล์สำหรับรูปโปรไฟล์ใน navbar */
-        .navbar .profile-pic {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 5px;
-        }
     </style>
 </head>
 <body>
     <div class="navbar">
+        <!-- Logo -->
         <img src="img/logo.png" alt="Logo" class="logo">
+        
+        <!-- Search Box -->
         <div class="search-box">
             <input type="text" placeholder="ค้นหา">
         </div>
+        
+        <!-- Navigation Links -->
         <div class="nav-links">
             <a href="#"><img src="img/homeicon.png" alt="หน้าแรก" class="icon" onclick="location.href='main.html'">หน้าแรก</a>
             <a href="#"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='maindish.html'">สูตรอาหารคาว</a>
             <a href="#"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='dessert.html'">สูตรของหวาน</a>
             <a href="#"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='recommend.html'">แนะนำสูตร</a>
-            <a href="#" id="user-link" class="login">
-                <img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="profile-pic">
-                <span id="username-display"></span>
-            </a>
+            <a href="#" class="login"><img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="icon" onclick="location.href='userid.html'"></a>
             <a href="#" class="logout"><img src="img/logout.png" alt="ลงชื่อออก" class="icon" onclick="location.href='index.html'"></a>
         </div>
     </div>
 
+    <!-- Form Section -->
     <div class="form-container">
         <h2>ข้อมูลสมาชิก</h2>
         <img id="profile-image" src="img/usericon.png" alt="User Profile Image">
-
-        <div class="user-data" id="name">ชื่อ: <span id="user-name"></span></div>
-        <div class="user-data" id="email">อีเมล: <span id="user-email"></span></div>
-        <div class="user-data" id="phone">เบอร์โทรศัพท์: <span id="user-phone"></span></div>
-        <div class="user-data" id="gender">เพศ: <span id="user-gender"></span></div>
-        <div class="user-data" id="age">อายุ: <span id="user-age"></span></div><br>
-
-        <button class="btn btn-blue" onclick="location.href='user_edit.html'">แก้ไขข้อมูลส่วนตัว</button><br>
-        <button class="btn btn-orange" onclick="location.href='changepassword.html'">เปลี่ยนรหัสผ่าน</button>
+        <label for="file-upload">+ เลือกภาพ</label>
+        <input id="file-upload" type="file" accept="image/*" onchange="previewImage(event)"><br>
+        
+        <input type="text" id="name" placeholder="ชื่อ">
+        <input type="text" id="phone" placeholder="เบอร์โทรศัพท์">
+        <input type="text" id="gender" placeholder="เพศ">
+        <input type="text" id="age" placeholder="อายุ"><br>
+        
+        <button class="btn btn-blue" onclick="saveUserData()">บันทึก</button><br>
+        <button class="btn btn-orange" onclick="location.href='userid.html'">ยกเลิก</button>
     </div>
 
     <script>
-        // ดึงข้อมูลผู้ใช้จาก backend และแสดงในส่วนต่าง ๆ ของหน้าเว็บ
-        fetch('get_user_data.php')
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('profile-image').src = e.target.result;
+                document.getElementById('navbar-profile-image').src = e.target.result; // เปลี่ยนรูปโปรไฟล์ใน navbar
+            }
+            reader.readAsDataURL(file);
+        }
+
+        function saveUserData() {
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const gender = document.getElementById('gender').value;
+            const age = document.getElementById('age').value;
+            const fileInput = document.getElementById('file-upload');
+
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('phone', phone);
+            formData.append('gender', gender);
+            formData.append('age', age);
+            formData.append('profile_image', fileInput.files[0]); // อัปโหลดไฟล์ภาพ
+
+            fetch('save_user_data.php', {
+                method: 'POST',
+                body: formData
+            })
             .then(response => response.json())
             .then(data => {
-                console.log(data); // ดูข้อมูลที่ได้รับ
-                if (data.error) {
-                    console.error(data.error);
-                    alert('เกิดข้อผิดพลาด: ' + data.error);
+                if (data.success) {
+                    alert('ข้อมูลของคุณได้ถูกบันทึก');
+                    // นำทางไปยัง userid.html หลังบันทึกข้อมูล
+                    location.href = 'userid.html';
                 } else {
-                    document.getElementById('user-name').innerText = data.username; // แสดงชื่อผู้ใช้
-                    document.getElementById('user-email').innerText = data.email; // แสดงอีเมล
-                    document.getElementById('user-phone').innerText = data.phone; // แสดงเบอร์โทรศัพท์
-                    document.getElementById('user-gender').innerText = data.gender; // แสดงเพศ
-                    document.getElementById('user-age').innerText = data.age; // แสดงอายุ
-                    
-                    // แสดงชื่อผู้ใช้ในแถบเมนู
-                    const userLink = document.getElementById('user-link');
-                    const usernameDisplay = document.getElementById('username-display');
-                    usernameDisplay.innerText = data.username; // แสดงชื่อในแถบเมนู
-                    const navbarProfileImage = document.getElementById('navbar-profile-image');
-                    navbarProfileImage.src = data.profile_image ? data.profile_image : 'img/usericon.png';
+                    alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' + data.error);
                 }
             })
             .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+        }
     </script>
 </body>
 </html>
