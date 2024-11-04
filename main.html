@@ -209,181 +209,199 @@
         
         <!-- Navigation Links -->
         <div class="nav-links">
-            <a href="#"><img src="img/homeicon.png" alt="หน้าแรก" class="icon">หน้าแรก</a>
-            <a href="#"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='maindish.html'">สูตรอาหารคาว</a>
-            <a href="#"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='dessert.html'">สูตรของหวาน</a>
-            <a href="#"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='recommend.html'">แนะนำสูตร</a>
+            <a href="main.html"><img src="img/homeicon.png" alt="หน้าแรก" class="icon">หน้าแรก</a>
+            <a href="maindish.html"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon">สูตรอาหารคาว</a>
+            <a href="dessert.html"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon">สูตรของหวาน</a>
+            <a href="recommend.html"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon">แนะนำสูตร</a>
             <a href="#" id="user-link" class="login">
                 <img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="profile-pic">
-                <span id="username-display"></span>
+                <span id="username-display">Username</span>
             </a>
-            <a href="#" class="login"><img src="img/logout.png" alt="ลงชื่อออก" class="icon" onclick="location.href='index.html'"></a>
-
+            <a href="index.html" class="login"><img src="img/logout.png" alt="ลงชื่อออก" class="icon"></a>
         </div>
     </div>
 
-    <!-- Main Content Section -->
-    <div class="main-content">
-        <!-- Highlight Section -->
-        <div class="highlight-container">
-            <!-- Thai food image (left side) -->
-            <div class="image-container">
-                <img src="img/สำรับไทย.jpg" alt="สำรับไทย">
-            </div>
+    <script>
+        // ดึงข้อมูลผู้ใช้จาก backend
+        fetch('get_user_data.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error(data.error);
+                    alert('เกิดข้อผิดพลาด: ' + data.error);
+                } else {
+                    // แสดงชื่อผู้ใช้และภาพโปรไฟล์
+                    document.getElementById('username-display').innerText = data.username;
+                    document.getElementById('navbar-profile-image').src = data.profile_image || 'img/usericon.png'; // ใช้รูปภาพจากผู้ใช้หรือรูปภาพดีฟอลต์
+                }
+            })
+            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+    </script>
+</body>
+</html>
 
-            <!-- Text and recipe items (right side) -->
-            <div class="text-container">
-                <h1>ใหม่และเป็นกระแส</h1><br>
-
-                <!-- New recipe 1 -->
-                <div class="recipe-item">
-                    <img src="img/ผัดไทยกุ้งสด.png" alt="ผัดไทยกุ้งสด">
-                    <div>
-                        <h2>ผัดไทยกุ้งสด</h2>
-                        <p>⭐⭐⭐⭐⭐ 5.0</p>
-                        <p>โดย Admin</p>
-                        <p>สูตรต้นตำรับสำหรับใครที่กำลังมองหาสูตรผัดไทยรสเด็ด ทำง่ายๆได้ที่บ้าน
-                            ส่วนผสม: เส้นผัดไทย กุ้งสด </p>
-                        <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                    </div>
-                </div><br>
-
-                <!-- New recipe 2 -->
-                <div class="recipe-item">
-                    <img src="img/ข้าวเหนียวมะม่วง1.png" alt="ข้าวเหนียวมะม่วง">
-                    <div>
-                        <h2>ข้าวเหนียวมะม่วง</h2>
-                        <p>⭐⭐⭐⭐⭐ 5.0</p>
-                        <p>โดย Admin</p>
-                        <p>สูตรต้นตำรับสำหรับใครที่กำลังมองหาสูตรข้าวเหนียวมะม่วง หอมน้ำกะทิ ทำง่ายๆได้ที่บ้าน
-                            ส่วนผสม: มะม่วงสุก กะทิ ข้าวเหนียวมูน</p>
-                        <a href="reciep1.html">ดูวิธีทำเพิ่มเติม >></a>
-                    </div>
-                </div><br>
-
-                <!-- New recipe 3  -->
-                <div class="recipe-item">
-                    <img src="img\ขนมจีนน้ำเงี้ยว.png" alt="ขนมจีนน้ำเงี้ยว">
-                    <div>
-                        <h2>ขนมจีนน้ำเงี้ยว</h2>
-                        <p>⭐⭐⭐⭐⭐ 5.0</p>
-                        <p>โดย Admin</p>
-                        <p>มาลองสัมผัสรสชาติของเมนูขนมจีนน้ำเงี้ยวสูตรเด็ดสุดเข้มข้นทำเองได้ง่ายๆ
-                            ส่วนผสม: ดอกงิ้ว มะเขือเทศ กระดูกหมู</p>
-                        <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                    </div>
-                </div><br>
-                <!-- New recipe 1 -->
-                <div class="recipe-item">
-                    <img src="img/ข้าวแดกงา.png" alt="ข้าวแดกงา">
-                    <div>
-                        <h2>ข้าวแดกงา</h2>
-                        <p>⭐⭐⭐⭐⭐ 5.0</p>
-                        <p>โดย Admin</p>
-                        <p>“ข้าวแดกงา” เมนูขนมไทยโบราณ
-                            ที่เป็นการถนอนอาหารของคนสมัยก่อน เคี้ยวหนึบหนับหอมงาคั่วรับรองอร่อยโดนใจคนสมัยใหม่แน่นอน
-                            ส่วนผสม:ข้าวเหนียว,งาดำ,เกลือ</p>
-                        <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                    </div>
-                </div><br>
-            </div>
+<!-- Main Content Section -->
+<div class="main-content">
+    <!-- Highlight Section -->
+    <div class="highlight-container">
+        <!-- Thai food image (left side) -->
+        <div class="image-container">
+            <img src="img/สำรับไทย.jpg" alt="สำรับไทย">
         </div>
 
-        <!-- Popular Recipes Section -->
-        <div class="popular-section">
-            <!-- Popular Thai Foods -->
-            <div class="category">
-                <h2>สูตรอาหารคาวยอดนิยม</h2>
+        <!-- Text and recipe items (right side) -->
+        <div class="text-container">
+            <h1>ใหม่และเป็นกระแส</h1><br>
 
-                <!-- Recipe 1 -->
-                <div class="recipe-item">
-                    <img src="img\กระเพา.png" alt="กระเพราหมูสับ">
-                    <div>
-                        <h2>1.กระเพราหมูสับ</h2>
-                        <p>⭐⭐⭐⭐⭐ 5.0</p>
-                        <p>โดย Admin</p>
-                        <p>มาลองสัมผัสความอร่อยกับเมนูยอด
-                            ฮิตตลอดกาลกระเพราหมูสับ สูตรที่ง่าย แต่อร่อยถึงใจ!
-                            ส่วนผสม: หมูสับ ใบกระเพรา พริก</p>
-                        <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                    </div>
-                </div><br>
+            <!-- New recipe 1 -->
+            <div class="recipe-item">
+                <img src="img/ผัดไทยกุ้งสด.png" alt="ผัดไทยกุ้งสด">
+                <div>
+                    <h2>ผัดไทยกุ้งสด</h2>
+                    <p>⭐⭐⭐⭐⭐ 5.0</p>
+                    <p>โดย Admin</p>
+                    <p>สูตรต้นตำรับสำหรับใครที่กำลังมองหาสูตรผัดไทยรสเด็ด ทำง่ายๆได้ที่บ้าน
+                        ส่วนผสม: เส้นผัดไทย กุ้งสด </p>
+                    <a href="#">ดูวิธีทำเพิ่มเติม >></a>
+                </div>
+            </div><br>
 
-                <!-- Recipe 2 -->
-                <div class="recipe-item">
-                    <img src="img/ขนมจีนน้ำเงี้ยว.png" alt="ขนมจีนน้ำเงี้ยว">
-                    <div>
-                        <h2>2.ขนมจีนน้ำเงี้ยว</h2>
-                        <p>⭐⭐⭐⭐⭐ 5.0</p>
-                        <p>มาลองสัมผัสรสชาติของเมนูขนมจีนน้ำเงี้ยวสูตรเด็ดสุดเข้มข้นทำเองได้ง่ายๆ
-                            ส่วนผสม: ดอกงิ้ว มะเขือเทศ กระดูกหมู </p>
-                        <p>โดย Admin</p>
-                        <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                    </div>
-                </div><br>
+            <!-- New recipe 2 -->
+            <div class="recipe-item">
+                <img src="img/ข้าวเหนียวมะม่วง1.png" alt="ข้าวเหนียวมะม่วง">
+                <div>
+                    <h2>ข้าวเหนียวมะม่วง</h2>
+                    <p>⭐⭐⭐⭐⭐ 5.0</p>
+                    <p>โดย Admin</p>
+                    <p>สูตรต้นตำรับสำหรับใครที่กำลังมองหาสูตรข้าวเหนียวมะม่วง หอมน้ำกะทิ ทำง่ายๆได้ที่บ้าน
+                        ส่วนผสม: มะม่วงสุก กะทิ ข้าวเหนียวมูน</p>
+                    <a href="reciep1.html">ดูวิธีทำเพิ่มเติม >></a>
+                </div>
+            </div><br>
 
-                <!-- Recipe 3 -->
-                <div class="recipe-item">
-                    <img src="img/แตงโมปลาแห้ง.png" alt="แตงโมปลาแห้ง">
-                    <div>
-                        <h2>3.แตงโมปลาแห้ง</h2>
-                        <p>⭐⭐⭐⭐⭐ 5.0</p>
-                        <p>โดย Admin</p>
-                        <p>เข้าครัวมาทำของว่างชาววัง “แตงโมปลาแห้ง” เมนูดับร้อน เย็นชื่นใจ
-                            ทำง่ายเพียง 3 ขั้นตอน ถ้าพร้อมแล้วมาดูวิธีทำกันเลย</p>
-                        <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                    </div>
-                </div><br>
-            </div>
-
-            <!-- Popular Desserts -->
-            <div class="category">
-                <h2>สูตรขนมยอดนิยม</h2>
-
-                <!-- Dessert 1 -->
-                <div class="recipe-item">
-                    <img src="img\ขนมโคกะทิ.png" alt="ขนมโคกะทิ">
-                    <div>
-                        <h2>1.ขนมโคกะทิ</h2>
-                        <p>⭐⭐⭐⭐⭐ 5.0</p>
-                        <p>โดย Admin</p>
-                        <p>อยู่บ้านฟิน ๆ กิน “ขนมโคกะทิ” สูตรคุณยายขนมไทยโบราณที่ไม่ต้องไม่หากินที่ไหนไกล สามารถทำเองง่ายๆได้ที่บ้าน 
-                            ส่วนผสม: แป้ง กะทิ มะพร้าว </p>
-                        <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                    </div>
-                </div><br>
-
-                <!-- Dessert 2 -->
-                <div class="recipe-item">
-                    <img src="img\ขนมพระพาย.png" alt="ขนมพระพาย">
-                    <div>
-                        <h2>2.ขนมพระพาย</h2>
-                        <p> <span style="display: inline-block;">⭐⭐⭐⭐</span>
-                            <span style="display: inline-block; margin-left: 10px;">4.0</span></p>
-                        <p>โดย Admin</p>
-                        <p>เข้าครัวมาทำเมนูขนมไทยโบราณที่หารับ
-                            ประทานได้ยาก กับเมนู
-                            “ขนมพระพาย” ขนมไทยสีสันสดใส หน้าตาน่ารับประทาน
-                            ส่วนผสม: แป้ง ถั่วเขียวเลาะเปลือก</p>
-                        <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                    </div>
-                </div><br>
-
-                <!-- Dessert 3 -->
-                <div class="recipe-item">
-                    <img src="img\ขนมอินทนิล.png" alt="ขนมอินทนิล">
-                    <div>
-                        <h2>3.ขนมอินทนิล</h2>
-                        <p>⭐⭐⭐⭐⭐ 5.0</p>
-                        <p>โดย Admin</p>
-                        <p>เข้าครัวมาทำ “ขนมอินทนิล” เมนูขนมไทยประยุกต์หากินได้ยาก เนื้อนุ่ม
-                            ละมุนลิ้น ถ้าพร้อมแล้วมาดูวิธีทำกันเลย
-                            ส่วนผสม: แป้งมันสำปะหลัง, กะทิ </p>
-                        <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                    </div>
-                </div><br>
-            </div>
+            <!-- New recipe 3  -->
+            <div class="recipe-item">
+                <img src="img\ขนมจีนน้ำเงี้ยว.png" alt="ขนมจีนน้ำเงี้ยว">
+                <div>
+                    <h2>ขนมจีนน้ำเงี้ยว</h2>
+                    <p>⭐⭐⭐⭐⭐ 5.0</p>
+                    <p>โดย Admin</p>
+                    <p>มาลองสัมผัสรสชาติของเมนูขนมจีนน้ำเงี้ยวสูตรเด็ดสุดเข้มข้นทำเองได้ง่ายๆ
+                        ส่วนผสม: ดอกงิ้ว มะเขือเทศ กระดูกหมู</p>
+                    <a href="#">ดูวิธีทำเพิ่มเติม >></a>
+                </div>
+            </div><br>
+            <!-- New recipe 1 -->
+            <div class="recipe-item">
+                <img src="img/ข้าวแดกงา.png" alt="ข้าวแดกงา">
+                <div>
+                    <h2>ข้าวแดกงา</h2>
+                    <p>⭐⭐⭐⭐⭐ 5.0</p>
+                    <p>โดย Admin</p>
+                    <p>“ข้าวแดกงา” เมนูขนมไทยโบราณ
+                        ที่เป็นการถนอนอาหารของคนสมัยก่อน เคี้ยวหนึบหนับหอมงาคั่วรับรองอร่อยโดนใจคนสมัยใหม่แน่นอน
+                        ส่วนผสม:ข้าวเหนียว,งาดำ,เกลือ</p>
+                    <a href="#">ดูวิธีทำเพิ่มเติม >></a>
+                </div>
+            </div><br>
         </div>
     </div>
+
+    <!-- Popular Recipes Section -->
+    <div class="popular-section">
+        <!-- Popular Thai Foods -->
+        <div class="category">
+            <h2>สูตรอาหารคาวยอดนิยม</h2>
+
+            <!-- Recipe 1 -->
+            <div class="recipe-item">
+                <img src="img\กระเพา.png" alt="กระเพราหมูสับ">
+                <div>
+                    <h2>1.กระเพราหมูสับ</h2>
+                    <p>⭐⭐⭐⭐⭐ 5.0</p>
+                    <p>โดย Admin</p>
+                    <p>มาลองสัมผัสความอร่อยกับเมนูยอด
+                        ฮิตตลอดกาลกระเพราหมูสับ สูตรที่ง่าย แต่อร่อยถึงใจ!
+                        ส่วนผสม: หมูสับ ใบกระเพรา พริก</p>
+                    <a href="#">ดูวิธีทำเพิ่มเติม >></a>
+                </div>
+            </div><br>
+
+            <!-- Recipe 2 -->
+            <div class="recipe-item">
+                <img src="img/ขนมจีนน้ำเงี้ยว.png" alt="ขนมจีนน้ำเงี้ยว">
+                <div>
+                    <h2>2.ขนมจีนน้ำเงี้ยว</h2>
+                    <p>⭐⭐⭐⭐⭐ 5.0</p>
+                    <p>มาลองสัมผัสรสชาติของเมนูขนมจีนน้ำเงี้ยวสูตรเด็ดสุดเข้มข้นทำเองได้ง่ายๆ
+                        ส่วนผสม: ดอกงิ้ว มะเขือเทศ กระดูกหมู </p>
+                    <p>โดย Admin</p>
+                    <a href="#">ดูวิธีทำเพิ่มเติม >></a>
+                </div>
+            </div><br>
+
+            <!-- Recipe 3 -->
+            <div class="recipe-item">
+                <img src="img/แตงโมปลาแห้ง.png" alt="แตงโมปลาแห้ง">
+                <div>
+                    <h2>3.แตงโมปลาแห้ง</h2>
+                    <p>⭐⭐⭐⭐⭐ 5.0</p>
+                    <p>โดย Admin</p>
+                    <p>เข้าครัวมาทำของว่างชาววัง “แตงโมปลาแห้ง” เมนูดับร้อน เย็นชื่นใจ
+                        ทำง่ายเพียง 3 ขั้นตอน ถ้าพร้อมแล้วมาดูวิธีทำกันเลย</p>
+                    <a href="#">ดูวิธีทำเพิ่มเติม >></a>
+                </div>
+            </div><br>
+        </div>
+
+        <!-- Popular Desserts -->
+        <div class="category">
+            <h2>สูตรขนมยอดนิยม</h2>
+
+            <!-- Dessert 1 -->
+            <div class="recipe-item">
+                <img src="img\ขนมโคกะทิ.png" alt="ขนมโคกะทิ">
+                <div>
+                    <h2>1.ขนมโคกะทิ</h2>
+                    <p>⭐⭐⭐⭐⭐ 5.0</p>
+                    <p>โดย Admin</p>
+                    <p>อยู่บ้านฟิน ๆ กิน “ขนมโคกะทิ” สูตรคุณยายขนมไทยโบราณที่ไม่ต้องไม่หากินที่ไหนไกล สามารถทำเองง่ายๆได้ที่บ้าน 
+                        ส่วนผสม: แป้ง กะทิ มะพร้าว </p>
+                    <a href="#">ดูวิธีทำเพิ่มเติม >></a>
+                </div>
+            </div><br>
+
+            <!-- Dessert 2 -->
+            <div class="recipe-item">
+                <img src="img\ขนมพระพาย.png" alt="ขนมพระพาย">
+                <div>
+                    <h2>2.ขนมพระพาย</h2>
+                    <p> <span style="display: inline-block;">⭐⭐⭐⭐</span>
+                        <span style="display: inline-block; margin-left: 10px;">4.0</span></p>
+                    <p>โดย Admin</p>
+                    <p>เข้าครัวมาทำเมนูขนมไทยโบราณที่หารับ
+                        ประทานได้ยาก กับเมนู
+                        “ขนมพระพาย” ขนมไทยสีสันสดใส หน้าตาน่ารับประทาน
+                        ส่วนผสม: แป้ง ถั่วเขียวเลาะเปลือก</p>
+                    <a href="#">ดูวิธีทำเพิ่มเติม >></a>
+                </div>
+            </div><br>
+
+            <!-- Dessert 3 -->
+            <div class="recipe-item">
+                <img src="img\ขนมอินทนิล.png" alt="ขนมอินทนิล">
+                <div>
+                    <h2>3.ขนมอินทนิล</h2>
+                    <p>⭐⭐⭐⭐⭐ 5.0</p>
+                    <p>โดย Admin</p>
+                    <p>เข้าครัวมาทำ “ขนมอินทนิล” เมนูขนมไทยประยุกต์หากินได้ยาก เนื้อนุ่ม
+                        ละมุนลิ้น ถ้าพร้อมแล้วมาดูวิธีทำกันเลย
+                        ส่วนผสม: แป้งมันสำปะหลัง, กะทิ </p>
+                    <a href="#">ดูวิธีทำเพิ่มเติม >></a>
+                </div>
+            </div><br>
+        </div>
+    </div>
+</div>
 </body>
 </html>
