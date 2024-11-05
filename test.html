@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ข้าวเหนียวมะม่วง</title>
+    <title>Thai Foods and Desserts</title>
     <style>
+        /* CSS ตามที่ให้มาในโค้ดของคุณ */
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #fdf6d2;
         }
         .navbar {
             background-color: #ffffff;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: center; 
             padding: 10px 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
@@ -36,7 +37,7 @@
         .navbar .nav-links a {
             text-decoration: none;
             color: #000;
-            margin-left: 20px;
+            margin-left: 20px; 
             font-size: 16px;
             display: flex;
             align-items: center;
@@ -45,53 +46,86 @@
             margin-right: 5px;
             height: 24px;
         }
-        .navbar .profile-pic {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 5px;
+        .navbar .nav-links a.logout {
+            color: red;
         }
-        .recipe-container {
-            max-width: 1000px;
-            margin: 0 auto;
+        .form-container {
+            background-color: #fff;
+            width: 500px;
+            margin: 50px auto;
             padding: 20px;
-            background-color: #fcf4ce;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
-        .recipe-image {
-            flex: 1;
-            max-width: 45%;
-            margin-right: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
-        .recipe-image img {
-            width: 100%;
-            height: auto;
+        .form-container h2 {
+            margin-bottom: 20px;
+            color: #666;
         }
-        .recipe-details {
-            flex: 1;
-            max-width: 45%;
+        .form-section {
+            margin-bottom: 20px;
         }
-        .recipe-details h1, .recipe-details label {
-            color: #000;
-            font-size: 20px;
+        .form-section label {
+            display: block;
+            text-align: left;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 5px;
         }
-        .form-control {
-            width: 100%;
+        .form-section input[type="text"],
+        .form-section textarea,
+        .form-section select {
+            width: 90%;
             padding: 10px;
             margin-top: 5px;
             border-radius: 5px;
             border: 1px solid #ccc;
             font-size: 14px;
         }
-        .recipe-steps {
-            max-width: 1000px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #ffffff;
+        .form-section textarea {
+            height: 100px;
+            resize: none;
+        }
+        .form-section img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            margin-top: 10px;
+            background-color: #eaeaea;
+            display: block;
+            margin: 0 auto;
+        }
+        .form-section input[type="file"] {
+            display: none;
+        }
+        .form-section label.upload-label {
+            color: #007bff;
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .form-section .btn {
+            width: calc(50% - 10px);
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+        }
+        .form-section .btn-green {
+            background-color: #5cb85c;
+        }
+        .form-section .btn-red {
+            background-color: #ff6347;
+        }
+        .navbar .profile-pic {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 5px;
         }
     </style>
 </head>
@@ -102,64 +136,128 @@
             <input type="text" placeholder="ค้นหา">
         </div>
         <div class="nav-links">
-            <a href="#"><img src="img/homeicon.png" alt="หน้าแรก" class="icon">หน้าแรก</a>
-            <a href="#"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon">สูตรอาหารคาว</a>
-            <a href="#"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon">สูตรของหวาน</a>
-            <a href="#"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon">แนะนำสูตร</a>
-            <a href="#" id="user-link">
+            <a href="#"><img src="img/homeicon.png" alt="หน้าแรก" class="icon" onclick="location.href='main.html'">หน้าแรก</a>
+            <a href="#"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='maindish.html'">สูตรอาหารคาว</a>
+            <a href="#"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='dessert.html'">สูตรของหวาน</a>
+            <a href="#"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='recommend.html'">แนะนำสูตร</a>
+            <a href="#" id="user-link" class="login" onclick="location.href='userid.html'">
                 <img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="profile-pic">
                 <span id="username-display"></span>
             </a>
-            <a href="#" class="logout"><img src="img/logout.png" alt="ลงชื่อออก" class="icon">ลงชื่อออก</a>
+            <a href="#" class="logout"><img src="img/logout.png" alt="ลงชื่อออก" class="icon" onclick="location.href='index.html'"></a>
         </div>
     </div>
-
-    <!-- Recipe Content -->
-    <div class="recipe-container">
-        <!-- Image and Upload Section -->
-        <div class="recipe-image">
-            <img src="img/image.png" alt="" id="upload-preview">
-            <label for="file-upload" style="color: #007bff; cursor: pointer; display: block; margin-top: 10px;">+ เพิ่มรูปภาพ</label>
-            <input type="file" id="file-upload" style="display: none;">
-        </div>
-
-        <!-- Details Section -->
-        <div class="recipe-details">
+    
+    <div class="form-container">
+        <h2>แนะนำสูตรอาหาร-ขนมไทย</h2>
+        
+        <div class="form-section">
             <label for="recipe-name">ชื่อเมนู</label>
-            <input type="text" id="recipe-name" class="form-control" placeholder="ชื่อเมนู"><br>
-
-            <label for="source">แหล่งอ้างอิง</label>
-            <input type="text" id="source" class="form-control" placeholder="ที่มาของสูตร"><br>
-
-            <label for="ingredients">วัตถุดิบ</label>
-            <textarea id="ingredients" class="form-control" placeholder="กรอกวัตถุดิบแต่ละข้อแยกบรรทัด"></textarea>
+            <input type="text" id="recipe-name" placeholder="ชื่อเมนู">
         </div>
-    </div>
 
-    <!-- Steps Section -->
-    <div class="recipe-steps">
-        <label for="steps">วิธีการปรุง</label>
-        <textarea id="steps" class="form-control" placeholder="กรอกขั้นตอนการทำอาหารแต่ละข้อแยกบรรทัด"></textarea>
+        <div class="form-section">
+            <label for="ingredients">วัตถุดิบ</label>
+            <textarea id="ingredients" placeholder="กรอกวัตถุดิบ"></textarea>
+        </div>
+
+        <div class="form-section">
+            <label for="steps">วิธีการปรุง</label>
+            <textarea id="steps" placeholder="กรอกขั้นตอนการทำอาหาร"></textarea>
+        </div>
+
+        <div class="form-section">
+            <label for="source">แหล่งอ้างอิง</label>
+            <input type="text" id="source" placeholder="หากปล่อยว่างจะแสดงชื่อผู้ใช้">
+        </div>
+
+        <div class="form-section">
+            <label for="food-category">ประเภทของอาหาร</label>
+            <select id="food-category">
+                <option value="">กรุณาเลือก</option>
+                <option value="อาหารคาว">อาหารคาว</option>
+                <option value="ของหวาน">ของหวาน</option>
+            </select>
+        </div>
+
+        <div class="form-section">
+            <img src="img/image.png" alt="Upload Preview" id="upload-preview">
+            <label for="file-upload" class="upload-label">+ เลือกภาพ</label>
+            <input type="file" id="file-upload">
+        </div>
+
+        <div class="form-section">
+            <button class="btn btn-green" onclick="submitRecipe()">ส่งคำแนะนำสูตร</button><br>
+            <button class="btn btn-red" onclick="location.href='main.html'">ยกเลิก</button>
+        </div>
     </div>
 
     <script>
-        // Preview image on file selection
-        document.getElementById("file-upload").onchange = function(event) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById("upload-preview").src = e.target.result;
-            };
-            reader.readAsDataURL(event.target.files[0]);
-        };
+        // ฟังก์ชันแสดงตัวอย่างภาพ
+        document.getElementById('file-upload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('upload-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
 
-        // Fetch and update user data
+        // ดึงข้อมูลผู้ใช้จาก backend
         fetch('get_user_data.php')
             .then(response => response.json())
             .then(data => {
-                document.getElementById('username-display').innerText = data.username;
-                document.getElementById('navbar-profile-image').src = data.profile_image || 'img/usericon.png';
+                if (data.error) {
+                    console.error(data.error);
+                    alert('เกิดข้อผิดพลาด: ' + data.error);
+                } else {
+                    // แสดงชื่อผู้ใช้
+                    const usernameDisplay = document.getElementById('username-display');
+                    usernameDisplay.innerText = data.username;
+    
+                    // อัปเดตภาพโปรไฟล์ใน navbar ถ้ามีข้อมูลโปรไฟล์ ถ้าไม่มีก็ใช้รูปเริ่มต้น
+                    const navbarProfileImage = document.getElementById('navbar-profile-image');
+                    navbarProfileImage.src = data.profile_image ? data.profile_image : 'img/usericon.png';
+                }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+
+        function submitRecipe() {
+            const recipeName = document.getElementById('recipe-name').value;
+            const ingredients = document.getElementById('ingredients').value;
+            const steps = document.getElementById('steps').value;
+            const source = document.getElementById('source').value || document.getElementById('username-display').innerText;
+            const foodCategory = document.getElementById('food-category').value;
+            const fileInput = document.getElementById('file-upload');
+            const file = fileInput.files[0];
+
+            const formData = new FormData();
+            formData.append('recipe_name', recipeName);
+            formData.append('ingredients', ingredients);
+            formData.append('steps', steps);
+            formData.append('source', source);
+            formData.append('food_category', foodCategory);
+            if (file) {
+                formData.append('image', file);
+            }
+
+            fetch('submit_recipe.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('ส่งคำแนะนำสูตรสำเร็จ');
+                    window.location.href = 'main.html';
+                } else {
+                    alert('เกิดข้อผิดพลาด: ' + data.message);
+                }
+            })
+            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+        }
     </script>
 </body>
 </html>

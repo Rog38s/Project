@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thai Foods and Desserts</title>
     <style>
+        /* CSS ตามที่ให้มาในโค้ดของคุณ */
         body {
             margin: 0;
             font-family: Arial, sans-serif;
@@ -186,12 +187,24 @@
         </div>
 
         <div class="form-section">
-            <button class="btn btn-green">ส่งคำแนะนำสูตร</button><br>
-            <button class="btn btn-red" onclick="location.href='index.html'">ยกเลิก</button>
+            <button class="btn btn-green" onclick="submitRecipe()">ส่งคำแนะนำสูตร</button><br>
+            <button class="btn btn-red" onclick="location.href='main.html'">ยกเลิก</button>
         </div>
     </div>
 
     <script>
+        // ฟังก์ชันแสดงตัวอย่างภาพ
+        document.getElementById('file-upload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('upload-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
         // ดึงข้อมูลผู้ใช้จาก backend
         fetch('get_user_data.php')
             .then(response => response.json())
@@ -211,30 +224,40 @@
             })
             .catch(error => console.error('เกิดข้อผิดพลาด:', error));
 
-        // สำหรับการเพิ่มหมายเลขบรรทัดในช่อง "วัตถุดิบ"
-        const ingredientsTextarea = document.getElementById('ingredients');
-        ingredientsTextarea.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                const lines = ingredientsTextarea.value.split('\n');
-                const newLineNumber = lines.length + 1;
-                ingredientsTextarea.value += '\n' + newLineNumber + '. ';
-            }
-        });
-        ingredientsTextarea.value = '1. ';
+        function submitRecipe() {
+            const recipeName = document.getElementById('recipe-name').value;
+            const ingredients = document.getElementById('ingredients').value;
+            const steps = document.getElementById('steps').value;
+            const source = document.getElementById('source').value || document.getElementById('username-display').innerText;
+            const foodCategory = document.getElementById('food-category').value;
+            const fileInput = document.getElementById('file-upload');
+            const file = fileInput.files[0];
 
-        // สำหรับการเพิ่มหมายเลขบรรทัดในช่อง "วิธีการปรุง"
-        const stepsTextarea = document.getElementById('steps');
-        stepsTextarea.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                const lines = stepsTextarea.value.split('\n');
-                const newLineNumber = lines.length + 1;
-                stepsTextarea.value += '\n' + newLineNumber + '. ';
+            const formData = new FormData();
+            formData.append('recipe_name', recipeName);
+            formData.append('ingredients', ingredients);
+            formData.append('steps', steps);
+            formData.append('source', source);
+            formData.append('food_category', foodCategory);
+            if (file) {
+                formData.append('image', file);
             }
-        });
-        stepsTextarea
 
+            fetch('submit_recipe.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('ส่งคำแนะนำสูตรสำเร็จ');
+                    window.location.href = 'main.html';
+                } else {
+                    alert('เกิดข้อผิดพลาด: ' + data.message);
+                }
+            })
+            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+        }
     </script>
 </body>
 </html>
