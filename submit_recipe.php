@@ -1,4 +1,6 @@
 <?php
+header('Content-Type: application/json'); // กำหนดประเภทเนื้อหาเป็น JSON
+
 // ตรวจสอบว่าเป็นการร้องขอแบบ POST หรือไม่
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // รับค่าจากฟอร์ม
@@ -7,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $steps = $_POST['steps'];
     $source = $_POST['source'];
     $category = $_POST['food-category'];  // ประเภทของอาหาร (อาหารคาว หรือ ของหวาน)
-    
+
     // ตั้งค่าให้ source เป็นชื่อผู้ใช้หากปล่อยว่างไว้
     if (empty($source)) {
         // สมมติว่าเรามี session ที่เก็บชื่อผู้ใช้ไว้แล้ว
@@ -18,11 +20,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // ตรวจสอบการเลือกประเภทอาหารและกำหนดโฟลเดอร์เก็บไฟล์
     $targetDir = "";
     if ($category == "อาหารคาว") {
-        $targetDir = "maindish_reciep/";
+        $targetDir = "maindish_recipe/"; // แก้ไขชื่อโฟลเดอร์ให้ถูกต้อง
     } elseif ($category == "ของหวาน") {
-        $targetDir = "dessert_reciep/";
+        $targetDir = "dessert_recipe/"; // แก้ไขชื่อโฟลเดอร์ให้ถูกต้อง
     } else {
-        echo "กรุณาเลือกประเภทอาหารที่ถูกต้อง";
+        echo json_encode(["success" => false, "message" => "กรุณาเลือกประเภทอาหารที่ถูกต้อง"]);
         exit();
     }
 
@@ -38,12 +40,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // ตรวจสอบและย้ายไฟล์ที่อัปโหลดไปยังโฟลเดอร์ที่เลือก
         if (move_uploaded_file($_FILES["file-upload"]["tmp_name"], $targetFilePath)) {
-            echo "อัปโหลดไฟล์สำเร็จไปยัง: " . $targetFilePath;
+            // อัปโหลดไฟล์สำเร็จ
         } else {
-            echo "เกิดข้อผิดพลาดในการอัปโหลดไฟล์";
+            echo json_encode(["success" => false, "message" => "เกิดข้อผิดพลาดในการอัปโหลดไฟล์"]);
+            exit();
         }
     } else {
-        echo "กรุณาเลือกไฟล์เพื่ออัปโหลด";
+        echo json_encode(["success" => false, "message" => "กรุณาเลือกไฟล์เพื่ออัปโหลด"]);
         exit();
     }
 
@@ -66,16 +69,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // บันทึกข้อมูลลงฐานข้อมูล
         if ($stmt->execute()) {
-            echo "บันทึกสูตรอาหารสำเร็จ!";
+            echo json_encode(["success" => true, "message" => "บันทึกสูตรอาหารสำเร็จ!"]);
         } else {
-            echo "เกิดข้อผิดพลาดในการบันทึกสูตรอาหาร";
+            echo json_encode(["success" => false, "message" => "เกิดข้อผิดพลาดในการบันทึกสูตรอาหาร"]);
         }
 
     } catch (PDOException $e) {
-        echo "เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล: " . $e->getMessage();
+        echo json_encode(["success" => false, "message" => "เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล: " . $e->getMessage()]);
     }
 
 } else {
-    echo "การร้องขอไม่ถูกต้อง";
+    echo json_encode(["success" => false, "message" => "การร้องขอไม่ถูกต้อง"]);
 }
 ?>
