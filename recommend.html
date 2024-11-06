@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thai Foods and Desserts</title>
     <style>
-        /* CSS ตามที่ให้มาในโค้ดของคุณ */
         body {
             margin: 0;
             font-family: Arial, sans-serif;
@@ -150,80 +149,61 @@
     
     <div class="form-container">
         <h2>แนะนำสูตรอาหาร-ขนมไทย</h2>
+    
+        <form id="recipe-form">
+            <div class="form-section">
+                <label for="recipe-name">ชื่อเมนู</label>
+                <input type="text" id="recipe-name" name="recipe-name" placeholder="ชื่อเมนู">
+            </div>
         
-        <div class="form-section">
-            <label for="recipe-name">ชื่อเมนู</label>
-            <input type="text" id="recipe-name" placeholder="ชื่อเมนู">
-        </div>
-
-        <div class="form-section">
-            <label for="ingredients">วัตถุดิบ</label>
-            <textarea id="ingredients" placeholder="กรอกวัตถุดิบ"></textarea>
-        </div>
-
-        <div class="form-section">
-            <label for="steps">วิธีการปรุง</label>
-            <textarea id="steps" placeholder="กรอกขั้นตอนการทำอาหาร"></textarea>
-        </div>
-
-        <div class="form-section">
-            <label for="source">แหล่งอ้างอิง</label>
-            <input type="text" id="source" placeholder="หากปล่อยว่างจะแสดงชื่อผู้ใช้">
-        </div>
-
-        <div class="form-section">
-            <label for="food-category">ประเภทของอาหาร</label>
-            <select id="food-category">
-                <option value="">กรุณาเลือก</option>
-                <option value="อาหารคาว">อาหารคาว</option>
-                <option value="ของหวาน">ของหวาน</option>
-            </select>
-        </div>
-
-        <div class="form-section">
-            <img src="img/image.png" alt="Upload Preview" id="upload-preview">
-            <label for="file-upload" class="upload-label">+ เลือกภาพ</label>
-            <input type="file" id="file-upload">
-        </div>
-
-        <div class="form-section">
-            <button class="btn btn-green" onclick="submitRecipe()">ส่งคำแนะนำสูตร</button><br>
-            <button class="btn btn-red" onclick="location.href='main.html'">ยกเลิก</button>
-        </div>
+            <div class="form-section">
+                <label for="ingredients">วัตถุดิบ</label>
+                <textarea id="ingredients" name="ingredients" placeholder="กรอกวัตถุดิบ"></textarea>
+            </div>
+        
+            <div class="form-section">
+                <label for="steps">วิธีการปรุง</label>
+                <textarea id="steps" name="steps" placeholder="กรอกขั้นตอนการทำอาหาร"></textarea>
+            </div>
+        
+            <div class="form-section">
+                <label for="source">แหล่งอ้างอิง</label>
+                <input type="text" id="source" name="source" placeholder="หากปล่อยว่างจะแสดงชื่อผู้ใช้">
+            </div>
+        
+            <div class="form-section">
+                <label for="food-category">ประเภทของอาหาร</label>
+                <select id="food-category" name="food-category">
+                    <option value="">กรุณาเลือก</option>
+                    <option value="อาหารคาว">อาหารคาว</option>
+                    <option value="ของหวาน">ของหวาน</option>
+                </select>
+            </div>
+        
+            <div class="form-section">
+                <img src="img/image.png" alt="Upload Preview" id="upload-preview">
+                <label for="file-upload" class="upload-label">+ เลือกภาพ</label>
+                <input type="file" id="file-upload" name="file-upload">
+            </div>
+        
+            <div class="form-section">
+                <button type="button" class="btn btn-green" onclick="submitRecipe()">ส่งคำแนะนำสูตร</button><br>
+                <button type="button" class="btn btn-red" onclick="location.href='main.html'">ยกเลิก</button>
+            </div>
+        </form>
     </div>
-
+    
     <script>
-        // ฟังก์ชันแสดงตัวอย่างภาพ
+        // ฟังก์ชันแสดงตัวอย่างภาพที่เลือก
         document.getElementById('file-upload').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('upload-preview').src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('upload-preview').src = e.target.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
         });
 
-        // ดึงข้อมูลผู้ใช้จาก backend
-        fetch('get_user_data.php')
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    console.error(data.error);
-                    alert('เกิดข้อผิดพลาด: ' + data.error);
-                } else {
-                    // แสดงชื่อผู้ใช้
-                    const usernameDisplay = document.getElementById('username-display');
-                    usernameDisplay.innerText = data.username;
-    
-                    // อัปเดตภาพโปรไฟล์ใน navbar ถ้ามีข้อมูลโปรไฟล์ ถ้าไม่มีก็ใช้รูปเริ่มต้น
-                    const navbarProfileImage = document.getElementById('navbar-profile-image');
-                    navbarProfileImage.src = data.profile_image ? data.profile_image : 'img/usericon.png';
-                }
-            })
-            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
-
+        // ฟังก์ชันสำหรับส่งข้อมูลสูตรไปยังเซิร์ฟเวอร์
         function submitRecipe() {
             const recipeName = document.getElementById('recipe-name').value;
             const ingredients = document.getElementById('ingredients').value;
@@ -258,6 +238,15 @@
             })
             .catch(error => console.error('เกิดข้อผิดพลาด:', error));
         }
+
+        // ดึงข้อมูลผู้ใช้เพื่อแสดงใน navbar
+        fetch('get_user_data.php')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('username-display').innerText = data.username;
+                document.getElementById('navbar-profile-image').src = data.profile_image || 'img/usericon.png';
+            })
+            .catch(error => console.error('ไม่สามารถดึงข้อมูลผู้ใช้ได้', error));
     </script>
 </body>
 </html>

@@ -1,28 +1,35 @@
 <?php
 header('Content-Type: application/json'); // กำหนดประเภทเนื้อหาเป็น JSON
+error_reporting(0); // ปิดการแสดงข้อผิดพลาด
+ini_set('display_errors', 0);
 
 // ตรวจสอบว่าเป็นการร้องขอแบบ POST หรือไม่
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // รับค่าจากฟอร์ม
-    $recipeName = $_POST['recipe-name'];
+    $recipeName = $_POST['recipe_name'];
     $ingredients = $_POST['ingredients'];
     $steps = $_POST['steps'];
     $source = $_POST['source'];
-    $category = $_POST['food-category'];  // ประเภทของอาหาร (อาหารคาว หรือ ของหวาน)
+    $category = $_POST['food_category'];  // ประเภทของอาหาร (อาหารคาว หรือ ของหวาน)
+
+    // ตรวจสอบว่าค่าที่ได้รับมาจากฟอร์มมีค่าหรือไม่
+    if (empty($recipeName) || empty($ingredients) || empty($steps) || empty($category)) {
+        echo json_encode(["success" => false, "message" => "กรุณากรอกข้อมูลให้ครบถ้วน"]);
+        exit();
+    }
 
     // ตั้งค่าให้ source เป็นชื่อผู้ใช้หากปล่อยว่างไว้
+    session_start();
     if (empty($source)) {
-        // สมมติว่าเรามี session ที่เก็บชื่อผู้ใช้ไว้แล้ว
-        session_start();
         $source = $_SESSION['username'] ?? 'unknown_user'; // ใช้ 'unknown_user' ถ้า session ไม่มีค่า username
     }
 
     // ตรวจสอบการเลือกประเภทอาหารและกำหนดโฟลเดอร์เก็บไฟล์
     $targetDir = "";
     if ($category == "อาหารคาว") {
-        $targetDir = "maindish_recipe/"; // แก้ไขชื่อโฟลเดอร์ให้ถูกต้อง
+        $targetDir = "maindish_recipe/"; // โฟลเดอร์สำหรับอาหารคาว
     } elseif ($category == "ของหวาน") {
-        $targetDir = "dessert_recipe/"; // แก้ไขชื่อโฟลเดอร์ให้ถูกต้อง
+        $targetDir = "dessert_recipe/"; // โฟลเดอร์สำหรับของหวาน
     } else {
         echo json_encode(["success" => false, "message" => "กรุณาเลือกประเภทอาหารที่ถูกต้อง"]);
         exit();
@@ -38,11 +45,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $fileName = basename($_FILES["file-upload"]["name"]);
         $targetFilePath = $targetDir . $fileName;
 
-        // ตรวจสอบและย้ายไฟล์ที่อัปโหลดไปยังโฟลเดอร์ที่เลือก
-        if (move_uploaded_file($_FILES["file-upload"]["tmp_name"], $targetFilePath)) {
-            // อัปโหลดไฟล์สำเร็จ
+        // ตรวจสอบขนาดไฟล์ (ถ้าไฟล์ใหญ่เกินไป)
+        if ($_FILES["file-upload"]["size"] > 10000000) {  // 10MB
+            echo json_encode(["success" => false, "message" => "ไฟล์มีขนาดใหญ่เกินไป"]);
+            exit();
+        }
+
+        // ตรวจสอบไฟล์ที่อัปโหลด
+        if (is_uploaded_file($_FILES["file-upload"]["tmp_name"])) {
+            // ย้ายไฟล์ไปยังโฟลเดอร์ที่เลือก
+            if (move_uploaded_file($_FILES["file-upload"]["tmp_name"], $targetFilePath)) {
+                // อัปโหลดไฟล์สำเร็จ
+            } else {
+                echo json_encode(["success" => false, "message" => "เกิดข้อผิดพลาดในการอัปโหลดไฟล์"]);
+                exit();
+            }
         } else {
-            echo json_encode(["success" => false, "message" => "เกิดข้อผิดพลาดในการอัปโหลดไฟล์"]);
+            echo json_encode(["success" => false, "message" => "ไฟล์ที่อัปโหลดไม่ถูกต้อง"]);
             exit();
         }
     } else {
@@ -50,21 +69,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    // เพิ่มการบันทึกข้อมูลลงในฐานข้อมูล (หากต้องการ)
+    // เพิ่มการบันทึกข้อมูลลงในฐานข้อมูล
     try {
         // ตั้งค่าการเชื่อมต่อฐานข้อมูล
-        $pdo = new PDO('mysql:host=localhost;dbname=user_management', 'root', '');
+        $pdo = new PDO('mysql:host=localhost;dbname=recipe_database', 'root', '');
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // เตรียมคำสั่ง SQL
-        $stmt = $pdo->prepare("INSERT INTO recipes (name, ingredients, steps, source, category, image_path) VALUES (:name, :ingredients, :steps, :source, :category, :image_path)");
+        $stmt = $pdo->prepare("INSERT INTO recipe (recipe_name, ingredients, steps, source, food_category, image_path) VALUES (:recipe_name, :ingredients, :steps, :source, :food_category, :image_path)");
 
         // ผูกค่า parameter
-        $stmt->bindParam(':name', $recipeName);
+        $stmt->bindParam(':recipe_name', $recipeName);
         $stmt->bindParam(':ingredients', $ingredients);
         $stmt->bindParam(':steps', $steps);
         $stmt->bindParam(':source', $source);
-        $stmt->bindParam(':category', $category);
+        $stmt->bindParam(':food_category', $category);
         $stmt->bindParam(':image_path', $targetFilePath);
 
         // บันทึกข้อมูลลงฐานข้อมูล

@@ -150,48 +150,48 @@
     
     <div class="form-container">
         <h2>แนะนำสูตรอาหาร-ขนมไทย</h2>
-        
+    
         <div class="form-section">
             <label for="recipe-name">ชื่อเมนู</label>
-            <input type="text" id="recipe-name" placeholder="ชื่อเมนู">
+            <input type="text" id="recipe-name" name="recipe-name" placeholder="ชื่อเมนู">
         </div>
-
+    
         <div class="form-section">
             <label for="ingredients">วัตถุดิบ</label>
-            <textarea id="ingredients" placeholder="กรอกวัตถุดิบ"></textarea>
+            <textarea id="ingredients" name="ingredients" placeholder="กรอกวัตถุดิบ"></textarea>
         </div>
-
+    
         <div class="form-section">
             <label for="steps">วิธีการปรุง</label>
-            <textarea id="steps" placeholder="กรอกขั้นตอนการทำอาหาร"></textarea>
+            <textarea id="steps" name="steps" placeholder="กรอกขั้นตอนการทำอาหาร"></textarea>
         </div>
-
+    
         <div class="form-section">
             <label for="source">แหล่งอ้างอิง</label>
-            <input type="text" id="source" placeholder="หากปล่อยว่างจะแสดงชื่อผู้ใช้">
+            <input type="text" id="source" name="source" placeholder="หากปล่อยว่างจะแสดงชื่อผู้ใช้">
         </div>
-
+    
         <div class="form-section">
             <label for="food-category">ประเภทของอาหาร</label>
-            <select id="food-category">
+            <select id="food-category" name="food-category">
                 <option value="">กรุณาเลือก</option>
                 <option value="อาหารคาว">อาหารคาว</option>
                 <option value="ของหวาน">ของหวาน</option>
             </select>
         </div>
-
+    
         <div class="form-section">
             <img src="img/image.png" alt="Upload Preview" id="upload-preview">
             <label for="file-upload" class="upload-label">+ เลือกภาพ</label>
-            <input type="file" id="file-upload">
+            <input type="file" id="file-upload" name="file-upload">
         </div>
-
+    
         <div class="form-section">
             <button class="btn btn-green" onclick="submitRecipe()">ส่งคำแนะนำสูตร</button><br>
             <button class="btn btn-red" onclick="location.href='main.html'">ยกเลิก</button>
         </div>
     </div>
-
+    
     <script>
         // ฟังก์ชันแสดงตัวอย่างภาพ
         document.getElementById('file-upload').addEventListener('change', function(event) {
@@ -204,7 +204,7 @@
                 reader.readAsDataURL(file);
             }
         });
-
+    
         // ดึงข้อมูลผู้ใช้จาก backend
         fetch('get_user_data.php')
             .then(response => response.json())
@@ -213,17 +213,15 @@
                     console.error(data.error);
                     alert('เกิดข้อผิดพลาด: ' + data.error);
                 } else {
-                    // แสดงชื่อผู้ใช้
                     const usernameDisplay = document.getElementById('username-display');
                     usernameDisplay.innerText = data.username;
     
-                    // อัปเดตภาพโปรไฟล์ใน navbar ถ้ามีข้อมูลโปรไฟล์ ถ้าไม่มีก็ใช้รูปเริ่มต้น
                     const navbarProfileImage = document.getElementById('navbar-profile-image');
                     navbarProfileImage.src = data.profile_image ? data.profile_image : 'img/usericon.png';
                 }
             })
             .catch(error => console.error('เกิดข้อผิดพลาด:', error));
-
+    
         function submitRecipe() {
             const recipeName = document.getElementById('recipe-name').value;
             const ingredients = document.getElementById('ingredients').value;
@@ -232,17 +230,17 @@
             const foodCategory = document.getElementById('food-category').value;
             const fileInput = document.getElementById('file-upload');
             const file = fileInput.files[0];
-
+    
             const formData = new FormData();
-            formData.append('recipe_name', recipeName);
+            formData.append('recipe_name', recipeName);  // เปลี่ยนเป็น recipe_name
             formData.append('ingredients', ingredients);
             formData.append('steps', steps);
             formData.append('source', source);
-            formData.append('food_category', foodCategory);
+            formData.append('food_category', foodCategory);  // เปลี่ยนเป็น food_category
             if (file) {
-                formData.append('image', file);
+                formData.append('image', file);  // เปลี่ยนเป็น image
             }
-
+    
             fetch('submit_recipe.php', {
                 method: 'POST',
                 body: formData
@@ -259,5 +257,6 @@
             .catch(error => console.error('เกิดข้อผิดพลาด:', error));
         }
     </script>
+        
 </body>
 </html>
