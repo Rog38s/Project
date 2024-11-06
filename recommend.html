@@ -153,39 +153,39 @@
         <form id="recipe-form">
             <div class="form-section">
                 <label for="recipe-name">ชื่อเมนู</label>
-                <input type="text" id="recipe-name" name="recipe-name" placeholder="ชื่อเมนู">
+                <input type="text" id="recipe-name" name="recipe_name" placeholder="ชื่อเมนู" required>
             </div>
-        
+    
             <div class="form-section">
                 <label for="ingredients">วัตถุดิบ</label>
-                <textarea id="ingredients" name="ingredients" placeholder="กรอกวัตถุดิบ"></textarea>
+                <textarea id="ingredients" name="ingredients" placeholder="กรอกวัตถุดิบ" required></textarea>
             </div>
-        
+    
             <div class="form-section">
                 <label for="steps">วิธีการปรุง</label>
-                <textarea id="steps" name="steps" placeholder="กรอกขั้นตอนการทำอาหาร"></textarea>
+                <textarea id="steps" name="steps" placeholder="กรอกขั้นตอนการทำอาหาร" required></textarea>
             </div>
-        
+    
             <div class="form-section">
                 <label for="source">แหล่งอ้างอิง</label>
                 <input type="text" id="source" name="source" placeholder="หากปล่อยว่างจะแสดงชื่อผู้ใช้">
             </div>
-        
+    
             <div class="form-section">
                 <label for="food-category">ประเภทของอาหาร</label>
-                <select id="food-category" name="food-category">
+                <select id="food-category" name="food_category" required>
                     <option value="">กรุณาเลือก</option>
                     <option value="อาหารคาว">อาหารคาว</option>
                     <option value="ของหวาน">ของหวาน</option>
                 </select>
             </div>
-        
+    
             <div class="form-section">
                 <img src="img/image.png" alt="Upload Preview" id="upload-preview">
                 <label for="file-upload" class="upload-label">+ เลือกภาพ</label>
                 <input type="file" id="file-upload" name="file-upload">
             </div>
-        
+    
             <div class="form-section">
                 <button type="button" class="btn btn-green" onclick="submitRecipe()">ส่งคำแนะนำสูตร</button><br>
                 <button type="button" class="btn btn-red" onclick="location.href='main.html'">ยกเลิก</button>
@@ -202,7 +202,7 @@
             };
             reader.readAsDataURL(event.target.files[0]);
         });
-
+    
         // ฟังก์ชันสำหรับส่งข้อมูลสูตรไปยังเซิร์ฟเวอร์
         function submitRecipe() {
             const recipeName = document.getElementById('recipe-name').value;
@@ -212,7 +212,13 @@
             const foodCategory = document.getElementById('food-category').value;
             const fileInput = document.getElementById('file-upload');
             const file = fileInput.files[0];
-
+    
+            // ตรวจสอบข้อมูลที่จำเป็น
+            if (!recipeName || !ingredients || !steps || !foodCategory) {
+                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+                return;
+            }
+    
             const formData = new FormData();
             formData.append('recipe_name', recipeName);
             formData.append('ingredients', ingredients);
@@ -220,9 +226,9 @@
             formData.append('source', source);
             formData.append('food_category', foodCategory);
             if (file) {
-                formData.append('image', file);
+                formData.append('file-upload', file); // เปลี่ยนชื่อให้ตรงกับชื่อฟิลด์ใน PHP
             }
-
+    
             fetch('submit_recipe.php', {
                 method: 'POST',
                 body: formData

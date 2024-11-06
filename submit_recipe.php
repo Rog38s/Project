@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json'); // กำหนดประเภทเนื้อหาเป็น JSON
-error_reporting(0); // ปิดการแสดงข้อผิดพลาด
-ini_set('display_errors', 0);
+error_reporting(E_ALL); // แสดงข้อผิดพลาดทั้งหมด
+ini_set('display_errors', 1); // แสดงข้อผิดพลาด
 
 // ตรวจสอบว่าเป็นการร้องขอแบบ POST หรือไม่
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -76,9 +76,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // เตรียมคำสั่ง SQL
-        $stmt = $pdo->prepare("INSERT INTO recipe (recipe_name, ingredients, steps, source, food_category, image_path) VALUES (:recipe_name, :ingredients, :steps, :source, :food_category, :image_path)");
+        $stmt = $pdo->prepare("INSERT INTO recipe (recipe_name, ingredients, steps, source, food_category, image_path, created_at) VALUES (:recipe_name, :ingredients, :steps, :source, :food_category, :image_path, NOW())");
 
-        // ผูกค่า parameter
+        // กำหนดค่าพารามิเตอร์
         $stmt->bindParam(':recipe_name', $recipeName);
         $stmt->bindParam(':ingredients', $ingredients);
         $stmt->bindParam(':steps', $steps);
@@ -87,16 +87,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':image_path', $targetFilePath);
 
         // บันทึกข้อมูลลงฐานข้อมูล
-        if ($stmt->execute()) {
-            echo json_encode(["success" => true, "message" => "บันทึกสูตรอาหารสำเร็จ!"]);
-        } else {
-            echo json_encode(["success" => false, "message" => "เกิดข้อผิดพลาดในการบันทึกสูตรอาหาร"]);
-        }
+        $stmt->execute();
 
+        echo json_encode(["success" => true, "message" => "บันทึกข้อมูลสำเร็จ"]);
     } catch (PDOException $e) {
-        echo json_encode(["success" => false, "message" => "เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล: " . $e->getMessage()]);
+        echo json_encode(["success" => false, "message" => "เกิดข้อผิดพลาดในการบันทึกข้อมูล: " . $e->getMessage()]);
     }
-
 } else {
     echo json_encode(["success" => false, "message" => "การร้องขอไม่ถูกต้อง"]);
 }
