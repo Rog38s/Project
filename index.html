@@ -229,31 +229,103 @@
     </div>
 
     <script>
-    fetch('get_new_recipes.php')
-    .then(response => response.json())
-    .then(data => {
-        const newRecipesContainer = document.getElementById('new-recipes');
-        data.forEach(recipe => {
-            // Ensure the rating is a number and fallback to 0 if invalid
-            const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
+        fetch('get_new_recipes.php')
+        .then(response => response.json())
+        .then(data => {
+            const newRecipesContainer = document.getElementById('new-recipes');
+            data.forEach(recipe => {
+                const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
 
-            const recipeElement = document.createElement('div');
-            recipeElement.classList.add('recipe-item');
-            recipeElement.innerHTML = `
-                <img src="${recipe.image}" alt="${recipe.recipe_name}">
-                <div>
-                    <h2>${recipe.recipe_name}</h2>
-                    <p>⭐ ${rating.toFixed(1)}</p>
-                    <p>โดย ${recipe.source}</p>
-                    <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
-                    <a href="recipe.html?id=${recipe.id}">ดูวิธีทำเพิ่มเติม >></a>
-                </div>
-            `;
-            newRecipesContainer.appendChild(recipeElement);
-        });
-    })
-    .catch(error => console.error('เกิดข้อผิดพลาด:', error));
-        
+                const recipeElement = document.createElement('div');
+                recipeElement.classList.add('recipe-item');
+                recipeElement.innerHTML = `
+                    <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
+                    <div>
+                        <h2>${recipe.recipe_name}</h2>
+                        <p>⭐ ${rating.toFixed(1)}</p>
+                        <p>โดย ${recipe.source}</p>
+                        <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
+                        <a href="recipe.html?id=${recipe.id}">ดูวิธีทำเพิ่มเติม >></a>
+                    </div>
+                `;
+                newRecipesContainer.appendChild(recipeElement);
+            });
+        })
+        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+
     </script>
+
+    <!-- Popular Recipes Section -->
+<div class="popular-section">
+    <!-- Popular Thai Foods -->
+    <div class="category">
+        <h2>สูตรอาหารคาวยอดนิยม</h2>
+        
+        <!-- Container for dynamic popular recipes -->
+        <div id="popular-recipes"></div>
+    </div>
+
+    <!-- Popular Desserts -->
+    <div class="category">
+        <h2>สูตรขนมยอดนิยม</h2>
+        
+        <!-- Container for dynamic popular desserts -->
+        <div id="popular-desserts"></div>
+    </div>
+</div>
+
+
+<script>
+    // ดึงข้อมูลสูตรอาหารคาวยอดนิยม
+    fetch('get_popular_recipes.php?category=อาหารคาว')
+        .then(response => response.json())
+        .then(data => {
+            const popularRecipesContainer = document.getElementById('popular-recipes');
+            data.forEach(recipe => {
+                const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
+
+                const recipeElement = document.createElement('div');
+                recipeElement.classList.add('recipe-item');
+                recipeElement.innerHTML = `
+                    <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
+                    <div>
+                        <h2>${recipe.recipe_name}</h2>
+                        <p>⭐ ${rating.toFixed(1)}</p>
+                        <p>โดย ${recipe.source}</p>
+                        <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
+                        <a href="recipe.html?id=${recipe.id}">ดูวิธีทำเพิ่มเติม >></a>
+                    </div>
+                `;
+                popularRecipesContainer.appendChild(recipeElement);
+            });
+        })
+        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+
+    // ดึงข้อมูลสูตรขนมยอดนิยม
+    fetch('get_popular_recipes.php?category=ของหวาน')
+        .then(response => response.json())
+        .then(data => {
+            const popularDessertsContainer = document.getElementById('popular-desserts');
+            data.forEach(recipe => {
+                const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
+
+                const recipeElement = document.createElement('div');
+                recipeElement.classList.add('recipe-item');
+                recipeElement.innerHTML = `
+                    <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
+                    <div>
+                        <h2>${recipe.recipe_name}</h2>
+                        <p>⭐ ${rating.toFixed(1)}</p>
+                        <p>โดย ${recipe.source}</p>
+                        <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
+                        <a href="recipe.html?id=${recipe.id}">ดูวิธีทำเพิ่มเติม >></a>
+                    </div>
+                `;
+                popularDessertsContainer.appendChild(recipeElement);
+            });
+        })
+        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+</script>
+
 </body>
 </html>
