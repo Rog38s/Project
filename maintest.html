@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thai Foods and Desserts</title>
-    <!-- รวม CSS เดิมทั้งหมดไว้ที่นี่ -->
     <style>
         body {
             margin: 0;
@@ -198,7 +197,6 @@
     </style>
 </head>
 <body>
-    <!-- ส่วน Navbar และเนื้อหาไฮไลท์เดิม -->
     <div class="navbar">
         <img src="img/logo.png" alt="Logo" class="logo">
         <div class="search-box">
@@ -237,65 +235,48 @@
             })
             .catch(error => console.error('เกิดข้อผิดพลาด:', error));
     </script>
-    
-</body>
-</html>
-    
+
+    <!-- Main Content Section -->
     <div class="main-content">
+        <!-- Highlight Section -->
         <div class="highlight-container">
+            <!-- Thai food image (left side) -->
             <div class="image-container">
                 <img src="img/สำรับไทย.jpg" alt="สำรับไทย">
             </div>
+
+            <!-- Text and recipe items (right side) -->
             <div class="text-container">
                 <h1>ใหม่และเป็นกระแส</h1><br>
-                <div id="recipe-container"></div>
+
+                <!-- Container for dynamic recipes -->
+                <div id="new-recipes"></div>
             </div>
-        </div>
-    </div>
-
-    <div class="popular-section">
-        <!-- เพิ่มคอนเทนเนอร์ใหม่สำหรับแสดงสูตรอาหารคาวยอดนิยม -->
-        <div class="category" id="popular-foods">
-            <h2>สูตรอาหารคาวยอดนิยม</h2>
-        </div>
-
-        <!-- เพิ่มคอนเทนเนอร์ใหม่สำหรับแสดงสูตรขนมยอดนิยม -->
-        <div class="category" id="popular-desserts">
-            <h2>สูตรขนมยอดนิยม</h2>
         </div>
     </div>
 
     <script>
-        // ฟังก์ชันสำหรับแสดงผลข้อมูลสูตรอาหาร
-        function displayRecipes(recipes, containerId) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = ''; // ล้างข้อมูลก่อน
-            recipes.forEach(recipe => {
-                const recipeItem = document.createElement('div');
-                recipeItem.classList.add('recipe-item');
-                recipeItem.innerHTML = `
-                    <img src="${recipe.image}" alt="${recipe.recipe_name}">
-                    <div>
-                        <h2>${recipe.recipe_name}</h2>
-                        <p>⭐⭐⭐⭐⭐ ${recipe.rating}</p>
-                        <p>โดย ${recipe.source}</p>
-                        <p>${recipe.description}</p>
-                        <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                    </div>
-                `;
-                container.appendChild(recipeItem);
-            });
-        }
-
-        // ดึงข้อมูลสูตรอาหารคาวและขนมยอดนิยมจากเซิร์ฟเวอร์
-        fetch('get_popular_recipes.php?category=main&limit=10')
+        // ดึงข้อมูลสูตรอาหาร "ใหม่และเป็นกระแส" จาก backend
+        fetch('get_new_recipes.php')
             .then(response => response.json())
-            .then(data => displayRecipes(data, 'popular-foods'))
-            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
-
-        fetch('get_popular_recipes.php?category=dessert&limit=10')
-            .then(response => response.json())
-            .then(data => displayRecipes(data, 'popular-desserts'))
+            .then(data => {
+                const newRecipesContainer = document.getElementById('new-recipes');
+                data.forEach(recipe => {
+                    const recipeElement = document.createElement('div');
+                    recipeElement.classList.add('recipe-item');
+                    recipeElement.innerHTML = `
+                        <img src="${recipe.image}" alt="${recipe.recipe_name}">
+                        <div>
+                            <h2>${recipe.recipe_name}</h2>
+                            <p>⭐⭐⭐⭐⭐ ${recipe.rating.toFixed(1)}</p>
+                            <p>โดย ${recipe.source}</p>
+                            <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
+                            <a href="recipe.html?id=${recipe.id}">ดูวิธีทำเพิ่มเติม >></a>
+                        </div>
+                    `;
+                    newRecipesContainer.appendChild(recipeElement);
+                });
+            })
             .catch(error => console.error('เกิดข้อผิดพลาด:', error));
     </script>
 </body>

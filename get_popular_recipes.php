@@ -10,7 +10,7 @@ try {
 
     // รับค่าหมวดหมู่และจำนวนสูตรที่จะดึง
     $category = $_GET['category'] ?? 'main';
-    $limit = (int)($_GET['limit'] ?? 10);
+    $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
 
     // สร้าง SQL สำหรับดึงข้อมูลสูตรอาหารที่มีเรตติ้งสูงสุดตามหมวดหมู่
     $stmt = $pdo->prepare("
@@ -18,10 +18,12 @@ try {
         FROM recipe
         WHERE food_category = :category
         ORDER BY rating DESC, created_at DESC
-        LIMIT $limit
+        LIMIT :limit
     ");
-    $stmt->bindValue(':category', $category);
-    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    
+    // ผูกค่าตัวแปรหมวดหมู่ และตรวจสอบว่าเป็นอาร์เรย์จริงๆ
+    $stmt->bindValue(':category', $category, PDO::PARAM_STR);
+    $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
     $stmt->execute();
 
     // แปลงข้อมูลให้เป็น JSON
