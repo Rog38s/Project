@@ -164,51 +164,65 @@
 </html>
 
     <!-- Recipe Content -->
-    <div class="recipe-container">
-        <!-- Image Section -->
-        <div class="recipe-image">
-            <img src="img\ข้าวเหนียวมะม่วง.png" alt="ข้าวเหนียวมะม่วง">
-        </div>
-
-        <!-- Details Section -->
-        <div class="recipe-details">
-            <h1>ข้าวเหนียวมะม่วง</h1>
-            
-            <div class="rating">
-                <span>⭐⭐⭐⭐⭐ 5.0</span>
-                <p>โดย Admin เมื่อ 03/05/2567</p>
-            </div>
-
-            <h2>วัตถุดิบ</h2>
-            <ul>
-                <li>1. ข้าวเหนียวเขี้ยวงู 1 กิโลกรัม</li>
-                <li>2. น้ำตาลทรายขาว 2 ช้อนโต๊ะ</li>
-                <li>3. กะทิ 100% 750 มิลลิลิตร</li>
-                <li>4. เกลือ 1 ช้อนชา</li>
-                <li>5. ใบเตยสำหรับจัดเสิร์ฟ</li>
-            </ul>
-        </div>
+<div class="recipe-container">
+    <div class="recipe-image">
+        <img id="recipe-image" src="" alt="รูปอาหาร">
     </div>
-    <div class="steps">
-        <h2>วิธีทำ</h2>
-        <ul>
-            <li>1.นึ่งข้าวเหนียว ซาวข้าวเหนียวเขี้ยวงู และแช่ทิ้งไว้จนครบสามชั่วโมง
-                ตั้งหม้อใส่น้ำสำหรับนึ่ง จากนั้นนำผ้าขาวบางมาปูในซึ้ง ตักข้าวเหนียวที่ซาวไว้ใส่ลงไปโดยเว้นตรงกลางเป็นวงกลม แล้วปิดผ้าขาวบางห่อข้าวเหนียวเอาไว้ นึ่งประมาณ 20 นาที
-                พอครบ 20 นาที ใช้ทัพพีกลับข้าวเหนียวเพื่อให้สุกทั่วถึง แล้วนึ่งต่ออีก 10 นาที </li><br>
-            <li>2.มูนข้าวเหนียว นำ อัมพวา กะทิ 100% น้ำตาลทราย และเกลือป่น เทผสมให้เข้ากัน
-                นำไปตั้งไฟอ่อน ๆ เคี่ยวจนน้ำตาลละลายหมด
-                นำข้าวเหนียวที่นึ่งสุกแล้วใส่ชาม จากนั้นเทน้ำกะทิลงไป คนให้เข้ากัน จากนั้นนำผ้าขาวบางปิดไว้ พักข้าว 30 นาทีเพื่อให้ข้าวเหนียวมูนดูดน้ำกะท</li><br>
-            <li>3.ทำน้ำราดกะทิและจัดเสิร์ฟ นำ อัมพวา กะทิ 100% เกลือ และแป้งข้าวเจ้ามาตั้งไฟอ่อน ๆ หมั่นคนเรื่อย ๆ พอกะทิข้นขึ้น ยกลงพักไว้
-                ปอกมะม่วงสุกจัดใส่จาน เสิร์ฟพร้อมข้าวเหนียวมูน ราดด้วยน้ำกะทิ เท่านี้ก็พร้อมเสิร์ฟแล้ว</li><br>
-            <li>วิธีทำ “ข้าวเหนียวมะม่วง” ไม่ยากอย่างที่คิดใช่ไหมคะ แค่นึ่งข้าวเหนียวแล้วนำมามูนกับน้ำกะทิ ก็เสร็จไปเกินครึ่งทางแล้ว ง่ายขนาดนี้ใคร ๆ ก็ทำเองได้ที่บ้าน ไม่ต้องง้อร้านเลยค่ะ </li>
-
-
-        </ul>
-
+    <div class="recipe-details">
+        <h1 id="recipe-name">ชื่อสูตร</h1>
+        <div class="rating">
+            <span id="recipe-rating">⭐ </span>
+            <p id="recipe-source">โดย </p>
+            <p id="recipe-date">เมื่อ </p>
+        </div>
+        <h2>วัตถุดิบ</h2>
+        <ul id="ingredients-list"></ul>
     </div>
+</div>
+<div class="steps">
+    <h2>วิธีทำ</h2>
+    <ul id="steps-list"></ul>
+</div>
 
+<script>
+    // ดึงค่า recipe_id จาก URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const recipeId = urlParams.get('recipe_id');
 
-    
-    
+    if (recipeId) {
+        fetch(`get_recipes.php?recipe_id=${recipeId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('เกิดข้อผิดพลาด: ' + data.error);
+                } else {
+                    // ตั้งค่าชื่อสูตร, คะแนน, ผู้เขียน, วันที่ และรูปภาพ
+                    document.getElementById('recipe-name').innerText = data.recipe_name;
+                    document.getElementById('recipe-rating').innerText += data.rating;
+                    document.getElementById('recipe-source').innerText += data.source;
+                    document.getElementById('recipe-date').innerText += new Date(data.created_at).toLocaleDateString();
+                    document.getElementById('recipe-image').src = data.image_path;
+
+                    // แสดงวัตถุดิบ
+                    data.ingredients.split('\n').forEach(item => {
+                        const li = document.createElement('li');
+                        li.innerText = item.trim(); // ตัดช่องว่างหัวท้ายออก
+                        document.getElementById('ingredients-list').appendChild(li);
+                    });
+
+                    // แสดงขั้นตอน
+                    data.steps.split('\n').forEach(step => {
+                        const li = document.createElement('li');
+                        li.innerText = step.trim(); // ตัดช่องว่างหัวท้ายออก
+                        document.getElementById('steps-list').appendChild(li);
+                    });
+                }
+            })
+            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+    } else {
+        alert('ไม่พบ ID ของสูตรอาหาร');
+    }
+</script>
+
 </body>
 </html>

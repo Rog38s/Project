@@ -13,12 +13,33 @@ try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // รับค่า category และ type จากพารามิเตอร์ใน URL
-    $category = isset($_GET['category']) ? $_GET['category'] : 'อาหารคาว';  // default เป็น 'อาหารคาว'
-    $type = isset($_GET['type']) ? $_GET['type'] : 'new';  // default เป็น 'new'
+    // รับค่า category, type, และ recipe_id จากพารามิเตอร์ใน URL
+$category = isset($_GET['category']) ? $_GET['category'] : null; // ตั้งค่าเริ่มต้นเป็น null
+$type = isset($_GET['type']) ? $_GET['type'] : 'new';  // default เป็น 'new'
+$recipe_id = isset($_GET['recipe_id']) ? intval($_GET['recipe_id']) : null;
 
-    // ตรวจสอบว่า category ที่รับมาเป็นประเภทที่ถูกต้องหรือไม่
-    if (!in_array($category, ['อาหารคาว', 'ของหวาน'])) {
+// ตรวจสอบว่ามีการส่ง recipe_id มาหรือไม่
+if ($recipe_id) {
+    // คิวรีดึงข้อมูลสูตรอาหารที่มี recipe_id ตรงกับที่กำหนดจากตารางที่ชื่อว่า "id"
+    $query = "SELECT id, recipe_name, ingredients, steps, rating, source, created_at, image_path 
+              FROM id 
+              WHERE id = :recipe_id";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute(['recipe_id' => $recipe_id]);
+    $recipe = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // ตรวจสอบว่าพบข้อมูลหรือไม่
+    if ($recipe) {
+        echo json_encode($recipe);
+    } else {
+        echo json_encode(['error' => 'ไม่พบสูตรอาหารที่ระบุ']);
+    }
+    exit;
+}
+
+
+    // ตรวจสอบว่า category ที่รับมาเป็นประเภทที่ถูกต้องหรือไม่ (หากไม่ใช่ null)
+    if ($category !== null && !in_array($category, ['อาหารคาว', 'ของหวาน'])) {
         echo json_encode(['error' => 'ประเภทอาหารไม่ถูกต้อง']);
         exit;
     }
@@ -28,21 +49,21 @@ try {
         case 'new':
             $query = "SELECT id, recipe_name, rating, source, created_at, image_path 
                       FROM recipe 
-                      WHERE food_category = :food_category 
+                      " . ($category ? "WHERE food_category = :food_category" : "") . "
                       ORDER BY created_at DESC 
-                      LIMIT 10";
+                      LIMIT 4";
             break;
         case 'popular':
             $query = "SELECT id, recipe_name, rating, source, created_at, image_path 
                       FROM recipe 
-                      WHERE food_category = :food_category 
+                      " . ($category ? "WHERE food_category = :food_category" : "") . "
                       ORDER BY rating DESC, created_at DESC 
                       LIMIT 10";
             break;
         case 'ancient':
             $query = "SELECT id, recipe_name, rating, source, created_at, image_path 
                       FROM recipe 
-                      WHERE food_category = :food_category 
+                      " . ($category ? "WHERE food_category = :food_category" : "") . "
                       ORDER BY created_at ASC 
                       LIMIT 10";
             break;
@@ -51,9 +72,16 @@ try {
             exit;
     }
 
-    // ดึงข้อมูลจากฐานข้อมูล
+    // เตรียมและรันคำสั่ง SQL
     $stmt = $pdo->prepare($query);
-    $stmt->execute(['food_category' => $category]);
+
+    // ถ้ามีการกำหนด category ให้ bind ค่า
+    if ($category) {
+        $stmt->execute(['food_category' => $category]);
+    } else {
+        $stmt->execute();
+    }
+
     $recipes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // ส่งข้อมูลกลับในรูปแบบ JSON

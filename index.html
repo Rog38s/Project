@@ -229,7 +229,7 @@
     </div>
 
     <script>
-        fetch('get_new_recipes.php')
+        fetch('get_recipes.php')
         .then(response => response.json())
         .then(data => {
             const newRecipesContainer = document.getElementById('new-recipes');
@@ -277,7 +277,7 @@
 
 <script>
     // ดึงข้อมูลสูตรอาหารคาวยอดนิยม
-    fetch('get_popular_recipes.php?category=อาหารคาว')
+    fetch('get_recipes.php?category=อาหารคาว')
         .then(response => response.json())
         .then(data => {
             const popularRecipesContainer = document.getElementById('popular-recipes');
@@ -302,7 +302,7 @@
         .catch(error => console.error('เกิดข้อผิดพลาด:', error));
 
     // ดึงข้อมูลสูตรขนมยอดนิยม
-    fetch('get_popular_recipes.php?category=ของหวาน')
+    fetch('get_recipes.php?category=ของหวาน')
         .then(response => response.json())
         .then(data => {
             const popularDessertsContainer = document.getElementById('popular-desserts');
