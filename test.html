@@ -54,7 +54,6 @@
 
         .navbar .nav-links a.login {
             color: red;
-        
         }
 
         /* Add styles for the image and text container */
@@ -186,205 +185,90 @@
         .category .recipe-item a:hover {
             text-decoration: underline;
         }
-        .navbar .profile-pic {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 5px;
-        }
 
     </style>
 </head>
 <body>
+    <!-- Navbar -->
     <div class="navbar">
+        <!-- Logo -->
         <img src="img/logo.png" alt="Logo" class="logo">
+        
+        <!-- Search Box -->
         <div class="search-box">
-            <input type="text" placeholder="ค้นหา">
+            <input type="text" id="searchInput" placeholder="ค้นหา">
         </div>
+
+        <script>
+            // จับเหตุการณ์เมื่อผู้ใช้กด Enter ในช่องค้นหา
+            document.getElementById('searchInput').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {  // ตรวจสอบว่าเป็นปุ่ม Enter หรือไม่
+                    const query = e.target.value.trim();  // รับค่าที่กรอกในช่องค้นหา
+                    if (query) {
+                        // ย้ายไปหน้า search.html พร้อมส่งค่าคำค้นหาเป็น query string
+                        window.location.href = `search.html?query=${encodeURIComponent(query)}`;
+                    }
+                }
+            });
+        </script>
+        
+        <!-- Navigation Links -->
         <div class="nav-links">
-            <a href="#"><img src="img/homeicon.png" alt="หน้าแรก" class="icon" onclick="location.href='main.html'">หน้าแรก</a>
-            <a href="#"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='maindish.html'">สูตรอาหารคาว</a>
-            <a href="#"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='dessert.html'">สูตรของหวาน</a>
-            <a href="#"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='recommend.html'">แนะนำสูตร</a>
-            <a href="#" id="user-link" class="login" onclick="location.href='userid.html'">
-                <img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="profile-pic">
-                <span id="username-display"></span>
-            </a>
-            <a href="#" class="logout"><img src="img/logout.png" alt="ลงชื่อออก" class="icon" onclick="location.href='index.html'"></a>
+            <a href="index.html"><img src="img/homeicon.png" alt="หน้าแรก" class="icon">หน้าแรก</a>
+            <a href="maindish.html"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='maindish.html'">สูตรอาหารคาว</a>
+            <a href="dessert.html"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='dessert.html'">สูตรของหวาน</a>
+            <a href="login.html"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='login.html'">แนะนำสูตร</a>
+            <a href="login.html" class="login"><img src="img/usericon.png" alt="เข้าสู่ระบบ" class="icon" onclick="location.href='login.html'">เข้าสู่ระบบ</a>
         </div>
     </div>
+
+    <h1 id="searchResultTitle">ผลลัพธ์การค้นหา</h1>
+    <div id="searchResults"></div>
 
     <script>
-        // ดึงข้อมูลผู้ใช้จาก backend
-        fetch('get_user_data.php')
+        // รับค่าคำค้นหาจาก query string
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get('query');
+    
+        // อัปเดตข้อความแสดงผลลัพธ์การค้นหา
+        document.getElementById('searchResultTitle').innerText = `ผลลัพธ์การค้นหาสำหรับ "${searchQuery}"`;
+    
+        // ส่งคำค้นหาไปที่ PHP เพื่อดึงข้อมูล
+        fetch(`search_recipes.php?query=${encodeURIComponent(searchQuery)}`)
             .then(response => response.json())
             .then(data => {
-                if (data.error) {
-                    console.error(data.error);
-                    alert('เกิดข้อผิดพลาด: ' + data.error);
-                } else {
-                    // แสดงชื่อผู้ใช้
-                    const usernameDisplay = document.getElementById('username-display');
-                    usernameDisplay.innerText = data.username;
+                const resultsContainer = document.getElementById('searchResults');
+                if (data.length > 0) {
+                    // แสดงผลลัพธ์การค้นหา
+                    data.forEach(recipe => {
+                        const recipeElement = document.createElement('div');
+                        recipeElement.classList.add('recipe-item');
+                        
+                        // ตรวจสอบค่า rating ก่อนเรียกใช้ .toFixed()
+                        const rating = recipe.rating ? parseFloat(recipe.rating).toFixed(1) : "N/A";
     
-                    // อัปเดตภาพโปรไฟล์ใน navbar ถ้ามีข้อมูลโปรไฟล์ ถ้าไม่มีก็ใช้รูปเริ่มต้น
-                    const navbarProfileImage = document.getElementById('navbar-profile-image');
-                    navbarProfileImage.src = data.profile_image ? data.profile_image : 'img/usericon.png';
+                        recipeElement.innerHTML = `
+                            <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
+                            <div>
+                                <h2>${recipe.recipe_name}</h2>
+                                <p>⭐ ${rating}</p>
+                                <p>โดย ${recipe.source}</p>
+                                <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
+                                <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
+                            </div>
+                        `;
+                        resultsContainer.appendChild(recipeElement);
+                    });
+                } else {
+                    // แสดงข้อความเมื่อไม่พบผลลัพธ์
+                    resultsContainer.innerHTML = `<p>ไม่พบผลลัพธ์การค้นหาสำหรับ "${searchQuery}"</p>`;
                 }
             })
-            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+            .catch(error => {
+                console.error('เกิดข้อผิดพลาด:', error);
+                document.getElementById('searchResults').innerHTML = `<p>เกิดข้อผิดพลาดในการค้นหา</p>`;
+            });
     </script>
     
-</body>
-</html>
-
-<!-- Main Content Section -->
-<div class="main-content">
-    <!-- Highlight Section -->
-    <div class="highlight-container">
-        <!-- Thai food image (left side) -->
-        <div class="image-container">
-            <img src="img/สำรับไทย.jpg" alt="สำรับไทย">
-        </div>
-
-        <!-- Text and recipe items (right side) -->
-        <div class="text-container">
-            <h1>ใหม่และเป็นกระแส</h1><br>
-
-            <!-- New recipe 1 -->
-            <div class="recipe-item">
-                <img src="img/ผัดไทยกุ้งสด.png" alt="ผัดไทยกุ้งสด">
-                <div>
-                    <h2>ผัดไทยกุ้งสด</h2>
-                    <p>⭐⭐⭐⭐⭐ 5.0</p>
-                    <p>โดย Admin</p>
-                    <p>เมื่อ 8/11/2024</p>
-                    <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                </div>
-            </div><br>
-
-            <!-- New recipe 2 -->
-            <div class="recipe-item">
-                <img src="img/ข้าวเหนียวมะม่วง1.png" alt="ข้าวเหนียวมะม่วง">
-                <div>
-                    <h2>ข้าวเหนียวมะม่วง</h2>
-                    <p>⭐⭐⭐⭐⭐ 5.0</p>
-                    <p>โดย Admin</p>
-                    <p>เมื่อ 7/11/2024</p>
-                    <a href="reciep1.html">ดูวิธีทำเพิ่มเติม >></a>
-                </div>
-            </div><br>
-
-            <!-- New recipe 3  -->
-            <div class="recipe-item">
-                <img src="img\ขนมจีนน้ำเงี้ยว.png" alt="ขนมจีนน้ำเงี้ยว">
-                <div>
-                    <h2>ขนมจีนน้ำเงี้ยว</h2>
-                    <p>⭐⭐⭐⭐⭐ 5.0</p>
-                    <p>โดย Admin</p>
-                    <p>เมื่อ 6/11/2024</p>
-                    <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                </div>
-            </div><br>
-            <!-- New recipe 4 -->
-            <div class="recipe-item">
-                <img src="img/ข้าวแดกงา.png" alt="ข้าวแดกงา">
-                <div>
-                    <h2>ข้าวแดกงา</h2>
-                    <p>⭐⭐⭐⭐⭐ 5.0</p>
-                    <p>โดย Admin</p>
-                    <p>เมื่อ 5/11/2024</p>
-                    <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                </div>
-            </div><br>
-        </div>
-    </div>
-
-    <!-- Popular Recipes Section -->
-    <div class="popular-section">
-        <!-- Popular Thai Foods -->
-        <div class="category">
-            <h2>สูตรอาหารคาวยอดนิยม</h2>
-
-            <!-- Recipe 1 -->
-            <div class="recipe-item">
-                <img src="img\กระเพา.png" alt="กระเพราหมูสับ">
-                <div>
-                    <h2>1.กระเพราหมูสับ</h2>
-                    <p>⭐⭐⭐⭐⭐ 5.0</p>
-                    <p>โดย Admin</p>
-                    <p>เมื่อ 20/10/2024</p>
-                    <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                </div>
-            </div><br>
-
-            <!-- Recipe 2 -->
-            <div class="recipe-item">
-                <img src="img/ขนมจีนน้ำเงี้ยว.png" alt="ขนมจีนน้ำเงี้ยว">
-                <div>
-                    <h2>2.ขนมจีนน้ำเงี้ยว</h2>
-                    <p>⭐⭐⭐⭐⭐ 5.0</p>
-                    <p>โดย Admin</p>
-                    <p>เมื่อ 19/11/2024</p>
-                    <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                </div>
-            </div><br>
-
-            <!-- Recipe 3 -->
-            <div class="recipe-item">
-                <img src="img/แตงโมปลาแห้ง.png" alt="แตงโมปลาแห้ง">
-                <div>
-                    <h2>3.แตงโมปลาแห้ง</h2>
-                    <p>⭐⭐⭐⭐ 4.0</p>
-                    <p>โดย Admin</p>
-                    <p>เมื่อ 7/11/2024</p>
-                    <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                </div>
-            </div><br>
-        </div>
-
-        <!-- Popular Desserts -->
-        <div class="category">
-            <h2>สูตรขนมยอดนิยม</h2>
-
-            <!-- Dessert 1 -->
-            <div class="recipe-item">
-                <img src="img\ขนมโคกะทิ.png" alt="ขนมโคกะทิ">
-                <div>
-                    <h2>1.ขนมโคกะทิ</h2>
-                    <p>⭐⭐⭐⭐⭐ 5.0</p>
-                    <p>โดย Admin</p>
-                    <p>เมื่อ 12/11/2024</p>
-                    <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                </div>
-            </div><br>
-
-            <!-- Dessert 2 -->
-            <div class="recipe-item">
-                <img src="img\ขนมพระพาย.png" alt="ขนมพระพาย">
-                <div>
-                    <h2>2.ขนมพระพาย</h2>
-                    <p>⭐⭐⭐⭐ 4.0</p>
-                    <p>โดย Admin</p>
-                    <p>เมื่อ 7/11/2024</p>
-                    <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                </div>
-            </div><br>
-
-            <!-- Dessert 3 -->
-            <div class="recipe-item">
-                <img src="img\ขนมอินทนิล.png" alt="ขนมอินทนิล">
-                <div>
-                    <h2>3.ขนมอินทนิล</h2>
-                    <p>⭐⭐⭐ 3.0</p>
-                    <p>โดย Admin</p>
-                    <p>เมื่อ 7/11/2024</p>
-                    <a href="#">ดูวิธีทำเพิ่มเติม >></a>
-                </div>
-            </div><br>
-        </div>
-    </div>
-</div>
 </body>
 </html>

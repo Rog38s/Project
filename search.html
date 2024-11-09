@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thai Foods and Desserts</title>
+    <title>Search Results</title>
     <style>
         body {
             margin: 0;
@@ -11,200 +11,88 @@
             background-color: #f4f4f4;
         }
 
-        .navbar {
-            background-color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar img.logo {
-            height: 70px;
-        }
-
-        .navbar .search-box {
-            width: 300px;
-            margin: 0 20px;
-            display: flex;
-            align-items: center;
-            border-radius: 20px;
-            padding: 5px 10px;
-        }
-
-        .navbar .nav-links {
-            display: flex;
-            align-items: center;
-        }
-
-        .navbar .nav-links a {
-            text-decoration: none;
-            color: #000;
-            margin-left: 20px;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-        }
-
-        .navbar .nav-links img.icon {
-            margin-right: 5px;
-            height: 24px;
-        }
-
-        .navbar .nav-links a.login {
-            color: red;
-        }
-
-        /* Add styles for the image and text container */
-        .main-content {
+        .search-results {
             padding: 20px;
         }
 
-        .main-content .highlight-container {
+        .recipe-item {
             display: flex;
-            justify-content: space-between;
+            align-items: center;
             background-color: #fcf4ce;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             padding: 15px;
-            
-        }
-
-        .highlight-container .image-container {
-            flex: 1;
-            padding-right: 20px;
-        }
-
-        .highlight-container .image-container img {
-            width: 100%;
-            height: auto;
-            
-        }
-
-        .highlight-container .text-container {
-            flex: 1;
-            background-color: #fcf4ce;
-            padding: 10px;
             border-radius: 10px;
         }
 
-        .text-container h1 {
-            font-size: 25px;
-            color: #000000;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .text-container .recipe-item {
-            display: flex;
-            margin-bottom: 20px;
-            align-items: center;
-        }
-
-        .text-container .recipe-item img {
+        .recipe-item img {
             width: 240px;
             height: 190px;
+            object-fit: cover;
             border-radius: 10px;
             margin-right: 15px;
         }
 
-        .text-container .recipe-item h2 {
-            font-size: 18px;
-            margin: 0;
-        }
-
-        .text-container .recipe-item p {
-            font-size: 14px;
-            color: #555;
-        }
-
-        .text-container .recipe-item a {
-            font-size: 14px;
-            color: #d9534f;
-            text-decoration: none;
-        }
-
-        .text-container .recipe-item a:hover {
-            text-decoration: underline;
-        }
-
-        /* Popular Recipes Section */
-        .popular-section {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .popular-section .category {
+        .recipe-details {
             flex: 1;
-            padding: 20px;
-            background-color: #e8f8ff;
-            margin-right: 20px;
-            border-radius: 10px;
         }
 
-        .popular-section .category:last-child {
-            margin-right: 0;
-        }
-
-        .popular-section h2 {
-            font-size: 22px;
-            margin-bottom: 20px;
-            
-        }
-
-        .category .recipe-item {
-            display: flex;
-            margin-bottom: 20px;
-            align-items: center;
-        }
-
-        .category .recipe-item img {
-            width: 240px; 
-            height: 190px; 
-            object-fit: cover; 
-            border-radius: 10px;
-            margin-right: 15px;
-        }
-
-        .category .recipe-item h2 {
+        .recipe-details h2 {
             font-size: 18px;
             margin: 0;
         }
 
-        .category .recipe-item p {
+        .recipe-details p {
             font-size: 14px;
             color: #555;
         }
 
-        .category .recipe-item a {
+        .recipe-details a {
             font-size: 14px;
             color: #d9534f;
             text-decoration: none;
         }
 
-        .category .recipe-item a:hover {
+        .recipe-details a:hover {
             text-decoration: underline;
         }
-
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <div class="navbar">
-        <!-- Logo -->
-        <img src="img/logo.png" alt="Logo" class="logo">
-        
-        <!-- Search Box -->
-        <div class="search-box">
-            <input type="text" placeholder="ค้นหา">
-        </div>
-        
-        <!-- Navigation Links -->
-        <div class="nav-links">
-            <a href="index.html"><img src="img/homeicon.png" alt="หน้าแรก" class="icon">หน้าแรก</a>
-            <a href="maindish.html"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='maindish.html'">สูตรอาหารคาว</a>
-            <a href="dessert.html"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='dessert.html'">สูตรของหวาน</a>
-            <a href="login.html"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='login.html'">แนะนำสูตร</a>
-            <a href="login.html" class="login"><img src="img/usericon.png" alt="เข้าสู่ระบบ" class="icon" onclick="location.href='login.html'">เข้าสู่ระบบ</a>
-        </div>
-    </div>
+
+<div class="search-results" id="search-results">
+    <!-- Results will be appended here -->
+</div>
+
+<script>
+    // Get the search query from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get('query');
+
+    // Fetch search results
+    fetch(`search_recipes.php?query=${encodeURIComponent(query)}`)
+        .then(response => response.json())
+        .then(data => {
+            const searchResultsContainer = document.getElementById('search-results');
+            data.forEach(recipe => {
+                const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
+
+                const recipeElement = document.createElement('div');
+                recipeElement.classList.add('recipe-item');
+                recipeElement.innerHTML = `
+                    <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
+                    <div class="recipe-details">
+                        <h2>${recipe.recipe_name}</h2>
+                        <p>⭐ ${rating.toFixed(1)}</p>
+                        <p>โดย ${recipe.source}</p>
+                        <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
+                        <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
+                    </div>
+                `;
+                searchResultsContainer.appendChild(recipeElement);
+            });
+        })
+        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+</script>
+
+</body>
+</html>

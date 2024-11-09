@@ -196,8 +196,22 @@
         
         <!-- Search Box -->
         <div class="search-box">
-            <input type="text" placeholder="ค้นหา">
+            <input type="text" id="searchInput" placeholder="ค้นหา">
         </div>
+
+        <script>
+            // จับเหตุการณ์เมื่อผู้ใช้กด Enter ในช่องค้นหา
+            document.getElementById('searchInput').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {  // ตรวจสอบว่าเป็นปุ่ม Enter หรือไม่
+                    const query = e.target.value.trim();  // รับค่าที่กรอกในช่องค้นหา
+                    if (query) {
+                        // ย้ายไปหน้า search.html พร้อมส่งค่าคำค้นหาเป็น query string
+                        window.location.href = `search.html?query=${encodeURIComponent(query)}`;
+                    }
+                }
+            });
+        </script>
+
         
         <!-- Navigation Links -->
         <div class="nav-links">
