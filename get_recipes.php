@@ -20,10 +20,11 @@ $recipe_id = isset($_GET['recipe_id']) ? intval($_GET['recipe_id']) : null;
 
 // ตรวจสอบว่ามีการส่ง recipe_id มาหรือไม่
 if ($recipe_id) {
-    // คิวรีดึงข้อมูลสูตรอาหารที่มี recipe_id ตรงกับที่กำหนดจากตารางที่ชื่อว่า "id"
+    // คิวรีดึงข้อมูลสูตรอาหาร
     $query = "SELECT id, recipe_name, ingredients, steps, rating, source, created_at, image_path 
-              FROM id 
-              WHERE id = :recipe_id";
+          FROM recipe 
+          WHERE id = :recipe_id";
+
     $stmt = $pdo->prepare($query);
     $stmt->execute(['recipe_id' => $recipe_id]);
     $recipe = $stmt->fetch(PDO::FETCH_ASSOC);

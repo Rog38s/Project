@@ -58,59 +58,78 @@
             flex-wrap: wrap;
             justify-content: space-between;
         }
+
         .recipe-image {
             flex: 1;
             max-width: 45%;
             margin-right: 20px;
         }
+
         .recipe-image img {
             width: 100%;
             height: auto;
-            
         }
+
         .recipe-details {
             flex: 1;
             max-width: 45%;
         }
+
         .recipe-details h1 {
             color: #000000;
             font-size: 25px;
             margin-bottom: 10px;
         }
+
         .recipe-details .rating {
             margin-bottom: 10px;
+            line-height: 1.6; /* เพิ่มระยะห่างระหว่างบรรทัด */
         }
+
         .recipe-details .rating span {
             font-size: 18px;
         }
+
+        .recipe-details .rating p {
+            margin: 0 ;
+        }
+
         .recipe-details h2 {
             color: #333;
             font-size: 20px;
             margin-top: 20px;
         }
+
         .recipe-details ul {
             list-style-type: none;
             padding: 0;
         }
+
         .recipe-details ul li {
             margin-bottom: 10px;
         }
+
         .steps {
             max-width: 1000px;
             margin: 0px auto;
             padding: 20px;
             background-color: #ffffff;
-            display: flex;
-            flex-wrap: wrap;
-            
-        }
-        .steps h2 {
-            color: #000000;
-            text-align: right;
-            font-size: 20px;
-            margin-left: 40px;
         }
 
+        .steps h2 {
+            color: #000000;
+            font-size: 20px;
+            margin-top: 0; /* ให้วิธีทำอยู่ด้านบน */
+            margin-bottom: 10px;
+        }
+
+        /* ลบจุดนำหน้าขั้นตอนการทำ */
+        #steps-list div {
+            list-style: none;
+            margin-bottom: 10px;
+        }
+
+        /* Navbar profile picture */
         .navbar .profile-pic {
             width: 30px;
             height: 30px;
@@ -118,6 +137,7 @@
             object-fit: cover;
             margin-right: 5px;
         }
+
         
     </style>
 </head>
@@ -164,65 +184,68 @@
 </html>
 
     <!-- Recipe Content -->
-<div class="recipe-container">
-    <div class="recipe-image">
-        <img id="recipe-image" src="" alt="รูปอาหาร">
-    </div>
-    <div class="recipe-details">
-        <h1 id="recipe-name">ชื่อสูตร</h1>
-        <div class="rating">
-            <span id="recipe-rating">⭐ </span>
-            <p id="recipe-source">โดย </p>
-            <p id="recipe-date">เมื่อ </p>
+    <div class="recipe-container">
+        <div class="recipe-image">
+            <img id="recipe-image" src="" alt="รูปอาหาร">
         </div>
-        <h2>วัตถุดิบ</h2>
-        <ul id="ingredients-list"></ul>
+        <div class="recipe-details">
+            <h1 id="recipe-name">ชื่อสูตร</h1>
+            <div class="rating">
+                <p id="recipe-rating">⭐</p>
+                <p id="recipe-source">โดย </p>
+                <p id="recipe-date">เมื่อ </p>
+            </div>
+            
+            <h2>วัตถุดิบ</h2>
+            <ul id="ingredients-list"></ul>
+        </div>
     </div>
-</div>
-<div class="steps">
-    <h2>วิธีทำ</h2>
-    <ul id="steps-list"></ul>
-</div>
+    <div class="steps">
+        <h2>วิธีทำ</h2>
+        <div id="steps-list"></div> <!-- เปลี่ยนจาก ul เป็น div -->
+    </div>
 
-<script>
-    // ดึงค่า recipe_id จาก URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const recipeId = urlParams.get('recipe_id');
+    <script>
+        // ดึงค่า recipe_id จาก URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const recipeId = urlParams.get('recipe_id');
 
-    if (recipeId) {
-        fetch(`get_recipes.php?recipe_id=${recipeId}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert('เกิดข้อผิดพลาด: ' + data.error);
-                } else {
-                    // ตั้งค่าชื่อสูตร, คะแนน, ผู้เขียน, วันที่ และรูปภาพ
-                    document.getElementById('recipe-name').innerText = data.recipe_name;
-                    document.getElementById('recipe-rating').innerText += data.rating;
-                    document.getElementById('recipe-source').innerText += data.source;
-                    document.getElementById('recipe-date').innerText += new Date(data.created_at).toLocaleDateString();
-                    document.getElementById('recipe-image').src = data.image_path;
+        if (recipeId) {
+            fetch(`get_recipes.php?recipe_id=${recipeId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('เกิดข้อผิดพลาด: ' + data.error);
+                    } else {
+                        // ตั้งค่าชื่อสูตร, คะแนน, ผู้เขียน, วันที่ และรูปภาพ
+                        document.getElementById('recipe-name').innerText = data.recipe_name;
+                        document.getElementById('recipe-rating').innerText += data.rating;
+                        document.getElementById('recipe-source').innerText += " " + data.source; // เพิ่มเว้นวรรคก่อนชื่อผู้ใช้
+                        document.getElementById('recipe-date').innerText += new Date(data.created_at).toLocaleDateString();
+                        document.getElementById('recipe-image').src = data.image_path;
 
-                    // แสดงวัตถุดิบ
-                    data.ingredients.split('\n').forEach(item => {
-                        const li = document.createElement('li');
-                        li.innerText = item.trim(); // ตัดช่องว่างหัวท้ายออก
-                        document.getElementById('ingredients-list').appendChild(li);
-                    });
+                        // แสดงวัตถุดิบ
+                        data.ingredients.split('\n').forEach(item => {
+                            const li = document.createElement('li');
+                            li.innerText = item.trim();
+                            document.getElementById('ingredients-list').appendChild(li);
+                        });
 
-                    // แสดงขั้นตอน
-                    data.steps.split('\n').forEach(step => {
-                        const li = document.createElement('li');
-                        li.innerText = step.trim(); // ตัดช่องว่างหัวท้ายออก
-                        document.getElementById('steps-list').appendChild(li);
-                    });
-                }
-            })
-            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
-    } else {
-        alert('ไม่พบ ID ของสูตรอาหาร');
-    }
-</script>
+                        // แสดงขั้นตอนการทำโดยไม่มีจุดนำหน้า
+                        data.steps.split('\n').forEach(step => {
+                            const div = document.createElement('div');
+                            div.innerText = step.trim(); // ตัดช่องว่างหัวท้ายออก
+                            document.getElementById('steps-list').appendChild(div);
+                        });
+                    }
+                })
+                .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+        } else {
+            alert('ไม่พบ ID ของสูตรอาหาร');
+        }
+    </script>
+
+
 
 </body>
 </html>
