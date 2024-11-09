@@ -205,8 +205,8 @@
                 if (e.key === 'Enter') {  // ตรวจสอบว่าเป็นปุ่ม Enter หรือไม่
                     const query = e.target.value.trim();  // รับค่าที่กรอกในช่องค้นหา
                     if (query) {
-                        // ย้ายไปหน้า search.html พร้อมส่งค่าคำค้นหาเป็น query string
-                        window.location.href = `search.html?query=${encodeURIComponent(query)}`;
+                        // ย้ายไปหน้า indexsearch.html พร้อมส่งค่าคำค้นหาเป็น query string
+                        window.location.href = `indexsearch.html?query=${encodeURIComponent(query)}`;
                     }
                 }
             });
@@ -216,8 +216,8 @@
         <!-- Navigation Links -->
         <div class="nav-links">
             <a href="index.html"><img src="img/homeicon.png" alt="หน้าแรก" class="icon">หน้าแรก</a>
-            <a href="maindish.html"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='maindish.html'">สูตรอาหารคาว</a>
-            <a href="dessert.html"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='dessert.html'">สูตรของหวาน</a>
+            <a href="indexmaindish.html"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='indexmaindish.html'">สูตรอาหารคาว</a>
+            <a href="indexdessert.html"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='indexdessert.html'">สูตรของหวาน</a>
             <a href="login.html"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='login.html'">แนะนำสูตร</a>
             <a href="login.html" class="login"><img src="img/usericon.png" alt="เข้าสู่ระบบ" class="icon" onclick="location.href='login.html'">เข้าสู่ระบบ</a>
         </div>
@@ -259,7 +259,7 @@
                         <p>⭐ ${rating.toFixed(1)}</p>
                         <p>โดย ${recipe.source}</p>
                         <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
-                        <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
+                        <a href="indexrecipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
                     </div>
                 `;
                 newRecipesContainer.appendChild(recipeElement);
@@ -307,7 +307,7 @@
                         <p>⭐ ${rating.toFixed(1)}</p>
                         <p>โดย ${recipe.source}</p>
                         <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
-                        <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
+                        <a href="indexrecipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
                     </div>
                 `;
                 popularRecipesContainer.appendChild(recipeElement);
@@ -332,7 +332,7 @@
                         <p>⭐ ${rating.toFixed(1)}</p>
                         <p>โดย ${recipe.source}</p>
                         <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
-                        <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
+                        <a href="indexrecipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
                     </div>
                 `;
                 popularDessertsContainer.appendChild(recipeElement);
