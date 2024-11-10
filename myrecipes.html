@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สูตรอาหารของฉัน</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #fdf6d2;
+        }
+
+        .navbar {
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar img.logo {
+            height: 70px;
+        }
+
+        .navbar .search-box {
+            width: 300px;
+            margin: 0 20px;
+            display: flex;
+            align-items: center;
+            border-radius: 20px;
+            padding: 5px 10px;
+        }
+
+        .navbar .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .nav-links a {
+            text-decoration: none;
+            color: #000;
+            margin-left: 20px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .nav-links img.icon {
+            margin-right: 5px;
+            height: 24px;
+        }
+
+        .navbar .nav-links a.login {
+            color: red;
+        }
+
+        .navbar .profile-pic {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 5px;
+        }
+
+        /* Updated container and layout styles */
+        .page-title {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .page-title h1 {
+            color: #333;
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .recipe-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .recipe-section {
+            flex: 1;
+            max-width: calc(50% - 20px);
+        }
+
+        .recipe-section h2 {
+            color: #333;
+            text-align: center;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .recipe-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .recipe-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 15px;
+        }
+
+        .recipe-item div {
+            text-align: left;
+        }
+
+        .recipe-item h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #555;
+        }
+
+        .recipe-item p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .recipe-item a {
+            font-size: 14px;
+            color: #d9534f;
+            text-decoration: none;
+        }
+
+        .recipe-item a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <img src="img/logo.png" alt="Logo" class="logo">
+        <!-- Search Box -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="ค้นหา">
+        </div>
+
+        <script>
+            // จับเหตุการณ์เมื่อผู้ใช้กด Enter ในช่องค้นหา
+            document.getElementById('searchInput').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {  // ตรวจสอบว่าเป็นปุ่ม Enter หรือไม่
+                    const query = e.target.value.trim();  // รับค่าที่กรอกในช่องค้นหา
+                    if (query) {
+                        // ย้ายไปหน้า search.html พร้อมส่งค่าคำค้นหาเป็น query string
+                        window.location.href = `search.html?query=${encodeURIComponent(query)}`;
+                    }
+                }
+            });
+        </script>
+        
+        <div class="nav-links">
+            <a href="main.html"><img src="img/homeicon.png" alt="หน้าแรก" class="icon">หน้าแรก</a>
+            <a href="maindish.html"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon">สูตรอาหารคาว</a>
+            <a href="dessert.html"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon">สูตรของหวาน</a>
+            <a href="recommend.html"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon">แนะนำสูตร</a>
+            <a href="userid.html" id="user-link" class="login">
+                <img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="profile-pic">
+                <span id="username-display"></span>
+            </a>
+            <a href="index.html" class="logout"><img src="img/logout.png" alt="ลงชื่อออก" class="icon"></a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="page-title">
+        <h1>สูตรอาหารของฉัน</h1>
+    </div>
+    
+    <div class="recipe-container">
+        <div class="recipe-section" id="popular-recipes">
+            <h2>สูตรอาหารคาว</h2>
+        </div>
+        <div class="recipe-section" id="popular-desserts">
+            <h2>สูตรของหวาน</h2>
+        </div>
+    </div>
+
+    <script>
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const query = e.target.value.trim();
+                if (query) {
+                    window.location.href = `search.html?query=${encodeURIComponent(query)}`;
+                }
+            }
+        });
+
+        // Fetch user data
+        fetch('get_user_data.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error(data.error);
+                    alert('เกิดข้อผิดพลาด: ' + data.error);
+                } else {
+                    document.getElementById('username-display').innerText = data.username;
+                    const navbarProfileImage = document.getElementById('navbar-profile-image');
+                    navbarProfileImage.src = data.profile_image ? data.profile_image : 'img/usericon.png';
+                }
+            })
+            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+
+        // Fetch recipes
+        function fetchRecipes(category, containerId) {
+            fetch(`get_myrecipes.php?category=${category}`)
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById(containerId);
+                    data.forEach(recipe => {
+                        const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
+                        const recipeElement = document.createElement('div');
+                        recipeElement.classList.add('recipe-item');
+                        recipeElement.innerHTML = `
+                            <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
+                            <div>
+                                <h3>${recipe.recipe_name}</h3>
+                                <p>⭐ ${rating.toFixed(1)}</p>
+                                <p>โดย ${recipe.source}</p>
+                                <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
+                                <a href="my_recipe_edit.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก>></a>
+                            </div>
+                        `;
+                        container.appendChild(recipeElement);
+                    });
+                })
+                .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+        }
+
+        fetchRecipes('อาหารคาว', 'popular-recipes');
+        fetchRecipes('ของหวาน', 'popular-desserts');
+    </script>
+</body>
+</html>

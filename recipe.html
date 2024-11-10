@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ข้าวเหนียวมะม่วง</title>
+    <title>สูตรอาหาร</title>
     <style>
         body {
             margin: 0;
@@ -137,6 +137,118 @@
             object-fit: cover;
             margin-right: 5px;
         }
+        .comments-section {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+
+        .comment-form {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .star-rating {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 10px;
+        }
+        
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+        
+        .star-rating label {
+            font-size: 25px;
+            color: #ddd;
+            cursor: pointer;
+        }
+        
+        .star-rating label:hover,
+        .star-rating label:hover ~ label,
+        .star-rating input[type="radio"]:checked ~ label {
+            color: #ffd700;
+        }
+        
+        /* สลับทิศทางของ hover effect */
+        .star-rating {
+            direction: rtl;
+        }
+        
+        .star-rating label {
+            direction: ltr;
+        }
+
+        .comment-input {
+            width: 100%;
+            min-height: 80px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        .comment-submit {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .comment-submit:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .comment-submit:hover:not(:disabled) {
+            background-color: #45a049;
+        }
+
+        .comments-list {
+            margin-top: 20px;
+        }
+
+        .comment-item {
+            background-color: #ffffff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .comment-stars {
+            color: #ffd700;
+            letter-spacing: 2px;
+        }
+
+        .comment-text {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+
+        .comment-user {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .comment-date {
+            color: #666;
+            font-size: 0.85em;
+        }
 
         
     </style>
@@ -218,6 +330,167 @@
         <h2>วิธีทำ</h2>
         <div id="steps-list"></div> <!-- เปลี่ยนจาก ul เป็น div -->
     </div>
+
+    <div class="comments-section">
+        <h2>แสดงความคิดเห็น</h2>
+        <div class="comment-form">
+            <div class="star-rating">
+                <input type="radio" id="star1" name="rating" value="5">
+                <label for="star1">★</label>
+                <input type="radio" id="star2" name="rating" value="4">
+                <label for="star2">★</label>
+                <input type="radio" id="star3" name="rating" value="3">
+                <label for="star3">★</label>
+                <input type="radio" id="star4" name="rating" value="2">
+                <label for="star4">★</label>
+                <input type="radio" id="star5" name="rating" value="1">
+                <label for="star5">★</label>
+            </div>
+            <textarea class="comment-input" placeholder="เขียนความคิดเห็นของคุณที่นี่..."></textarea>
+            <button type="button" class="comment-submit" disabled>ส่งความคิดเห็น</button>
+        </div>
+        <div class="comments-list">
+            <!-- ความคิดเห็นจะถูกเพิ่มที่นี่ด้วย JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const commentForm = document.querySelector('.comment-form');
+            const commentInput = document.querySelector('.comment-input');
+            const submitButton = document.querySelector('.comment-submit');
+            const ratingInputs = document.querySelectorAll('input[name="rating"]');
+            
+            // ตรวจสอบการกรอกข้อมูล
+            function checkFormValidity() {
+                const rating = document.querySelector('input[name="rating"]:checked');
+                const comment = commentInput.value.trim();
+                submitButton.disabled = !rating || !comment;
+            }
+        
+            // ติดตามการเปลี่ยนแปลงของ input
+            commentInput.addEventListener('input', checkFormValidity);
+            ratingInputs.forEach(input => {
+                input.addEventListener('change', checkFormValidity);
+            });
+    
+            // ฟังก์ชันโหลดความคิดเห็น - แยกออกมาให้เรียกใช้ได้ทั่วไป
+            function loadComments() {
+                fetch(`get_comments.php?recipe_id=${recipeId}`)
+                .then(response => response.json())
+                .then(comments => {
+                    const commentsList = document.querySelector('.comments-list');
+                    commentsList.innerHTML = '';
+                    
+                    if (comments.error) {
+                        commentsList.innerHTML = `<p>ไม่พบความคิดเห็น</p>`;
+                        return;
+                    }
+                    
+                    if (comments.length === 0) {
+                        commentsList.innerHTML = `<p>ยังไม่มีความคิดเห็น</p>`;
+                        return;
+                    }
+                    
+                    comments.forEach(comment => {
+                        const stars = '⭐'.repeat(parseInt(comment.rating));
+                        const commentDate = new Date(comment.created_at).toLocaleDateString('th-TH', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        
+                        const commentHtml = `
+                            <div class="comment-item">
+                                <div class="comment-header">
+                                    <span class="comment-user">${comment.username}</span>
+                                    <span class="comment-stars">${stars}</span>
+                                </div>
+                                <div class="comment-text">${comment.comment_text}</div>
+                                <small class="comment-date">${commentDate}</small>
+                            </div>
+                        `;
+                        commentsList.insertAdjacentHTML('beforeend', commentHtml);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.querySelector('.comments-list').innerHTML = 
+                        '<p>เกิดข้อผิดพลาดในการโหลดความคิดเห็น</p>';
+                });
+            }
+    
+            // เช็คสถานะการล็อกอินก่อนแสดงฟอร์มความคิดเห็น
+            fetch('check_session.php')
+            .then(response => response.json())
+            .then(data => {
+                if (!data.logged_in) {
+                    commentForm.innerHTML = '<p>กรุณาเข้าสู่ระบบก่อนแสดงความคิดเห็น</p>';
+                    return;
+                }
+        
+                // จัดการการส่งความคิดเห็น
+                submitButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const rating = document.querySelector('input[name="rating"]:checked');
+                    const comment = commentInput.value.trim();
+                    
+                    if (!rating || !comment) {
+                        alert('กรุณาให้คะแนนและเขียนความคิดเห็น');
+                        return;
+                    }
+            
+                    const formData = new FormData();
+                    formData.append('recipe_id', recipeId);
+                    formData.append('rating', rating.value);
+                    formData.append('comment', comment);
+            
+                    fetch('save_comment.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // อัปเดตคะแนนเฉลี่ย
+                            document.getElementById('recipe-rating').innerText = 
+                                `${'⭐'.repeat(Math.round(data.avg_rating))} (${data.avg_rating})`;
+                            
+                            // รีเซ็ตฟอร์ม
+                            commentInput.value = '';
+                            const checkedRating = document.querySelector('input[name="rating"]:checked');
+                            if (checkedRating) checkedRating.checked = false;
+                            submitButton.disabled = true;
+                            
+                            // โหลดความคิดเห็นใหม่ทันที
+                            loadComments();
+                            
+                            alert('บันทึกความคิดเห็นเรียบร้อยแล้ว');
+                        } else {
+                            alert(data.error || 'เกิดข้อผิดพลาดในการบันทึกความคิดเห็น');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('เกิดข้อผิดพลาดในการส่งข้อมูล');
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('เกิดข้อผิดพลาดในการตรวจสอบสถานะการเข้าสู่ระบบ');
+            });
+            
+            // โหลดความคิดเห็นตั้งแต่เริ่มต้น
+            loadComments();
+            
+            // ตั้งเวลาโหลดความคิดเห็นใหม่ทุก 30 วินาที
+            setInterval(loadComments, 30000);
+        });
+    </script>
 
     <script>
         // ดึงค่า recipe_id จาก URL
