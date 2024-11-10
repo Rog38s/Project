@@ -150,18 +150,40 @@
     <div class="form-container">
         <h2>ข้อมูลสมาชิก</h2>
         <img id="profile-image" src="img/usericon.png" alt="User Profile Image">
-
+    
         <div class="user-data" id="name">ชื่อ: <span id="user-name"></span></div>
         <div class="user-data" id="email">อีเมล: <span id="user-email"></span></div>
         <div class="user-data" id="phone">เบอร์โทรศัพท์: <span id="user-phone"></span></div>
         <div class="user-data" id="gender">เพศ: <span id="user-gender"></span></div>
-        <div class="user-data" id="age">อายุ: <span id="user-age"></span></div><br>
-
+        <div class="user-data" id="birth_date">วันเดือนปีเกิด: <span id="user-birth_date"></span></div>
+        <div class="user-data" id="calculated-age">อายุ: <span id="user-age"></span></div><br>
+    
         <button class="btn btn-blue" onclick="location.href='user_edit.html'">แก้ไขข้อมูลส่วนตัว</button><br>
         <button class="btn btn-orange" onclick="location.href='changepassword.html'">เปลี่ยนรหัสผ่าน</button>
     </div>
-
+    
     <script>
+        // ฟังก์ชันสำหรับจัดรูปแบบวันเดือนปีเกิดเป็น dd/mm/yyyy
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // เดือนใน JavaScript เริ่มที่ 0
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+    
+        // ฟังก์ชันคำนวณอายุจากวันเดือนปีเกิด
+        function calculateAge(birthDate) {
+            const today = new Date();
+            const birth = new Date(birthDate);
+            let age = today.getFullYear() - birth.getFullYear();
+            const monthDiff = today.getMonth() - birth.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+                age--;
+            }
+            return age;
+        }
+    
         // ดึงข้อมูลผู้ใช้จาก backend และแสดงในส่วนต่าง ๆ ของหน้าเว็บ
         fetch('get_user_data.php')
             .then(response => response.json())
@@ -175,12 +197,13 @@
                     document.getElementById('user-email').innerText = data.email; // แสดงอีเมล
                     document.getElementById('user-phone').innerText = data.phone; // แสดงเบอร์โทรศัพท์
                     document.getElementById('user-gender').innerText = data.gender; // แสดงเพศ
-                    document.getElementById('user-age').innerText = data.age; // แสดงอายุ
-                    
+                    document.getElementById('user-birth_date').innerText = formatDate(data.birth_date); // แสดงวันเดือนปีเกิดในรูปแบบ dd/mm/yyyy
+                    document.getElementById('user-age').innerText = calculateAge(data.birth_date); // คำนวณและแสดงอายุ
+    
                     // แสดงชื่อผู้ใช้ในแถบเมนู
                     const usernameDisplay = document.getElementById('username-display');
                     usernameDisplay.innerText = data.username;
-
+    
                     // อัปเดตภาพโปรไฟล์ทั้งใน navbar และหน้าโปรไฟล์
                     const navbarProfileImage = document.getElementById('navbar-profile-image');
                     const profileImage = document.getElementById('profile-image');
@@ -191,5 +214,7 @@
             })
             .catch(error => console.error('เกิดข้อผิดพลาด:', error));
     </script>
+    
+    
 </body>
 </html>

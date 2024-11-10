@@ -15,7 +15,7 @@ try {
     $user_id = $_SESSION['user_id'];  // ใช้ user_id จากเซสชัน
 
     // ดึงข้อมูลผู้ใช้จากฐานข้อมูล
-    $stmt = $pdo->prepare("SELECT id, username, email, phone, gender, age, profile_image FROM users WHERE id = :id");
+    $stmt = $pdo->prepare("SELECT id, username, email, phone, gender, birth_date, profile_image FROM users WHERE id = :id");
     $stmt->execute(['id' => $user_id]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
