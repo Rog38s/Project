@@ -250,6 +250,105 @@
             font-size: 0.85em;
         }
 
+        .edit-buttons {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            text-align: right;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn-edit {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background-color: #45a049;
+        }
+
+        .btn-delete {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: #da190b;
+        }
+
+        .btn-save {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background-color: #1976D2;
+        }
+
+        .btn-cancel {
+            background-color: #9e9e9e;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background-color: #757575;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            margin-top: 20px;
+        }
+
+        /* Styles for editable content */
+        .editable {
+            border: 1px solid transparent;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .editable.editing {
+            border-color: #ddd;
+            background-color: #fff;
+        }
+
+        #ingredients-list.editing li,
+        #steps-list.editing div {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 5px;
+            margin-bottom: 5px;
+        }
+
         
     </style>
 </head>
@@ -535,6 +634,193 @@
         } else {
             alert('ไม่พบ ID ของสูตรอาหาร');
         }
+    </script>
+
+    <!-- เพิ่มปุ่มแก้ไขและลบในส่วนบนของหน้าสูตร -->
+    <div class="edit-buttons">
+        <button id="editBtn" class="btn btn-edit">แก้ไขสูตร</button>
+        <button id="saveBtn" class="btn btn-save" style="display: none;">บันทึก</button>
+        <button id="cancelBtn" class="btn btn-cancel" style="display: none;">ยกเลิก</button>
+        <button id="deleteBtn" class="btn btn-delete">ลบสูตร</button>
+    </div>
+
+    <!-- Modal ยืนยันการลบ -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <h2>ยืนยันการลบสูตร</h2>
+            <p>คุณต้องการลบสูตรนี้ใช่หรือไม่? การดำเนินการนี้ไม่สามารถย้อนกลับได้</p>
+            <div class="modal-buttons">
+                <button id="confirmDelete" class="btn btn-delete">ยืนยัน</button>
+                <button id="cancelDelete" class="btn btn-cancel">ยกเลิก</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const editBtn = document.getElementById('editBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const deleteBtn = document.getElementById('deleteBtn');
+            const deleteModal = document.getElementById('deleteModal');
+            const confirmDelete = document.getElementById('confirmDelete');
+            const cancelDelete = document.getElementById('cancelDelete');
+
+            // Elements that can be edited
+            const recipeName = document.getElementById('recipe-name');
+            const ingredientsList = document.getElementById('ingredients-list');
+            const stepsList = document.getElementById('steps-list');
+
+            let originalData = {};
+
+            // Function to make elements editable
+            function makeEditable() {
+                // Store original data
+                originalData = {
+                    recipeName: recipeName.innerText,
+                    ingredients: Array.from(ingredientsList.children).map(li => li.innerText),
+                    steps: Array.from(stepsList.children).map(div => div.innerText)
+                };
+
+                // Make recipe name editable
+                recipeName.contentEditable = true;
+                recipeName.classList.add('editing');
+
+                // Make ingredients editable
+                ingredientsList.classList.add('editing');
+                Array.from(ingredientsList.children).forEach(li => {
+                    li.contentEditable = true;
+                });
+
+                // Make steps editable
+                stepsList.classList.add('editing');
+                Array.from(stepsList.children).forEach(div => {
+                    div.contentEditable = true;
+                });
+
+                // Show/hide buttons
+                editBtn.style.display = 'none';
+                deleteBtn.style.display = 'none';
+                saveBtn.style.display = 'inline-block';
+                cancelBtn.style.display = 'inline-block';
+            }
+
+            // Function to restore original data
+            function restoreOriginal() {
+                recipeName.innerText = originalData.recipeName;
+                
+                ingredientsList.innerHTML = '';
+                originalData.ingredients.forEach(ingredient => {
+                    const li = document.createElement('li');
+                    li.innerText = ingredient;
+                    ingredientsList.appendChild(li);
+                });
+
+                stepsList.innerHTML = '';
+                originalData.steps.forEach(step => {
+                    const div = document.createElement('div');
+                    div.innerText = step;
+                    stepsList.appendChild(div);
+                });
+
+                exitEditMode();
+            }
+
+            // Function to exit edit mode
+            function exitEditMode() {
+                recipeName.contentEditable = false;
+                recipeName.classList.remove('editing');
+
+                ingredientsList.classList.remove('editing');
+                Array.from(ingredientsList.children).forEach(li => {
+                    li.contentEditable = false;
+                });
+
+                stepsList.classList.remove('editing');
+                Array.from(stepsList.children).forEach(div => {
+                    div.contentEditable = false;
+                });
+
+                editBtn.style.display = 'inline-block';
+                deleteBtn.style.display = 'inline-block';
+                saveBtn.style.display = 'none';
+                cancelBtn.style.display = 'none';
+            }
+
+            // Event Listeners
+            editBtn.addEventListener('click', makeEditable);
+            
+            cancelBtn.addEventListener('click', restoreOriginal);
+
+            saveBtn.addEventListener('click', function() {
+                const updatedData = {
+                    recipe_id: recipeId,
+                    recipe_name: recipeName.innerText,
+                    ingredients: Array.from(ingredientsList.children)
+                        .map(li => li.innerText)
+                        .join('\n'),
+                    steps: Array.from(stepsList.children)
+                        .map(div => div.innerText)
+                        .join('\n')
+                };
+
+                fetch('update_recipe.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('บันทึกการแก้ไขเรียบร้อยแล้ว');
+                        exitEditMode();
+                    } else {
+                        alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+                });
+            });
+
+            deleteBtn.addEventListener('click', function() {
+                deleteModal.style.display = 'block';
+            });
+
+            confirmDelete.addEventListener('click', function() {
+                fetch(`delete_recipe.php?recipe_id=${recipeId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('ลบสูตรเรียบร้อยแล้ว');
+                        window.location.href = 'my_recipes.html'; // กลับไปยังหน้ารายการสูตรของฉัน
+                    } else {
+                        alert('เกิดข้อผิดพลาดในการลบสูตร: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('เกิดข้อผิดพลาดในการลบสูตร');
+                });
+                deleteModal.style.display = 'none';
+            });
+
+            cancelDelete.addEventListener('click', function() {
+                deleteModal.style.display = 'none';
+            });
+
+            // ปิด Modal เมื่อคลิกภายนอก
+            window.addEventListener('click', function(event) {
+                if (event.target == deleteModal) {
+                    deleteModal.style.display = 'none';
+                }
+            });
+        });
     </script>
 
 
