@@ -3,65 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Results</title>
+    <title>รายงานสูตรอาหาร</title>
     <style>
         body {
             margin: 0;
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
         }
-
-        .search-results {
+        
+        .report-container {
+            max-width: 800px;
+            margin: 20px auto;
             padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .recipe-item {
+        .recipe-summary {
             display: flex;
-            align-items: center;
+            align-items: start;
             background-color: #fcf4ce;
-            margin-bottom: 20px;
             padding: 15px;
             border-radius: 10px;
+            margin-bottom: 20px;
         }
 
-        .recipe-item img {
-            width: 240px;
-            height: 190px;
+        .recipe-image {
+            width: 200px;
+            height: 150px;
             object-fit: cover;
-            border-radius: 10px;
-            margin-right: 15px;
-        }
-
-        .recipe-details {
-            flex: 1;
+            border-radius: 8px;
+            margin-right: 20px;
         }
 
         .recipe-details h2 {
-            font-size: 18px;
-            margin: 0;
+            margin: 0 0 10px 0;
         }
 
         .recipe-details p {
-            font-size: 14px;
-            color: #555;
+            margin: 5px 0;
+            color: #666;
         }
 
-        .recipe-details a {
-            font-size: 14px;
+        .report-form {
+            background-color: #f8f8f8;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .report-form h3 {
+            margin-top: 0;
             color: #d9534f;
-            text-decoration: none;
         }
 
-        .recipe-details a:hover {
-            text-decoration: underline;
+        .form-group {
+            margin-bottom: 15px;
         }
 
-        .navbar .profile-pic {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 5px;
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .submit-btn:hover {
+            background-color: #c9302c;
         }
 
         .navbar {
@@ -108,6 +134,14 @@
         .navbar .nav-links a.login {
             color: red;
         
+        }
+
+        .navbar .profile-pic {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 5px;
         }
 
 
@@ -172,41 +206,81 @@
             .catch(error => console.error('เกิดข้อผิดพลาด:', error));
     </script>
 
+    <div class="report-container">
+        <div class="recipe-summary" id="recipe-info">
+            <img id="recipe-image" src="" alt="รูปอาหาร" class="recipe-image">
+            <div class="recipe-details">
+                <h2 id="recipe-name"></h2>
+                <p id="recipe-rating"></p>
+                <p id="recipe-source"></p>
+                <p id="recipe-date"></p>
+            </div>
+        </div>
 
-<div class="search-results" id="search-results">
-    <!-- Results will be appended here -->
-</div>
+        <div class="report-form">
+            <h3>แจ้งรายงาน</h3>
+            <form id="reportForm">
+                <input type="hidden" id="recipe_id" name="recipe_id">
+                <div class="form-group">
+                    <label for="report_text">รายละเอียดการรายงาน:</label>
+                    <textarea id="report_text" name="report_text" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">ส่งรายงาน</button>
+            </form>
+        </div>
+    </div>
 
-<script>
-    // Get the search query from the URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const query = urlParams.get('query');
+    <script>
+        // ดึงค่า recipe_id จาก URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const recipeId = urlParams.get('recipe_id');
+        
+        // ตั้งค่า recipe_id ในฟอร์ม
+        document.getElementById('recipe_id').value = recipeId;
 
-    // Fetch search results
-    fetch(`search_recipes.php?query=${encodeURIComponent(query)}`)
-        .then(response => response.json())
-        .then(data => {
-            const searchResultsContainer = document.getElementById('search-results');
-            data.forEach(recipe => {
-                const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
+        // ดึงข้อมูลสูตรอาหาร
+        if (recipeId) {
+            fetch(`get_recipes.php?recipe_id=${recipeId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('เกิดข้อผิดพลาด: ' + data.error);
+                    } else {
+                        document.getElementById('recipe-image').src = data.image_path;
+                        document.getElementById('recipe-name').innerText = data.recipe_name;
+                        document.getElementById('recipe-rating').innerText = `⭐ ${data.rating}`;
+                        document.getElementById('recipe-source').innerText = `โดย ${data.source}`;
+                        document.getElementById('recipe-date').innerText = 
+                            `เมื่อ ${new Date(data.created_at).toLocaleDateString()}`;
+                    }
+                })
+                .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+        }
 
-                const recipeElement = document.createElement('div');
-                recipeElement.classList.add('recipe-item');
-                recipeElement.innerHTML = `
-                    <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
-                    <div class="recipe-details">
-                        <h2>${recipe.recipe_name}</h2>
-                        <p>⭐ ${rating.toFixed(1)}</p>
-                        <p>โดย ${recipe.source}</p>
-                        <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
-                        <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
-                    </div>
-                `;
-                searchResultsContainer.appendChild(recipeElement);
+        // จัดการการส่งฟอร์ม
+        document.getElementById('reportForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+
+            fetch('save_report.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('ขอบคุณสำหรับการรายงาน');
+                    window.location.href = 'main.html';
+                } else {
+                    alert(data.error || 'เกิดข้อผิดพลาดในการส่งรายงาน');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('เกิดข้อผิดพลาดในการส่งข้อมูล');
             });
-        })
-        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
-</script>
-
+        });
+    </script>
 </body>
 </html>

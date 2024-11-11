@@ -175,20 +175,11 @@
                 <img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="profile-pic">
                 <span id="username-display"></span>
             </a>
-            <a href="index.html" class="logout" onclick="logout()">
+            <a href="logout.php" class="logout">
                 <img src="img/logout.png" alt="ลงชื่อออก" class="icon">
                 ลงชื่อออก
             </a>
             
-            <script>
-            function logout() {
-                // ลบ session ของผู้ใช้
-                sessionStorage.clear();
-            
-                // ย้ายไปยัง index.html
-                window.location.href = 'index.html';
-            }
-            </script>
         </div>
     </div>
 
@@ -196,7 +187,7 @@
     <div class="page-title">
         <h1>สูตรอาหารของฉัน</h1>
     </div>
-    
+
     <div class="recipe-container">
         <div class="recipe-section" id="popular-recipes">
             <h2>สูตรอาหารคาว</h2>
@@ -207,59 +198,59 @@
     </div>
 
     <script>
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                const query = e.target.value.trim();
-                if (query) {
-                    window.location.href = `search.html?query=${encodeURIComponent(query)}`;
-                }
-            }
-        });
-
-        // Fetch user data
+        // ตรวจสอบการล็อกอิน
         fetch('get_user_data.php')
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    console.error(data.error);
-                    alert('เกิดข้อผิดพลาด: ' + data.error);
-                } else {
-                    document.getElementById('username-display').innerText = data.username;
-                    const navbarProfileImage = document.getElementById('navbar-profile-image');
-                    navbarProfileImage.src = data.profile_image ? data.profile_image : 'img/usericon.png';
-                }
-            })
-            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                window.location.href = 'login.html';  // ถ้ายังไม่ล็อกอินให้กลับไปหน้า login
+            } else {
+                document.getElementById('username-display').innerText = data.username;
+                const navbarProfileImage = document.getElementById('navbar-profile-image');
+                navbarProfileImage.src = data.profile_image ? data.profile_image : 'img/usericon.png';
+                
+                // Fetch user recipes หลังจากยืนยันการล็อกอินแล้ว
+                fetchRecipes('อาหารคาว', 'popular-recipes');
+                fetchRecipes('ของหวาน', 'popular-desserts');
+            }
+        })
+        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
 
-        // Fetch recipes
+        // Fetch recipes ของผู้ใช้ที่ล็อกอินอยู่เท่านั้น
         function fetchRecipes(category, containerId) {
             fetch(`get_myrecipes.php?category=${category}`)
                 .then(response => response.json())
                 .then(data => {
                     const container = document.getElementById(containerId);
-                    data.forEach(recipe => {
-                        const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
-                        const recipeElement = document.createElement('div');
-                        recipeElement.classList.add('recipe-item');
-                        recipeElement.innerHTML = `
-                            <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
-                            <div>
-                                <h3>${recipe.recipe_name}</h3>
-                                <p>⭐ ${rating.toFixed(1)}</p>
-                                <p>โดย ${recipe.source}</p>
-                                <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
-                                <a href="my_recipe_edit.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
-                            </div>
-                        `;
-                        container.appendChild(recipeElement);
-                    });
+        
+                    if (data.error) {
+                        container.innerHTML += `<p>${data.error}</p>`;
+                    } else if (data.length === 0) {
+                        container.innerHTML += '<p>ไม่มีสูตรในหมวดหมู่นี้</p>';
+                    } else {
+                        data.forEach(recipe => {
+                            const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
+                            const recipeElement = document.createElement('div');
+                            recipeElement.classList.add('recipe-item');
+                            recipeElement.innerHTML = `
+                                <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
+                                <div>
+                                    <h3>${recipe.recipe_name}</h3>
+                                    <p>⭐ ${rating.toFixed(1)}</p>
+                                    <p>โดย ${recipe.source}</p>
+                                    <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
+                                    <a href="my_recipe_edit.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
+                                </div>
+                            `;
+                            container.appendChild(recipeElement);
+                        });
+                    }
                 })
                 .catch(error => console.error('เกิดข้อผิดพลาด:', error));
         }
+        
 
-        fetchRecipes('อาหารคาว', 'popular-recipes');
-        fetchRecipes('ของหวาน', 'popular-desserts');
     </script>
+
 </body>
 </html>

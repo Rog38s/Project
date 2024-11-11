@@ -76,9 +76,9 @@
         }
 
         .recipe-details h1 {
-            color: #000000;
-            font-size: 25px;
-            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .recipe-details .rating {
@@ -250,6 +250,24 @@
             font-size: 0.85em;
         }
 
+        .report-link {
+            font-size: 14px;
+            text-decoration: none;
+            background-color: #ff4444;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 4px;
+            margin-left: 10px;
+            transition: background-color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .report-link:hover {
+            background-color: #cc0000;
+            text-decoration: none;
+        }
+
         
     </style>
 </head>
@@ -282,20 +300,11 @@
                 <img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="profile-pic">
                 <span id="username-display"></span>
             </a>
-            <a href="index.html" class="logout" onclick="logout()">
+            <a href="logout.php" class="logout">
                 <img src="img/logout.png" alt="ลงชื่อออก" class="icon">
                 ลงชื่อออก
             </a>
             
-            <script>
-            function logout() {
-                // ลบ session ของผู้ใช้
-                sessionStorage.clear();
-            
-                // ย้ายไปยัง index.html
-                window.location.href = 'index.html';
-            }
-            </script>
         </div>
     </div>
 
@@ -328,7 +337,10 @@
             <img id="recipe-image" src="" alt="รูปอาหาร">
         </div>
         <div class="recipe-details">
-            <h1 id="recipe-name">ชื่อสูตร</h1>
+            <h1 id="recipe-name">
+                <span id="recipe-title">ชื่อสูตร</span>
+                <a href="#" id="report-link" class="report-link">รายงาน</a>
+            </h1>
             <div class="rating">
                 <p id="recipe-rating">⭐</p>
                 <p id="recipe-source">โดย </p>
@@ -338,6 +350,7 @@
             <h2>วัตถุดิบ</h2>
             <ul id="ingredients-list"></ul>
         </div>
+        
     </div>
     <div class="steps">
         <h2>วิธีทำ</h2>
@@ -512,40 +525,40 @@
 
         if (recipeId) {
             fetch(`get_recipes.php?recipe_id=${recipeId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert('เกิดข้อผิดพลาด: ' + data.error);
-                    } else {
-                        // ตั้งค่าชื่อสูตร, คะแนน, ผู้เขียน, วันที่ และรูปภาพ
-                        document.getElementById('recipe-name').innerText = data.recipe_name;
-                        document.getElementById('recipe-rating').innerText += data.rating;
-                        document.getElementById('recipe-source').innerText += " " + data.source; // เพิ่มเว้นวรรคก่อนชื่อผู้ใช้
-                        document.getElementById('recipe-date').innerText += new Date(data.created_at).toLocaleDateString();
-                        document.getElementById('recipe-image').src = data.image_path;
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('เกิดข้อผิดพลาด: ' + data.error);
+                } else {
+                    // ตั้งค่าชื่อสูตรและข้อมูลอื่นๆ ตามเดิม
+                    document.getElementById('recipe-title').innerText = data.recipe_name;
+                    document.getElementById('recipe-rating').innerText += data.rating;
+                    document.getElementById('recipe-source').innerText += " " + data.source;
+                    document.getElementById('recipe-date').innerText += new Date(data.created_at).toLocaleDateString();
+                    document.getElementById('recipe-image').src = data.image_path;
 
-                        // แสดงวัตถุดิบ
-                        data.ingredients.split('\n').forEach(item => {
-                            const li = document.createElement('li');
-                            li.innerText = item.trim();
-                            document.getElementById('ingredients-list').appendChild(li);
-                        });
+                    // เพิ่ม URL สำหรับปุ่มรายงาน
+                    document.getElementById('report-link').href = `report.html?recipe_id=${recipeId}`;
 
-                        // แสดงขั้นตอนการทำโดยไม่มีจุดนำหน้า
-                        data.steps.split('\n').forEach(step => {
-                            const div = document.createElement('div');
-                            div.innerText = step.trim(); // ตัดช่องว่างหัวท้ายออก
-                            document.getElementById('steps-list').appendChild(div);
-                        });
-                    }
-                })
-                .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+                    // ส่วนที่เหลือคงเดิม
+                    data.ingredients.split('\n').forEach(item => {
+                        const li = document.createElement('li');
+                        li.innerText = item.trim();
+                        document.getElementById('ingredients-list').appendChild(li);
+                    });
+
+                    data.steps.split('\n').forEach(step => {
+                        const div = document.createElement('div');
+                        div.innerText = step.trim();
+                        document.getElementById('steps-list').appendChild(div);
+                    });
+                }
+            })
+            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
         } else {
             alert('ไม่พบ ID ของสูตรอาหาร');
         }
     </script>
-
-
 
 </body>
 </html>
