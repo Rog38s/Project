@@ -175,7 +175,20 @@
                 <img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="profile-pic">
                 <span id="username-display"></span>
             </a>
-            <a href="index.html" class="logout"><img src="img/logout.png" alt="ลงชื่อออก" class="icon"></a>
+            <a href="index.html" class="logout" onclick="logout()">
+                <img src="img/logout.png" alt="ลงชื่อออก" class="icon">
+                ลงชื่อออก
+            </a>
+            
+            <script>
+            function logout() {
+                // ลบ session ของผู้ใช้
+                sessionStorage.clear();
+            
+                // ย้ายไปยัง index.html
+                window.location.href = 'index.html';
+            }
+            </script>
         </div>
     </div>
 
