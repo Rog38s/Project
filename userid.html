@@ -101,6 +101,7 @@
         }
         .form-container .btn-blue {
             background-color: #5bc0de;
+
         }
         .form-container .btn-orange {
             background-color: #f0ad4e;
@@ -115,6 +116,7 @@
     </style>
 </head>
 <body>
+    <!-- ส่วน Navbar  -->
     <div class="navbar">
         <img src="img/logo.png" alt="Logo" class="logo">
         <!-- Search Box -->
@@ -139,7 +141,7 @@
             <a href="maindish.html"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='maindish.html'">สูตรอาหารคาว</a>
             <a href="dessert.html"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='dessert.html'">สูตรของหวาน</a>
             <a href="recommend.html"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='recommend.html'">แนะนำสูตร</a>
-            <a href="userid.html" id="user-link" class="login">
+            <a href="userid.html" id="user-link" class="login" onclick="location.href='userid.html'">
                 <img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="profile-pic">
                 <span id="username-display"></span>
             </a>
@@ -147,37 +149,69 @@
                 <img src="img/logout.png" alt="ลงชื่อออก" class="icon">
                 ลงชื่อออก
             </a>
+            <a href="admin_menu.html" id="admin-menu-button" style="display: none;">
+                <img src="img/reporticon.png" alt="หน้ารายงานสูตร" class="icon">
+                หน้ารายงานสูตร
+            </a>
             
         </div>
+    </div>
+
+    <script>
+        // ดึงข้อมูลผู้ใช้จาก backend
+        fetch('get_user_data.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.error);
+                alert('เกิดข้อผิดพลาด: ' + data.error);
+            } else {
+                // แสดงชื่อผู้ใช้
+                const usernameDisplay = document.getElementById('username-display');
+                usernameDisplay.innerText = data.username;
+
+                // อัปเดตภาพโปรไฟล์ใน navbar ถ้ามีข้อมูลโปรไฟล์ ถ้าไม่มีก็ใช้รูปเริ่มต้น
+                const navbarProfileImage = document.getElementById('navbar-profile-image');
+                navbarProfileImage.src = data.profile_image ? data.profile_image : 'img/usericon.png';
+
+                // ตรวจสอบค่า role ของผู้ใช้และแสดง/ซ่อนปุ่ม "หน้ารายงานสูตร"
+                const adminMenuButton = document.getElementById('admin-menu-button');
+                if (data.role === 'admin') {
+                    adminMenuButton.style.display = 'inline-block';
+                } else {
+                    adminMenuButton.style.display = 'none';
+                }
+            }
+        })
+        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+    </script>
     </div>
 
     <div class="form-container">
         <h2>ข้อมูลสมาชิก</h2>
         <img id="profile-image" src="img/usericon.png" alt="User Profile Image">
-    
+
         <div class="user-data" id="name">ชื่อ: <span id="user-name"></span></div>
         <div class="user-data" id="email">อีเมล: <span id="user-email"></span></div>
         <div class="user-data" id="phone">เบอร์โทรศัพท์: <span id="user-phone"></span></div>
         <div class="user-data" id="gender">เพศ: <span id="user-gender"></span></div>
         <div class="user-data" id="birth_date">วันเดือนปีเกิด: <span id="user-birth_date"></span></div>
         <div class="user-data" id="calculated-age">อายุ: <span id="user-age"></span></div><br>
-    
+
         <button class="btn btn-blue" onclick="location.href='user_edit.html'">แก้ไขข้อมูลส่วนตัว</button><br>
-        <button class="btn btn-blue" onclick="location.href='myrecipes.html'">สูตรอาหารของฉัน</button><br>
+        <button class="btn btn-blue" onclick="location.href='myrecipes.html'">สูตรอาหารของฉัน</button>
         <button class="btn btn-orange" onclick="location.href='changepassword.html'">เปลี่ยนรหัสผ่าน</button>
     </div>
-    
+
     <script>
-        // ฟังก์ชันสำหรับจัดรูปแบบวันเดือนปีเกิดเป็น dd/mm/yyyy
         function formatDate(dateString) {
             const date = new Date(dateString);
             const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0'); // เดือนใน JavaScript เริ่มที่ 0
+            const month = String(date.getMonth() + 1).padStart(2, '0');
             const year = date.getFullYear();
             return `${day}/${month}/${year}`;
         }
-    
-        // ฟังก์ชันคำนวณอายุจากวันเดือนปีเกิด
+
         function calculateAge(birthDate) {
             const today = new Date();
             const birth = new Date(birthDate);
@@ -188,33 +222,30 @@
             }
             return age;
         }
-    
-        // ดึงข้อมูลผู้ใช้จาก backend และแสดงในส่วนต่าง ๆ ของหน้าเว็บ
+
         fetch('get_user_data.php')
             .then(response => response.json())
             .then(data => {
-                console.log(data); // ดูข้อมูลที่ได้รับ
                 if (data.error) {
                     console.error(data.error);
                     alert('เกิดข้อผิดพลาด: ' + data.error);
                 } else {
-                    document.getElementById('user-name').innerText = data.username; // แสดงชื่อผู้ใช้
-                    document.getElementById('user-email').innerText = data.email; // แสดงอีเมล
-                    document.getElementById('user-phone').innerText = data.phone; // แสดงเบอร์โทรศัพท์
-                    document.getElementById('user-gender').innerText = data.gender; // แสดงเพศ
-                    document.getElementById('user-birth_date').innerText = formatDate(data.birth_date); // แสดงวันเดือนปีเกิดในรูปแบบ dd/mm/yyyy
-                    document.getElementById('user-age').innerText = calculateAge(data.birth_date); // คำนวณและแสดงอายุ
-    
-                    // แสดงชื่อผู้ใช้ในแถบเมนู
+                    document.getElementById('user-name').innerText = data.username;
+                    document.getElementById('user-email').innerText = data.email;
+                    document.getElementById('user-phone').innerText = data.phone;
+                    document.getElementById('user-gender').innerText = data.gender;
+                    document.getElementById('user-birth_date').innerText = formatDate(data.birth_date);
+                    document.getElementById('user-age').innerText = calculateAge(data.birth_date);
+
                     const usernameDisplay = document.getElementById('username-display');
                     usernameDisplay.innerText = data.username;
-    
-                    // อัปเดตภาพโปรไฟล์ทั้งใน navbar และหน้าโปรไฟล์
+
                     const navbarProfileImage = document.getElementById('navbar-profile-image');
                     const profileImage = document.getElementById('profile-image');
                     const profileImageSrc = data.profile_image ? data.profile_image : 'img/usericon.png';
                     navbarProfileImage.src = profileImageSrc;
                     profileImage.src = profileImageSrc;
+
                 }
             })
             .catch(error => console.error('เกิดข้อผิดพลาด:', error));

@@ -21,9 +21,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // ตั้งค่าเซสชันเมื่อล็อกอินสำเร็จ
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
+            $_SESSION['role'] = $user['role']; // เพิ่ม role เพื่อใช้ตรวจสอบสิทธิ์
 
-            // เปลี่ยนไปยังหน้าหลักที่ต้องการ
-            header("Location: main.html");
+            // ตรวจสอบสิทธิ์และเปลี่ยนหน้า
+            if ($user['role'] === 'admin') {
+                header("Location: main.html"); // เปลี่ยนหน้าไปยังหน้าของแอดมิน
+            } else {
+                header("Location: main.html"); // เปลี่ยนไปยังหน้าผู้ใช้ทั่วไป
+            }
             exit();
         } else {
             echo "<script>alert('รหัสผ่านไม่ถูกต้อง');</script>"; // แจ้งเตือนเมื่อรหัสผ่านไม่ถูกต้อง

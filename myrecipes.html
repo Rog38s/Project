@@ -145,7 +145,7 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
+    <!-- ส่วน Navbar  -->
     <div class="navbar">
         <img src="img/logo.png" alt="Logo" class="logo">
         <!-- Search Box -->
@@ -165,13 +165,12 @@
                 }
             });
         </script>
-        
         <div class="nav-links">
-            <a href="main.html"><img src="img/homeicon.png" alt="หน้าแรก" class="icon">หน้าแรก</a>
-            <a href="maindish.html"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon">สูตรอาหารคาว</a>
-            <a href="dessert.html"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon">สูตรของหวาน</a>
-            <a href="recommend.html"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon">แนะนำสูตร</a>
-            <a href="userid.html" id="user-link" class="login">
+            <a href="main.html"><img src="img/homeicon.png" alt="หน้าแรก" class="icon" onclick="location.href='main.html'">หน้าแรก</a>
+            <a href="maindish.html"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='maindish.html'">สูตรอาหารคาว</a>
+            <a href="dessert.html"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='dessert.html'">สูตรของหวาน</a>
+            <a href="recommend.html"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='recommend.html'">แนะนำสูตร</a>
+            <a href="userid.html" id="user-link" class="login" onclick="location.href='userid.html'">
                 <img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="profile-pic">
                 <span id="username-display"></span>
             </a>
@@ -179,8 +178,42 @@
                 <img src="img/logout.png" alt="ลงชื่อออก" class="icon">
                 ลงชื่อออก
             </a>
+            <a href="admin_menu.html" id="admin-menu-button" style="display: none;">
+                <img src="img/reporticon.png" alt="หน้ารายงานสูตร" class="icon">
+                หน้ารายงานสูตร
+            </a>
             
         </div>
+    </div>
+
+    <script>
+        // ดึงข้อมูลผู้ใช้จาก backend
+        fetch('get_user_data.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.error);
+                alert('เกิดข้อผิดพลาด: ' + data.error);
+            } else {
+                // แสดงชื่อผู้ใช้
+                const usernameDisplay = document.getElementById('username-display');
+                usernameDisplay.innerText = data.username;
+
+                // อัปเดตภาพโปรไฟล์ใน navbar ถ้ามีข้อมูลโปรไฟล์ ถ้าไม่มีก็ใช้รูปเริ่มต้น
+                const navbarProfileImage = document.getElementById('navbar-profile-image');
+                navbarProfileImage.src = data.profile_image ? data.profile_image : 'img/usericon.png';
+
+                // ตรวจสอบค่า role ของผู้ใช้และแสดง/ซ่อนปุ่ม "หน้ารายงานสูตร"
+                const adminMenuButton = document.getElementById('admin-menu-button');
+                if (data.role === 'admin') {
+                    adminMenuButton.style.display = 'inline-block';
+                } else {
+                    adminMenuButton.style.display = 'none';
+                }
+            }
+        })
+        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+    </script>
     </div>
 
     <!-- Main Content -->

@@ -26,11 +26,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($stmt->rowCount() > 0) {
         echo "<script>alert('ชื่อผู้ใช้หรืออีเมลนี้ถูกใช้ไปแล้ว');</script>"; // แจ้งเตือนเมื่อ username หรือ email มีอยู่แล้ว
     } else {
-        // เก็บข้อมูลผู้ใช้ใหม่ในฐานข้อมูล
-        $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (:username, :email, :password)");
+        // กำหนด role เป็น 'user' สำหรับผู้ใช้ใหม่
+        $role = 'user';
+
+        // เก็บข้อมูลผู้ใช้ใหม่ในฐานข้อมูลพร้อม role
+        $stmt = $conn->prepare("INSERT INTO users (username, email, password, role) VALUES (:username, :email, :password, :role)");
         $stmt->bindParam(':username', $username);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':password', $hashed_password);
+        $stmt->bindParam(':role', $role);
 
         if ($stmt->execute()) {
             echo "<script>alert('ลงทะเบียนสำเร็จ');</script>"; // แจ้งเตือนเมื่อสมัครสมาชิกสำเร็จ

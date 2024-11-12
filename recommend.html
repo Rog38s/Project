@@ -129,6 +129,7 @@
     </style>
 </head>
 <body>
+    <!-- ส่วน Navbar  -->
     <div class="navbar">
         <img src="img/logo.png" alt="Logo" class="logo">
         <!-- Search Box -->
@@ -161,8 +162,42 @@
                 <img src="img/logout.png" alt="ลงชื่อออก" class="icon">
                 ลงชื่อออก
             </a>
+            <a href="admin_menu.html" id="admin-menu-button" style="display: none;">
+                <img src="img/reporticon.png" alt="หน้ารายงานสูตร" class="icon">
+                หน้ารายงานสูตร
+            </a>
             
         </div>
+    </div>
+
+    <script>
+        // ดึงข้อมูลผู้ใช้จาก backend
+        fetch('get_user_data.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.error);
+                alert('เกิดข้อผิดพลาด: ' + data.error);
+            } else {
+                // แสดงชื่อผู้ใช้
+                const usernameDisplay = document.getElementById('username-display');
+                usernameDisplay.innerText = data.username;
+
+                // อัปเดตภาพโปรไฟล์ใน navbar ถ้ามีข้อมูลโปรไฟล์ ถ้าไม่มีก็ใช้รูปเริ่มต้น
+                const navbarProfileImage = document.getElementById('navbar-profile-image');
+                navbarProfileImage.src = data.profile_image ? data.profile_image : 'img/usericon.png';
+
+                // ตรวจสอบค่า role ของผู้ใช้และแสดง/ซ่อนปุ่ม "หน้ารายงานสูตร"
+                const adminMenuButton = document.getElementById('admin-menu-button');
+                if (data.role === 'admin') {
+                    adminMenuButton.style.display = 'inline-block';
+                } else {
+                    adminMenuButton.style.display = 'none';
+                }
+            }
+        })
+        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+    </script>
     </div>
     
     <div class="form-container">
@@ -263,14 +298,7 @@
             .catch(error => console.error('เกิดข้อผิดพลาด:', error));
         }
 
-        // ดึงข้อมูลผู้ใช้เพื่อแสดงใน navbar
-        fetch('get_user_data.php')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('username-display').innerText = data.username;
-                document.getElementById('navbar-profile-image').src = data.profile_image || 'img/usericon.png';
-            })
-            .catch(error => console.error('ไม่สามารถดึงข้อมูลผู้ใช้ได้', error));
+        
     </script>
 </body>
 </html>
