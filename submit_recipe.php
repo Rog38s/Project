@@ -5,12 +5,22 @@ ini_set('display_errors', 1); // แสดงข้อผิดพลาด
 
 // ตรวจสอบว่าเป็นการร้องขอแบบ POST หรือไม่
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // รับค่าจากฟอร์ม
+    // เริ่ม session เพื่อดึงข้อมูล user_id
+    session_start();
+
+    // ตรวจสอบว่ามีการเข้าสู่ระบบหรือไม่
+    if (!isset($_SESSION['user_id'])) {
+        echo json_encode(["success" => false, "message" => "กรุณาเข้าสู่ระบบก่อน"]);
+        exit();
+    }
+
+    // รับค่าจากฟอร์มและ user_id จาก session
     $recipeName = $_POST['recipe_name'];
     $ingredients = $_POST['ingredients'];
     $steps = $_POST['steps'];
     $source = $_POST['source'];
-    $category = $_POST['food_category'];  // ประเภทของอาหาร (อาหารคาว หรือ ของหวาน)
+    $category = $_POST['food_category'];
+    $user_id = $_SESSION['user_id']; // ดึง user_id จาก session
 
     // ตรวจสอบว่าค่าที่ได้รับมาจากฟอร์มมีค่าหรือไม่
     if (empty($recipeName) || empty($ingredients) || empty($steps) || empty($category)) {
@@ -19,25 +29,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // ตั้งค่าให้ source เป็นชื่อผู้ใช้หากปล่อยว่างไว้
-    session_start();
     if (empty($source)) {
-        $source = $_SESSION['username'] ?? 'unknown_user'; // ใช้ 'unknown_user' ถ้า session ไม่มีค่า username
+        $source = $_SESSION['username'] ?? 'unknown_user';
     }
 
     // ตรวจสอบการเลือกประเภทอาหารและกำหนดโฟลเดอร์เก็บไฟล์
-    $targetDir = "";
-    if ($category == "อาหารคาว") {
-        $targetDir = "maindish_recipe/"; // โฟลเดอร์สำหรับอาหารคาว
-    } elseif ($category == "ของหวาน") {
-        $targetDir = "dessert_recipe/"; // โฟลเดอร์สำหรับของหวาน
-    } else {
-        echo json_encode(["success" => false, "message" => "กรุณาเลือกประเภทอาหารที่ถูกต้อง"]);
-        exit();
-    }
+    $targetDir = ($category == "อาหารคาว") ? "maindish_recipe/" : "dessert_recipe/";
 
     // ตรวจสอบและสร้างโฟลเดอร์หากยังไม่มี
     if (!is_dir($targetDir)) {
-        mkdir($targetDir, 0777, true);  // สร้างโฟลเดอร์พร้อมกำหนดสิทธิ์
+        mkdir($targetDir, 0777, true);
     }
 
     // ตรวจสอบการอัปโหลดไฟล์
@@ -45,15 +46,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $fileName = basename($_FILES["file-upload"]["name"]);
         $targetFilePath = $targetDir . $fileName;
 
-        // ตรวจสอบขนาดไฟล์ (ถ้าไฟล์ใหญ่เกินไป)
-        if ($_FILES["file-upload"]["size"] > 10000000) {  // 10MB
+        if ($_FILES["file-upload"]["size"] > 10000000) { // 10MB
             echo json_encode(["success" => false, "message" => "ไฟล์มีขนาดใหญ่เกินไป"]);
             exit();
         }
 
-        // ตรวจสอบไฟล์ที่อัปโหลด
         if (is_uploaded_file($_FILES["file-upload"]["tmp_name"])) {
-            // ย้ายไฟล์ไปยังโฟลเดอร์ที่เลือก
             if (move_uploaded_file($_FILES["file-upload"]["tmp_name"], $targetFilePath)) {
                 // อัปโหลดไฟล์สำเร็จ
             } else {
@@ -71,12 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // เพิ่มการบันทึกข้อมูลลงในฐานข้อมูล
     try {
-        // ตั้งค่าการเชื่อมต่อฐานข้อมูล
         $pdo = new PDO('mysql:host=localhost;dbname=recipe_database', 'root', '');
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        // เตรียมคำสั่ง SQL
-        $stmt = $pdo->prepare("INSERT INTO recipe (recipe_name, ingredients, steps, source, food_category, image_path, created_at) VALUES (:recipe_name, :ingredients, :steps, :source, :food_category, :image_path, NOW())");
+        // เตรียมคำสั่ง SQL โดยเพิ่มฟิลด์ user_id
+        $stmt = $pdo->prepare("INSERT INTO recipe (recipe_name, ingredients, steps, source, food_category, image_path, created_at, user_id) VALUES (:recipe_name, :ingredients, :steps, :source, :food_category, :image_path, NOW(), :user_id)");
 
         // กำหนดค่าพารามิเตอร์
         $stmt->bindParam(':recipe_name', $recipeName);
@@ -85,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':source', $source);
         $stmt->bindParam(':food_category', $category);
         $stmt->bindParam(':image_path', $targetFilePath);
+        $stmt->bindParam(':user_id', $user_id);
 
         // บันทึกข้อมูลลงฐานข้อมูล
         $stmt->execute();
