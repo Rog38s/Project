@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+// ตรวจสอบสิทธิ์เข้าถึงของผู้ใช้ (ต้องเป็นแอดมินเท่านั้น)
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     echo json_encode(['error' => 'Unauthorized access']);
     exit;
@@ -15,7 +16,7 @@ try {
     $user_db = new PDO('mysql:host=localhost;dbname=user_management', 'root', '');
     $user_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // คำสั่ง SQL เพื่อดึงข้อมูลรายงานพร้อมชื่อสูตรและชื่อผู้รายงาน
+    // คำสั่ง SQL เพื่อดึงข้อมูลรายงาน พร้อมชื่อสูตร ชื่อผู้รายงาน และ path รูปภาพ
     $query = "
         SELECT 
             r.id as report_id,
@@ -24,6 +25,7 @@ try {
             r.report_text,
             r.report_date,
             rc.recipe_name,
+            rc.image_path AS recipe_image,  -- เพิ่ม field image_path
             u.username as reporter_name
         FROM recipe_database.reports r
         INNER JOIN recipe_database.recipe rc ON r.recipe_id = rc.id
