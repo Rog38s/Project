@@ -332,7 +332,7 @@
         <h2>สูตรขนมยอดนิยม</h2>
         
         <!-- Container for dynamic popular desserts -->
-        <div id="popular-desserts"></div>
+        <div id="popular-dessert-recipes"></div>
     </div>
 </div>
 
@@ -364,10 +364,10 @@
         .catch(error => console.error('เกิดข้อผิดพลาด:', error));
 
     // ดึงข้อมูลสูตรขนมยอดนิยม
-    fetch('get_recipes.php?category=ของหวาน')
+    fetch('get_recipes.php?category=ของหวาน&type=popular')
         .then(response => response.json())
         .then(data => {
-            const popularDessertsContainer = document.getElementById('popular-desserts');
+            const popularDessertsContainer = document.getElementById('popular-dessert-recipes');
             data.forEach(recipe => {
                 const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
 

@@ -58,14 +58,14 @@ if ($recipe_id) {
             $query = "SELECT id, recipe_name, rating, source, created_at, image_path 
                       FROM recipe 
                       " . ($category ? "WHERE food_category = :food_category" : "") . "
-                      ORDER BY rating DESC, created_at DESC 
+                      ORDER BY rating DESC, created_at DESC
                       LIMIT 10";
             break;
         case 'ancient':
             $query = "SELECT id, recipe_name, rating, source, created_at, image_path 
                       FROM recipe 
                       " . ($category ? "WHERE food_category = :food_category" : "") . "
-                      ORDER BY created_at ASC 
+                      ORDER BY rating DESC, created_at ASC
                       LIMIT 10";
             break;
         default:
