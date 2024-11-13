@@ -211,35 +211,45 @@
     <script>
         // Fetch reported recipes
         fetch('get_reported_recipes.php')
-            .then(response => response.json())
-            .then(data => {
-                const reportList = document.getElementById('report-list');
-                
-                if (data.length === 0) {
-                    reportList.innerHTML = '<p>ไม่มีรายงานสูตรอาหาร</p>';
-                } else {
-                    data.forEach(report => {
-                        const reportItem = document.createElement('div');
-                        reportItem.className = 'report-item';
-                        
-                        reportItem.innerHTML = `
-                            <img src="${report.recipe_image || 'img/default-recipe.jpg'}" alt="${report.recipe_name}" class="recipe-image">
-                            <div class="report-details">
-                                <a href="get_recipes.php?id=${report.recipe_id}" class="recipe-title">${report.recipe_name}</a>
-                                <p class="report-info">ผู้รายงาน: ${report.reporter_name}</p>
-                                <p class="report-info">รายละเอียดการรายงาน: ${report.report_text}</p>
-                                <p class="report-info">วันที่รายงาน: ${new Date(report.report_date).toLocaleDateString('th-TH')}</p>
-                            </div>
-                            <div class="button-group">
-                                <button class="keep-btn" onclick="deleteReport(${parseInt(report.recipe_id, 10)})">เก็บสูตร</button>
-                                <button class="delete-btn" onclick="deleteRecipe(${parseInt(report.recipe_id, 10)})">ลบสูตรนี้</button>
-                            </div>
-                        `;
-                        reportList.appendChild(reportItem);
-                    });
-                }
-            })
-            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+        .then(response => response.json())
+        .then(data => {
+            const reportList = document.getElementById('report-list');
+            
+            if (data.length === 0) {
+                reportList.innerHTML = '<p>ไม่มีรายงานสูตรอาหาร</p>';
+            } else {
+                data.forEach(report => {
+                    const reportItem = document.createElement('div');
+                    reportItem.className = 'report-item';
+                    
+                    // ตรวจสอบ path รูปภาพและใช้รูปภาพ default ถ้าไม่มี
+                    const imagePath = report.recipe_image && report.recipe_image.trim() !== '' 
+                        ? report.recipe_image 
+                        : 'img/image.png';
+                    
+                    reportItem.innerHTML = `
+                        <img src="${imagePath}" alt="${report.recipe_name}" class="recipe-image"
+                            onerror="this.src='img/default-recipe.jpg'">
+                        <div class="report-details">
+                            <a href="recipe.html?recipe_id=${report.recipe_id}" class="recipe-title">${report.recipe_name}</a>
+                            <p class="report-info">ผู้รายงาน: ${report.reporter_name}</p>
+                            <p class="report-info">รายละเอียดการรายงาน: ${report.report_text}</p>
+                            <p class="report-info">วันที่รายงาน: ${new Date(report.report_date).toLocaleDateString('th-TH')}</p>
+                        </div>
+                        <div class="button-group">
+                            <button class="keep-btn" onclick="deleteReport(${report.recipe_id})">เก็บสูตร</button>
+                            <button class="delete-btn" onclick="deleteRecipe(${report.recipe_id})">ลบสูตรนี้</button>
+                        </div>
+                    `;
+                    reportList.appendChild(reportItem);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('เกิดข้อผิดพลาด:', error);
+            const reportList = document.getElementById('report-list');
+            reportList.innerHTML = '<p>เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
+        });
 
         // ฟังก์ชันสำหรับเก็บสูตรที่ถูกรายงาน
         function deleteReport(recipeId) {
