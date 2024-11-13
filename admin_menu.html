@@ -50,23 +50,7 @@
         .navbar .nav-links a.login {
             color: red;
         }
-
-        .navbar .profile-pic {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 5px;
-        }
-
-
-        /* เพิ่มสไตล์เพิ่มเติมสำหรับหน้า admin */
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-        }
-
+        
         .admin-container {
             max-width: 900px;
             margin: 20px auto;
@@ -78,29 +62,50 @@
 
         .report-item {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
             background-color: #fcf4ce;
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 15px;
+            gap: 20px;
+        }
+
+        .recipe-image {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
         }
 
         .report-details {
             flex-grow: 1;
-            margin-right: 20px;
         }
 
-        .report-details h3 {
-            margin: 0 0 5px;
+        .recipe-title {
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            display: block;
         }
 
-        .report-details p {
-            margin: 5px 0;
+        .recipe-title:hover {
+            color: #ff6b6b;
+        }
+
+        .report-info {
             color: #666;
+            margin: 5px 0;
         }
 
-        .delete-btn {
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .delete-btn, .keep-btn {
             background-color: #d9534f;
             color: white;
             border: none;
@@ -108,99 +113,108 @@
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
+            min-width: 120px;
         }
 
-        .delete-btn:hover {
-            background-color: #c9302c;
+        .keep-btn {
+            background-color: #5cb85c;
+        }
+
+        .navbar .profile-pic {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 5px;
         }
     </style>
 </head>
 <body>
-   <!-- ส่วน Navbar  -->
-   <div class="navbar">
-    <img src="img/logo.png" alt="Logo" class="logo">
-    <!-- Search Box -->
-    <div class="search-box">
-        <input type="text" id="searchInput" placeholder="ค้นหา">
-    </div>
+    <!-- ส่วน Navbar  -->
+    <div class="navbar">
+        <img src="img/logo.png" alt="Logo" class="logo">
+        <!-- Search Box -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="ค้นหา">
+        </div>
 
-    <script>
-        // จับเหตุการณ์เมื่อผู้ใช้กด Enter ในช่องค้นหา
-        document.getElementById('searchInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {  // ตรวจสอบว่าเป็นปุ่ม Enter หรือไม่
-                const query = e.target.value.trim();  // รับค่าที่กรอกในช่องค้นหา
-                if (query) {
-                    // ย้ายไปหน้า search.html พร้อมส่งค่าคำค้นหาเป็น query string
-                    window.location.href = `search.html?query=${encodeURIComponent(query)}`;
+        <script>
+            // จับเหตุการณ์เมื่อผู้ใช้กด Enter ในช่องค้นหา
+            document.getElementById('searchInput').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {  // ตรวจสอบว่าเป็นปุ่ม Enter หรือไม่
+                    const query = e.target.value.trim();  // รับค่าที่กรอกในช่องค้นหา
+                    if (query) {
+                        // ย้ายไปหน้า search.html พร้อมส่งค่าคำค้นหาเป็น query string
+                        window.location.href = `search.html?query=${encodeURIComponent(query)}`;
+                    }
                 }
-            }
-        });
-    </script>
-    <div class="nav-links">
-        <a href="main.html"><img src="img/homeicon.png" alt="หน้าแรก" class="icon" onclick="location.href='main.html'">หน้าแรก</a>
-        <a href="maindish.html"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='maindish.html'">สูตรอาหารคาว</a>
-        <a href="dessert.html"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='dessert.html'">สูตรของหวาน</a>
-        <a href="recommend.html"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='recommend.html'">แนะนำสูตร</a>
-        <a href="userid.html" id="user-link" class="login" onclick="location.href='userid.html'">
-            <img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="profile-pic">
-            <span id="username-display"></span>
-        </a>
-        <a href="logout.php" class="logout">
-            <img src="img/logout.png" alt="ลงชื่อออก" class="icon">
-            ลงชื่อออก
-        </a>
-        <a href="admin_menu.html" id="admin-menu-button" style="display: none;">
-            <img src="img/reporticon.png" alt="หน้ารายงานสูตร" class="icon">
-            หน้ารายงานสูตร
-        </a>
-    </div>
-</div>
-
-<script>
-    // ดึงข้อมูลผู้ใช้จาก backend
-    fetch('get_user_data.php')
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            console.error(data.error);
-            alert('เกิดข้อผิดพลาด: ' + data.error);
-        } else {
-            // แสดงชื่อผู้ใช้
-            const usernameDisplay = document.getElementById('username-display');
-            usernameDisplay.innerText = data.username;
-
-            // อัปเดตภาพโปรไฟล์ใน navbar ถ้ามีข้อมูลโปรไฟล์ ถ้าไม่มีก็ใช้รูปเริ่มต้น
-            const navbarProfileImage = document.getElementById('navbar-profile-image');
-            navbarProfileImage.src = data.profile_image ? data.profile_image : 'img/usericon.png';
-
-            // ตรวจสอบค่า role ของผู้ใช้และแสดง/ซ่อนปุ่ม "หน้ารายงานสูตร"
-            const adminMenuButton = document.getElementById('admin-menu-button');
-            if (data.role === 'admin') {
-                adminMenuButton.style.display = 'inline-block';
-            } else {
-                adminMenuButton.style.display = 'none';
-            }
-        }
-    })
-    .catch(error => console.error('เกิดข้อผิดพลาด:', error));
-</script>
-
-    <!-- Container สำหรับรายการสูตรที่ถูกรายงาน -->
-    <div class="admin-container">
-        <h2>จัดการรายงานสูตรอาหาร</h2>
-        <div id="report-list">
-            <!-- จะทำการดึงรายการสูตรที่ถูกรายงานมาแสดงที่นี่ -->
+            });
+        </script>
+        <div class="nav-links">
+            <a href="main.html"><img src="img/homeicon.png" alt="หน้าแรก" class="icon" onclick="location.href='main.html'">หน้าแรก</a>
+            <a href="maindish.html"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='maindish.html'">สูตรอาหารคาว</a>
+            <a href="dessert.html"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='dessert.html'">สูตรของหวาน</a>
+            <a href="recommend.html"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='recommend.html'">แนะนำสูตร</a>
+            <a href="userid.html" id="user-link" class="login" onclick="location.href='userid.html'">
+                <img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="profile-pic">
+                <span id="username-display"></span>
+            </a>
+            <a href="logout.php" class="logout">
+                <img src="img/logout.png" alt="ลงชื่อออก" class="icon">
+                ลงชื่อออก
+            </a>
+            <a href="admin_menu.html" id="admin-menu-button" style="display: none;">
+                <img src="img/reporticon.png" alt="หน้ารายงานสูตร" class="icon">
+                หน้ารายงานสูตร
+            </a>
+            
         </div>
     </div>
 
     <script>
-        // ดึงข้อมูลสูตรที่ถูกรายงาน
+        // ดึงข้อมูลผู้ใช้จาก backend
+        fetch('get_user_data.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.error);
+                alert('เกิดข้อผิดพลาด: ' + data.error);
+            } else {
+                // แสดงชื่อผู้ใช้
+                const usernameDisplay = document.getElementById('username-display');
+                usernameDisplay.innerText = data.username;
+
+                // อัปเดตภาพโปรไฟล์ใน navbar ถ้ามีข้อมูลโปรไฟล์ ถ้าไม่มีก็ใช้รูปเริ่มต้น
+                const navbarProfileImage = document.getElementById('navbar-profile-image');
+                navbarProfileImage.src = data.profile_image ? data.profile_image : 'img/usericon.png';
+
+                // ตรวจสอบค่า role ของผู้ใช้และแสดง/ซ่อนปุ่ม "หน้ารายงานสูตร"
+                const adminMenuButton = document.getElementById('admin-menu-button');
+                if (data.role === 'admin') {
+                    adminMenuButton.style.display = 'inline-block';
+                } else {
+                    adminMenuButton.style.display = 'none';
+                }
+            }
+        })
+        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+    </script>
+
+    <!-- Container for reported recipes -->
+    <div class="admin-container">
+        <h2>จัดการรายงานสูตรอาหาร</h2>
+        <div id="report-list">
+            <!-- Reported recipes will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        // Fetch reported recipes
         fetch('get_reported_recipes.php')
             .then(response => response.json())
             .then(data => {
                 const reportList = document.getElementById('report-list');
                 
-                // ตรวจสอบว่ามีสูตรที่ถูกรายงานหรือไม่
                 if (data.length === 0) {
                     reportList.innerHTML = '<p>ไม่มีรายงานสูตรอาหาร</p>';
                 } else {
@@ -209,34 +223,79 @@
                         reportItem.className = 'report-item';
                         
                         reportItem.innerHTML = `
+                            <img src="${report.recipe_image || 'img/default-recipe.jpg'}" alt="${report.recipe_name}" class="recipe-image">
                             <div class="report-details">
-                                <h3>${report.recipe_name}</h3>
-                                <p>ผู้รายงาน: ${report.reporter_name}</p>
-                                <p>รายละเอียดการรายงาน: ${report.report_text}</p>
+                                <a href="get_recipes.php?id=${report.recipe_id}" class="recipe-title">${report.recipe_name}</a>
+                                <p class="report-info">ผู้รายงาน: ${report.reporter_name}</p>
+                                <p class="report-info">รายละเอียดการรายงาน: ${report.report_text}</p>
+                                <p class="report-info">วันที่รายงาน: ${new Date(report.report_date).toLocaleDateString('th-TH')}</p>
                             </div>
-                            <button class="delete-btn" onclick="deleteRecipe(${report.recipe_id})">ลบสูตรนี้</button>
+                            <div class="button-group">
+                                <button class="keep-btn" onclick="deleteReport(${parseInt(report.recipe_id, 10)})">เก็บสูตร</button>
+                                <button class="delete-btn" onclick="deleteRecipe(${parseInt(report.recipe_id, 10)})">ลบสูตรนี้</button>
+                            </div>
                         `;
-
                         reportList.appendChild(reportItem);
                     });
                 }
             })
             .catch(error => console.error('เกิดข้อผิดพลาด:', error));
 
-        // ฟังก์ชันสำหรับลบสูตรอาหารที่ถูกรายงาน
+        // ฟังก์ชันสำหรับเก็บสูตรที่ถูกรายงาน
+        function deleteReport(recipeId) {
+            if (confirm('คุณต้องการเก็บสูตรนี้และลบรายงานออกหรือไม่?')) {
+                // Log เพื่อดูค่า recipeId ที่ได้รับ
+                console.log('Recipe ID:', recipeId);
+                
+                const formData = new FormData();
+                formData.append('recipe_id', recipeId.toString()); // แปลงเป็น string ก่อนส่ง
+        
+                fetch('delete_report.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    // Log ค่า response เพื่อ debug
+                    console.log('Response:', response);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Data received:', data); // Log ข้อมูลที่ได้รับกลับมา
+                    if (data.success) {
+                        alert(data.message || 'ลบรายงานสำเร็จ');
+                        location.reload();
+                    } else {
+                        alert('เกิดข้อผิดพลาด: ' + (data.error || 'ไม่สามารถลบรายงานได้'));
+                    }
+                })
+                .catch(error => {
+                    console.error('เกิดข้อผิดพลาด:', error);
+                    alert('เกิดข้อผิดพลาดในการส่งคำขอ');
+                });
+            }
+        }
+        
+        
+        // Function to delete recipe
         function deleteRecipe(recipeId) {
             if (confirm('คุณต้องการลบสูตรอาหารนี้หรือไม่?')) {
-                fetch(`delete_recipe.php?recipe_id=${recipeId}`, { method: 'POST' })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('ลบสูตรอาหารสำเร็จ');
-                            location.reload();
-                        } else {
-                            alert('เกิดข้อผิดพลาด: ' + (data.error || 'ไม่สามารถลบสูตรอาหารได้'));
-                        }
-                    })
-                    .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+                const formData = new FormData();
+                formData.append('recipe_id', recipeId.toString());
+        
+                fetch('admin_delete_recipe.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert('เกิดข้อผิดพลาด: ' + (data.error || 'ไม่สามารถลบสูตรอาหารได้'));
+                    }
+                })
+                .catch(error => console.error('เกิดข้อผิดพลาด:', error));
             }
         }
     </script>

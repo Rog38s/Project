@@ -1,26 +1,43 @@
 <?php
-// เชื่อมต่อฐานข้อมูล
-$dsn = "mysql:host=localhost;dbname=recipe_database;charset=utf8";
-$username = "root";
-$password = "";
+session_start();
+
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    echo json_encode(['error' => 'Unauthorized access']);
+    exit;
+}
 
 try {
-    $pdo = new PDO($dsn, $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // เชื่อมต่อกับฐานข้อมูล recipe_database
+    $recipe_db = new PDO('mysql:host=localhost;dbname=recipe_database', 'root', '');
+    $recipe_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    // เชื่อมต่อกับฐานข้อมูล user_management
+    $user_db = new PDO('mysql:host=localhost;dbname=user_management', 'root', '');
+    $user_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // ดึงข้อมูลสูตรอาหารที่ถูกรายงาน
-    $stmt = $pdo->prepare("
-        SELECT recipe.id, recipe.recipe_name, recipe.image_path, recipe.rating, recipe.source, recipe.created_at, reports.report_text 
-        FROM reports 
-        JOIN recipe ON reports.recipe_id = recipe.id
-    ");
+    // คำสั่ง SQL เพื่อดึงข้อมูลรายงานพร้อมชื่อสูตรและชื่อผู้รายงาน
+    $query = "
+        SELECT 
+            r.id as report_id,
+            r.recipe_id,
+            r.user_id as reporter_id,
+            r.report_text,
+            r.report_date,
+            rc.recipe_name,
+            u.username as reporter_name
+        FROM recipe_database.reports r
+        INNER JOIN recipe_database.recipe rc ON r.recipe_id = rc.id
+        INNER JOIN user_management.users u ON r.user_id = u.id
+        ORDER BY r.report_date DESC
+    ";
+
+    $stmt = $recipe_db->prepare($query);
     $stmt->execute();
+    $reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // เก็บข้อมูลในรูปแบบ JSON
-    $reportedRecipes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    echo json_encode($reportedRecipes);
+    echo json_encode($reports);
 
 } catch (PDOException $e) {
-    echo json_encode(['error' => 'เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล: ' . $e->getMessage()]);
+    echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
 }
 ?>
