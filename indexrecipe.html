@@ -295,8 +295,8 @@
             <h1 id="recipe-name">ชื่อสูตร</h1>
             <div class="rating">
                 <p id="recipe-rating">⭐</p>
-                <p id="recipe-source">โดย </p>
-                <p id="recipe-date">เมื่อ </p>
+                <p id="recipe-source">สร้างโดย </p>
+                <p id="recipe-date">วันที่สร้าง </p>
             </div>
             
             <h2>วัตถุดิบ</h2>
@@ -332,6 +332,15 @@
     </div>
 
     <script>
+        // ฟังก์ชันแปลงวันที่เป็น วัน/เดือน/ปี (พ.ศ.)
+    function formatDateThai(dateStr) {
+        const date = new Date(dateStr);
+        const day = date.getDate();
+        const month = date.toLocaleString('th-TH', { month: 'long' });
+        const year = date.getFullYear() + 543; // แปลงเป็น พ.ศ.
+        return `${day} ${month} ${year}`;
+    }
+    
         document.addEventListener('DOMContentLoaded', function() {
             const commentForm = document.querySelector('.comment-form');
             const commentInput = document.querySelector('.comment-input');

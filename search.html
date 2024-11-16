@@ -197,9 +197,10 @@
                     <div class="recipe-details">
                         <h2>${recipe.recipe_name}</h2>
                         <p>⭐ ${rating.toFixed(1)}</p>
-                        <p>โดย ${recipe.source}</p>
-                        <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
-                        <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
+                        <p>สร้างโดย ${recipe.source}</p>
+                        <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
+                        ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
+                        <a href="indexrecipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
                     </div>
                 `;
                 searchResultsContainer.appendChild(recipeElement);

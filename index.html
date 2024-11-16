@@ -224,26 +224,36 @@
     </div>
 
     <!-- Main Content Section -->
-    <div class="main-content">
-        <!-- Highlight Section -->
-        <div class="highlight-container">
-            <!-- Thai food image (left side) -->
-            <div class="image-container">
-                <img src="img/สำรับไทย.jpg" alt="สำรับไทย">
-            </div>
+<div class="main-content">
+    <!-- Highlight Section -->
+    <div class="highlight-container">
+        <!-- Thai food image (left side) -->
+        <div class="image-container">
+            <img src="img/สำรับไทย.jpg" alt="สำรับไทย">
+        </div>
 
-            <!-- Text and recipe items (right side) -->
-            <div class="text-container">
-                <h1>ใหม่และเป็นกระแส</h1><br>
+        <!-- Text and recipe items (right side) -->
+        <div class="text-container">
+            <h1>ใหม่และเป็นกระแส</h1><br>
 
-                <!-- Container for dynamic recipes -->
-                <div id="new-recipes"></div>
-            </div>
+            <!-- Container for dynamic recipes -->
+            <div id="new-recipes"></div>
         </div>
     </div>
+</div>
 
-    <script>
-        fetch('get_recipes.php')
+<script>
+    // ฟังก์ชันแปลงวันที่เป็น วัน/เดือน/ปี (พ.ศ.)
+    function formatDateThai(dateStr) {
+        const date = new Date(dateStr);
+        const day = date.getDate();
+        const month = date.toLocaleString('th-TH', { month: 'long' });
+        const year = date.getFullYear() + 543; // แปลงเป็น พ.ศ.
+        return `${day} ${month} ${year}`;
+    }
+
+    // ดึงข้อมูลสูตรใหม่
+    fetch('get_recipes.php')
         .then(response => response.json())
         .then(data => {
             const newRecipesContainer = document.getElementById('new-recipes');
@@ -257,8 +267,9 @@
                     <div>
                         <h2>${recipe.recipe_name}</h2>
                         <p>⭐ ${rating.toFixed(1)}</p>
-                        <p>โดย ${recipe.source}</p>
-                        <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
+                        <p>สร้างโดย ${recipe.source}</p>
+                        <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
+                        ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
                         <a href="indexrecipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
                     </div>
                 `;
@@ -266,10 +277,9 @@
             });
         })
         .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+</script>
 
-    </script>
-
-    <!-- Popular Recipes Section -->
+<!-- Popular Recipes Section -->
 <div class="popular-section">
     <!-- Popular Thai Foods -->
     <div class="category">
@@ -288,10 +298,9 @@
     </div>
 </div>
 
-
 <script>
     // ดึงข้อมูลสูตรอาหารคาวยอดนิยม
-    fetch('get_recipes.php?category=อาหารคาว')
+    fetch('get_recipes.php?category=อาหารคาว&type=popular')
         .then(response => response.json())
         .then(data => {
             const popularRecipesContainer = document.getElementById('popular-recipes');
@@ -305,8 +314,9 @@
                     <div>
                         <h2>${recipe.recipe_name}</h2>
                         <p>⭐ ${rating.toFixed(1)}</p>
-                        <p>โดย ${recipe.source}</p>
-                        <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
+                        <p>สร้างโดย ${recipe.source}</p>
+                        <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
+                        ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
                         <a href="indexrecipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
                     </div>
                 `;
@@ -330,8 +340,9 @@
                     <div>
                         <h2>${recipe.recipe_name}</h2>
                         <p>⭐ ${rating.toFixed(1)}</p>
-                        <p>โดย ${recipe.source}</p>
-                        <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
+                        <p>สร้างโดย ${recipe.source}</p>
+                        <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
+                        ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
                         <a href="indexrecipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
                     </div>
                 `;
@@ -340,6 +351,7 @@
         })
         .catch(error => console.error('เกิดข้อผิดพลาด:', error));
 </script>
+
 
 </body>
 </html>

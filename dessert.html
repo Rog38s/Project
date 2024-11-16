@@ -304,6 +304,15 @@
 
 <!-- JavaScript for Fetching Recipes -->
 <script>
+    // ฟังก์ชันแปลงวันที่เป็น วัน/เดือน/ปี (พ.ศ.)
+    function formatDateThai(dateStr) {
+        const date = new Date(dateStr);
+        const day = date.getDate();
+        const month = date.toLocaleString('th-TH', { month: 'long' });
+        const year = date.getFullYear() + 543; // แปลงเป็น พ.ศ.
+        return `${day} ${month} ${year}`;
+    }
+
     // Fetch New Dessert Recipes
     fetch('get_recipes.php?category=ของหวาน&type=new')
         .then(response => response.json())
@@ -319,8 +328,9 @@
                     <div>
                         <h2>${recipe.recipe_name}</h2>
                         <p>⭐ ${rating.toFixed(1)}</p>
-                        <p>โดย ${recipe.source}</p>
-                        <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
+                        <p>สร้างโดย ${recipe.source}</p>
+                        <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
+                        ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
                         <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
                     </div>
                 `;
@@ -344,8 +354,9 @@
                     <div>
                         <h2>${recipe.recipe_name}</h2>
                         <p>⭐ ${rating.toFixed(1)}</p>
-                        <p>โดย ${recipe.source}</p>
-                        <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
+                        <p>สร้างโดย ${recipe.source}</p>
+                        <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
+                        ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
                         <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
                     </div>
                 `;
@@ -369,8 +380,9 @@
                     <div>
                         <h2>${recipe.recipe_name}</h2>
                         <p>⭐ ${rating.toFixed(1)}</p>
-                        <p>โดย ${recipe.source}</p>
-                        <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
+                        <p>สร้างโดย ${recipe.source}</p>
+                        <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
+                        ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
                         <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
                     </div>
                 `;

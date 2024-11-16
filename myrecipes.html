@@ -231,6 +231,15 @@
     </div>
 
     <script>
+        // ฟังก์ชันแปลงวันที่เป็น วัน/เดือน/ปี (พ.ศ.)
+        function formatDateThai(dateStr) {
+            const date = new Date(dateStr);
+            const day = date.getDate();
+            const month = date.toLocaleString('th-TH', { month: 'long' });
+            const year = date.getFullYear() + 543; // แปลงเป็น พ.ศ.
+            return `${day} ${month} ${year}`;
+        }
+
         // ตรวจสอบการล็อกอิน
         fetch('get_user_data.php')
         .then(response => response.json())
@@ -268,10 +277,11 @@
                             recipeElement.innerHTML = `
                                 <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
                                 <div>
-                                    <h3>${recipe.recipe_name}</h3>
+                                    <h2>${recipe.recipe_name}</h2>
                                     <p>⭐ ${rating.toFixed(1)}</p>
-                                    <p>โดย ${recipe.source}</p>
-                                    <p>เมื่อ ${new Date(recipe.created_at).toLocaleDateString()}</p>
+                                    <p>สร้างโดย ${recipe.source}</p>
+                                    <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
+                                    ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
                                     <a href="my_recipe_edit.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
                                 </div>
                             `;

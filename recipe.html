@@ -356,8 +356,9 @@
             </h1>
             <div class="rating">
                 <p id="recipe-rating">⭐</p>
-                <p id="recipe-source">โดย </p>
-                <p id="recipe-date">เมื่อ </p>
+                <p id="recipe-source">สร้างโดย </p>
+                <p id="recipe-date">วันที่สร้าง </p>
+                <p id="recipe-updated-date" style="display: none;">วันที่ปรับปรุง </p>
             </div>
             
             <h2>วัตถุดิบ</h2>
@@ -394,6 +395,7 @@
     </div>
 
     <script>
+
         document.addEventListener('DOMContentLoaded', function() {
             const commentForm = document.querySelector('.comment-form');
             const commentInput = document.querySelector('.comment-input');
@@ -535,43 +537,58 @@
         // ดึงค่า recipe_id จาก URL
         const urlParams = new URLSearchParams(window.location.search);
         const recipeId = urlParams.get('recipe_id');
-
+    
+        // ฟังก์ชันสำหรับแปลงวันที่เป็นภาษาไทย
+        function formatDateThai(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            return new Date(dateString).toLocaleDateString('th-TH', options);
+        }
+    
         if (recipeId) {
             fetch(`get_recipes.php?recipe_id=${recipeId}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert('เกิดข้อผิดพลาด: ' + data.error);
-                } else {
-                    // ตั้งค่าชื่อสูตรและข้อมูลอื่นๆ ตามเดิม
-                    document.getElementById('recipe-title').innerText = data.recipe_name;
-                    document.getElementById('recipe-rating').innerText += data.rating;
-                    document.getElementById('recipe-source').innerText += " " + data.source;
-                    document.getElementById('recipe-date').innerText += new Date(data.created_at).toLocaleDateString();
-                    document.getElementById('recipe-image').src = data.image_path;
-
-                    // เพิ่ม URL สำหรับปุ่มรายงาน
-                    document.getElementById('report-link').href = `report.html?recipe_id=${recipeId}`;
-
-                    // ส่วนที่เหลือคงเดิม
-                    data.ingredients.split('\n').forEach(item => {
-                        const li = document.createElement('li');
-                        li.innerText = item.trim();
-                        document.getElementById('ingredients-list').appendChild(li);
-                    });
-
-                    data.steps.split('\n').forEach(step => {
-                        const div = document.createElement('div');
-                        div.innerText = step.trim();
-                        document.getElementById('steps-list').appendChild(div);
-                    });
-                }
-            })
-            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('เกิดข้อผิดพลาด: ' + data.error);
+                    } else {
+                        // ตั้งค่าชื่อสูตรและข้อมูลอื่นๆ
+                        document.getElementById('recipe-title').innerText = data.recipe_name;
+                        document.getElementById('recipe-rating').innerText += data.rating;
+                        document.getElementById('recipe-source').innerText += " " + data.source;
+                        document.getElementById('recipe-date').innerText += formatDateThai(data.created_at);
+                        document.getElementById('recipe-image').src = data.image_path;
+    
+                        // เพิ่ม URL สำหรับปุ่มรายงาน
+                        document.getElementById('report-link').href = `report.html?recipe_id=${recipeId}`;
+    
+                        // แสดงวันที่ปรับปรุงถ้ามี
+                        if (data.updated_at) {
+                            const updatedDateElement = document.getElementById('recipe-updated-date');
+                            updatedDateElement.innerText += formatDateThai(data.updated_at);
+                            updatedDateElement.style.display = "block";
+                        }
+    
+                        // เพิ่มวัตถุดิบ
+                        data.ingredients.split('\n').forEach(item => {
+                            const li = document.createElement('li');
+                            li.innerText = item.trim();
+                            document.getElementById('ingredients-list').appendChild(li);
+                        });
+    
+                        // เพิ่มขั้นตอนการทำ
+                        data.steps.split('\n').forEach(step => {
+                            const div = document.createElement('div');
+                            div.innerText = step.trim();
+                            document.getElementById('steps-list').appendChild(div);
+                        });
+                    }
+                })
+                .catch(error => console.error('เกิดข้อผิดพลาด:', error));
         } else {
             alert('ไม่พบ ID ของสูตรอาหาร');
         }
     </script>
+    
 
 </body>
 </html>
