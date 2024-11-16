@@ -11,6 +11,7 @@
             background-color: #f4f4f4;
         }
 
+        /* Navbar */
         .navbar {
             background-color: #ffffff;
             display: flex;
@@ -56,30 +57,55 @@
             color: red;
         }
 
-        /* Add styles for the image and text container */
-        .main-content {
-            padding: 20px;
-            
+
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: url('img/2006005.jpg') no-repeat center center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            text-align: center;
         }
 
-        .main-content .highlight-container {
+        .hero .text {
+            font-size: 48px;
+            font-weight: bold;
+            animation: fadeIn 3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 20px;
+        }
+
+        /* Highlight Section */
+        .highlight-container {
             display: flex;
             justify-content: space-between;
             background-color: #fcf4ce;
             margin-bottom: 10px;
             padding: 15px;
-            
-        }
-
-        .highlight-container .image-container {
-            flex: 1;
-            padding-right: 20px;
         }
 
         .highlight-container .image-container img {
             width: 100%;
             height: auto;
-            
         }
 
         .highlight-container .text-container {
@@ -91,11 +117,11 @@
 
         .text-container h1 {
             font-size: 25px;
-            color: #000000;
-            margin-bottom: 20px;
+            color: #000;
             text-align: center;
         }
 
+        /* Recipe Items */
         .text-container .recipe-item {
             display: flex;
             margin-bottom: 20px;
@@ -133,8 +159,8 @@
             text-decoration: underline;
         }
 
-        /* Popular Recipes Section */
-        .popular-section {
+         /* Popular Recipes Section */
+         .popular-section {
             display: flex;
             justify-content: space-between;
         }
@@ -142,7 +168,7 @@
         .popular-section .category {
             flex: 1;
             padding: 20px;
-            background-color: #deb887;
+            background-color: #e8f8ff;
             margin-right: 20px;
             border-radius: 10px;
         }
@@ -151,10 +177,11 @@
             margin-right: 0;
         }
 
-        .popular-section h2 {
+        .popular-section h1 {
             font-size: 25px;
-            margin-bottom: 20px;
+            color: #000;
             text-align: center;
+            
             
         }
 
@@ -162,10 +189,6 @@
             display: flex;
             margin-bottom: 20px;
             align-items: center;
-            background-color: #fdf5e6;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .category .recipe-item img {
@@ -199,7 +222,7 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
+   <!-- Navbar -->
     <div class="navbar">
         <!-- Logo -->
         <img src="img/logo.png" alt="Logo" class="logo">
@@ -232,6 +255,12 @@
             <a href="login.html" class="login"><img src="img/usericon.png" alt="เข้าสู่ระบบ" class="icon" onclick="location.href='login.html'">เข้าสู่ระบบ</a>
         </div>
     </div>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="text">สำรับคาว - หวานของไทย</div>
+    </div>
+  
 
     <!-- Main Content Section -->
 <div class="main-content">
@@ -293,7 +322,7 @@
 <div class="popular-section">
     <!-- Popular Thai Foods -->
     <div class="category">
-        <h2>สูตรอาหารคาวยอดนิยม</h2>
+        <h1>สูตรอาหารคาวยอดนิยม</h1><br>
         
         <!-- Container for dynamic popular recipes -->
         <div id="popular-recipes"></div>
@@ -301,7 +330,7 @@
 
     <!-- Popular Desserts -->
     <div class="category">
-        <h2>สูตรขนมยอดนิยม</h2>
+        <h1>สูตรขนมยอดนิยม</h1><br>
         
         <!-- Container for dynamic popular desserts -->
         <div id="popular-dessert-recipes"></div>
@@ -361,7 +390,5 @@
         })
         .catch(error => console.error('เกิดข้อผิดพลาด:', error));
 </script>
-
-
 </body>
 </html>
