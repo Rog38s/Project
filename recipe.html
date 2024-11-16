@@ -538,9 +538,9 @@
         const urlParams = new URLSearchParams(window.location.search);
         const recipeId = urlParams.get('recipe_id');
     
-        // ฟังก์ชันสำหรับแปลงวันที่เป็นภาษาไทย
+        // ฟังก์ชันสำหรับแปลงวันที่เป็นภาษาไทยโดยไม่แสดงเวลา
         function formatDateThai(dateString) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return new Date(dateString).toLocaleDateString('th-TH', options);
         }
     
@@ -588,6 +588,7 @@
             alert('ไม่พบ ID ของสูตรอาหาร');
         }
     </script>
+    
     
 
 </body>
