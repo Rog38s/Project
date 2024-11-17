@@ -11,6 +11,7 @@
             background-color: #f4f4f4;
         }
 
+        /* Navbar */
         .navbar {
             background-color: #ffffff;
             display: flex;
@@ -56,29 +57,63 @@
             color: red;
         }
 
-        /* Add styles for the image and text container */
+        .navbar .profile-pic {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 5px;
+        }
+
+
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: url('img/2006005.jpg') no-repeat center center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            text-align: center;
+        }
+
+        .hero .text {
+            font-size: 48px;
+            font-weight: bold;
+            animation: fadeIn 3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Main Content */
         .main-content {
             padding: 20px;
         }
 
-        .main-content .highlight-container {
+        /* Highlight Section */
+        .highlight-container {
             display: flex;
             justify-content: space-between;
             background-color: #fcf4ce;
             margin-bottom: 10px;
             padding: 15px;
-            
-        }
-
-        .highlight-container .image-container {
-            flex: 1;
-            padding-right: 20px;
         }
 
         .highlight-container .image-container img {
             width: 100%;
             height: auto;
-            
         }
 
         .highlight-container .text-container {
@@ -90,15 +125,19 @@
 
         .text-container h1 {
             font-size: 25px;
-            color: #000000;
-            margin-bottom: 20px;
+            color: #000;
             text-align: center;
         }
 
+        /* Recipe Items */
         .text-container .recipe-item {
             display: flex;
             margin-bottom: 20px;
             align-items: center;
+            background-color: #fdf5e6;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .text-container .recipe-item img {
@@ -128,10 +167,21 @@
             text-decoration: underline;
         }
 
-        /* Popular Recipes Section */
-        .popular-section {
+         /* Popular Recipes Section */
+         .popular-section {
             display: flex;
             justify-content: space-between;
+        }
+
+        /* Recipe Items */
+        .popular-section .recipe-item {
+            display: flex;
+            margin-bottom: 20px;
+            align-items: center;
+            background-color: #fdf5e6;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .popular-section .category {
@@ -146,9 +196,11 @@
             margin-right: 0;
         }
 
-        .popular-section h2 {
-            font-size: 22px;
-            margin-bottom: 20px;
+        .popular-section h1 {
+            font-size: 25px;
+            color: #000;
+            text-align: center;
+            
             
         }
 
@@ -189,7 +241,7 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
+   <!-- Navbar -->
     <div class="navbar">
         <!-- Logo -->
         <img src="img/logo.png" alt="Logo" class="logo">
@@ -213,145 +265,183 @@
         </script>
 
         
-        <!-- Navigation Links -->
         <div class="nav-links">
-            <a href="index.html"><img src="img/homeicon.png" alt="หน้าแรก" class="icon">หน้าแรก</a>
-            <a href="indexmaindish.html"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='indexmaindish.html'">สูตรอาหารคาว</a>
-            <a href="indexdessert.html"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='indexdessert.html'">สูตรของหวาน</a>
-            <a href="login.html"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='login.html'">แนะนำสูตร</a>
-            <a href="login.html" class="login"><img src="img/usericon.png" alt="เข้าสู่ระบบ" class="icon" onclick="location.href='login.html'">เข้าสู่ระบบ</a>
+            <a href="main.html"><img src="img/homeicon.png" alt="หน้าแรก" class="icon" onclick="location.href='main.html'">หน้าแรก</a>
+            <a href="maindish.html"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='maindish.html'">สูตรอาหารคาว</a>
+            <a href="dessert.html"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='dessert.html'">สูตรของหวาน</a>
+            <a href="recommend.html"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='recommend.html'">แนะนำสูตร</a>
+            <a href="userid.html" id="user-link" class="login" onclick="location.href='userid.html'">
+                <img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="profile-pic">
+                <span id="username-display"></span>
+            </a>
+            <a href="logout.php" class="logout">
+                <img src="img/logout.png" alt="ลงชื่อออก" class="icon">
+                ลงชื่อออก
+            </a>
+            <a href="admin_menu.html" id="admin-menu-button" style="display: none;">
+                <img src="img/reporticon.png" alt="หน้ารายงานสูตร" class="icon">
+                หน้ารายงานสูตร
+            </a>
+            
         </div>
     </div>
+
+    <script>
+        // ดึงข้อมูลผู้ใช้จาก backend
+        fetch('get_user_data.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.error);
+                alert('เกิดข้อผิดพลาด: ' + data.error);
+            } else {
+                // แสดงชื่อผู้ใช้
+                const usernameDisplay = document.getElementById('username-display');
+                usernameDisplay.innerText = data.username;
+
+                // อัปเดตภาพโปรไฟล์ใน navbar ถ้ามีข้อมูลโปรไฟล์ ถ้าไม่มีก็ใช้รูปเริ่มต้น
+                const navbarProfileImage = document.getElementById('navbar-profile-image');
+                navbarProfileImage.src = data.profile_image ? data.profile_image : 'img/usericon.png';
+
+                // ตรวจสอบค่า role ของผู้ใช้และแสดง/ซ่อนปุ่ม "หน้ารายงานสูตร"
+                const adminMenuButton = document.getElementById('admin-menu-button');
+                if (data.role === 'admin') {
+                    adminMenuButton.style.display = 'inline-block';
+                } else {
+                    adminMenuButton.style.display = 'none';
+                }
+            }
+        })
+        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+    </script>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="text">สำรับคาว - หวานของไทย</div>
+    </div>
+  
 
     <!-- Main Content Section -->
-<div class="main-content">
-    <!-- Highlight Section -->
-    <div class="highlight-container">
-        <!-- Thai food image (left side) -->
-        <div class="image-container">
-            <img src="img/สำรับไทย.jpg" alt="สำรับไทย">
+    <div class="main-content">
+        <!-- Highlight Section -->
+        <div class="highlight-container">
+            <!-- Dessert image (left side) -->
+            <div class="image-container">
+                <img src="img/สำรับไทย.jpg" alt="สำรับไทย">
+            </div>
+
+            <!-- Text and recipe items (right side) -->
+            <div class="text-container">
+                <h1>สูตรของหวานมาใหม่</h1>
+                <div id="new-dessert-recipes"></div>
+            </div>
         </div>
 
-        <!-- Text and recipe items (right side) -->
-        <div class="text-container">
-            <h1>ใหม่และเป็นกระแส</h1><br>
+        <!-- Popular Recipes Section -->
+        <div class="popular-section">
+            <!-- Popular Desserts -->
+            <div class="category">
+                <h2>สูตรของหวานยอดนิยม</h2>
+                <div id="popular-dessert-recipes"></div>
+            </div>
 
-            <!-- Container for dynamic recipes -->
-            <div id="new-recipes"></div>
+            <!-- Ancient Desserts -->
+            <div class="category">
+                <h2>สูตรของหวานโบราณหากินยาก</h2>
+                <div id="ancient-dessert-recipes"></div>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    // ฟังก์ชันแปลงวันที่เป็น วัน/เดือน/ปี (พ.ศ.)
-    function formatDateThai(dateStr) {
-        const date = new Date(dateStr);
-        const day = date.getDate();
-        const month = date.toLocaleString('th-TH', { month: 'long' });
-        const year = date.getFullYear() + 543; // แปลงเป็น พ.ศ.
-        return `${day} ${month} ${year}`;
-    }
+    <!-- JavaScript for Fetching Recipes -->
+    <script>
+        // ฟังก์ชันแปลงวันที่เป็น วัน/เดือน/ปี (พ.ศ.)
+        function formatDateThai(dateStr) {
+            const date = new Date(dateStr);
+            const day = date.getDate();
+            const month = date.toLocaleString('th-TH', { month: 'long' });
+            const year = date.getFullYear() + 543; // แปลงเป็น พ.ศ.
+            return `${day} ${month} ${year}`;
+        }
 
-    // ดึงข้อมูลสูตรใหม่
-    fetch('get_recipes.php')
-        .then(response => response.json())
-        .then(data => {
-            const newRecipesContainer = document.getElementById('new-recipes');
-            data.forEach(recipe => {
-                const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
+        // Fetch New Dessert Recipes
+        fetch('get_recipes.php?category=ของหวาน&type=new')
+            .then(response => response.json())
+            .then(data => {
+                const newDessertsContainer = document.getElementById('new-dessert-recipes');
+                data.forEach(recipe => {
+                    const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
 
-                const recipeElement = document.createElement('div');
-                recipeElement.classList.add('recipe-item');
-                recipeElement.innerHTML = `
-                    <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
-                    <div>
-                        <h2>${recipe.recipe_name}</h2>
-                        <p>⭐ ${rating.toFixed(1)}</p>
-                        <p>สร้างโดย ${recipe.source}</p>
-                        <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
-                        ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
-                        <a href="indexrecipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
-                    </div>
-                `;
-                newRecipesContainer.appendChild(recipeElement);
-            });
-        })
-        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
-</script>
+                    const recipeElement = document.createElement('div');
+                    recipeElement.classList.add('recipe-item');
+                    recipeElement.innerHTML = `
+                        <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
+                        <div>
+                            <h2>${recipe.recipe_name}</h2>
+                            <p>⭐ ${rating.toFixed(1)}</p>
+                            <p>สร้างโดย ${recipe.source}</p>
+                            <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
+                            ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
+                            <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
+                        </div>
+                    `;
+                    newDessertsContainer.appendChild(recipeElement);
+                });
+            })
+            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
 
-<!-- Popular Recipes Section -->
-<div class="popular-section">
-    <!-- Popular Thai Foods -->
-    <div class="category">
-        <h2>สูตรอาหารคาวยอดนิยม</h2>
-        
-        <!-- Container for dynamic popular recipes -->
-        <div id="popular-recipes"></div>
-    </div>
+        // Fetch Popular Dessert Recipes
+        fetch('get_recipes.php?category=ของหวาน&type=popular')
+            .then(response => response.json())
+            .then(data => {
+                const popularDessertsContainer = document.getElementById('popular-dessert-recipes');
+                data.forEach(recipe => {
+                    const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
 
-    <!-- Popular Desserts -->
-    <div class="category">
-        <h2>สูตรขนมยอดนิยม</h2>
-        
-        <!-- Container for dynamic popular desserts -->
-        <div id="popular-dessert-recipes"></div>
-    </div>
-</div>
+                    const recipeElement = document.createElement('div');
+                    recipeElement.classList.add('recipe-item');
+                    recipeElement.innerHTML = `
+                        <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
+                        <div>
+                            <h2>${recipe.recipe_name}</h2>
+                            <p>⭐ ${rating.toFixed(1)}</p>
+                            <p>สร้างโดย ${recipe.source}</p>
+                            <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
+                            ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
+                            <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
+                        </div>
+                    `;
+                    popularDessertsContainer.appendChild(recipeElement);
+                });
+            })
+            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
 
-<script>
-    // ดึงข้อมูลสูตรอาหารคาวยอดนิยม
-    fetch('get_recipes.php?category=อาหารคาว&type=popular')
-        .then(response => response.json())
-        .then(data => {
-            const popularRecipesContainer = document.getElementById('popular-recipes');
-            data.forEach(recipe => {
-                const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
+        // Fetch Ancient Dessert Recipes
+        fetch('get_recipes.php?category=ของหวาน&type=ancient')
+            .then(response => response.json())
+            .then(data => {
+                const ancientDessertsContainer = document.getElementById('ancient-dessert-recipes');
+                data.forEach(recipe => {
+                    const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
 
-                const recipeElement = document.createElement('div');
-                recipeElement.classList.add('recipe-item');
-                recipeElement.innerHTML = `
-                    <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
-                    <div>
-                        <h2>${recipe.recipe_name}</h2>
-                        <p>⭐ ${rating.toFixed(1)}</p>
-                        <p>สร้างโดย ${recipe.source}</p>
-                        <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
-                        ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
-                        <a href="indexrecipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
-                    </div>
-                `;
-                popularRecipesContainer.appendChild(recipeElement);
-            });
-        })
-        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
-
-    // ดึงข้อมูลสูตรขนมยอดนิยม
-    fetch('get_recipes.php?category=ของหวาน&type=popular')
-        .then(response => response.json())
-        .then(data => {
-            const popularDessertsContainer = document.getElementById('popular-dessert-recipes');
-            data.forEach(recipe => {
-                const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
-
-                const recipeElement = document.createElement('div');
-                recipeElement.classList.add('recipe-item');
-                recipeElement.innerHTML = `
-                    <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
-                    <div>
-                        <h2>${recipe.recipe_name}</h2>
-                        <p>⭐ ${rating.toFixed(1)}</p>
-                        <p>สร้างโดย ${recipe.source}</p>
-                        <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
-                        ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
-                        <a href="indexrecipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
-                    </div>
-                `;
-                popularDessertsContainer.appendChild(recipeElement);
-            });
-        })
-        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
-</script>
-
-
+                    const recipeElement = document.createElement('div');
+                    recipeElement.classList.add('recipe-item');
+                    recipeElement.innerHTML = `
+                        <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
+                        <div>
+                            <h2>${recipe.recipe_name}</h2>
+                            <p>⭐ ${rating.toFixed(1)}</p>
+                            <p>สร้างโดย ${recipe.source}</p>
+                            <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
+                            ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
+                            <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
+                        </div>
+                    `;
+                    ancientDessertsContainer.appendChild(recipeElement);
+                });
+            })
+            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+    </script>
+    
 </body>
 </html>

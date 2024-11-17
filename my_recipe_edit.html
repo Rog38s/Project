@@ -436,6 +436,7 @@
                 <p id="recipe-rating">⭐</p>
                 <p id="recipe-source">สร้างโดย </p>
                 <p id="recipe-date">วันที่สร้าง </p>
+                <p id="recipe-updated-date" style="display: none;">วันที่ปรับปรุง </p>
             </div>
             
             <h2>วัตถุดิบ</h2>
@@ -613,6 +614,12 @@
         const urlParams = new URLSearchParams(window.location.search);
         const recipeId = urlParams.get('recipe_id');
 
+         // ฟังก์ชันสำหรับแปลงวันที่เป็นภาษาไทยโดยไม่แสดงเวลา
+         function formatDateThai(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('th-TH', options);
+        }
+
         if (recipeId) {
             fetch(`get_recipes.php?recipe_id=${recipeId}`)
                 .then(response => response.json())
@@ -624,7 +631,7 @@
                         document.getElementById('recipe-name').innerText = data.recipe_name;
                         document.getElementById('recipe-rating').innerText += data.rating;
                         document.getElementById('recipe-source').innerText += " " + data.source; // เพิ่มเว้นวรรคก่อนชื่อผู้ใช้
-                        document.getElementById('recipe-date').innerText += new Date(data.created_at).toLocaleDateString();
+                        document.getElementById('recipe-date').innerText += formatDateThai(data.created_at);
                         document.getElementById('recipe-image').src = data.image_path;
 
                         // แสดงวัตถุดิบ
@@ -633,6 +640,13 @@
                             li.innerText = item.trim();
                             document.getElementById('ingredients-list').appendChild(li);
                         });
+
+                        // แสดงวันที่ปรับปรุงถ้ามี
+                        if (data.updated_at) {
+                            const updatedDateElement = document.getElementById('recipe-updated-date');
+                            updatedDateElement.innerText += formatDateThai(data.updated_at);
+                            updatedDateElement.style.display = "block";
+                        }
 
                         // แสดงขั้นตอนการทำโดยไม่มีจุดนำหน้า
                         data.steps.split('\n').forEach(step => {

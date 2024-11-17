@@ -149,6 +149,15 @@
 </div>
 
 <script>
+    // ฟังก์ชันแปลงวันที่เป็น วัน/เดือน/ปี (พ.ศ.)
+    function formatDateThai(dateStr) {
+        const date = new Date(dateStr);
+        const day = date.getDate();
+        const month = date.toLocaleString('th-TH', { month: 'long' });
+        const year = date.getFullYear() + 543; // แปลงเป็น พ.ศ.
+        return `${day} ${month} ${year}`;
+    }
+    
     // Get the search query from the URL
     const urlParams = new URLSearchParams(window.location.search);
     const query = urlParams.get('query');
