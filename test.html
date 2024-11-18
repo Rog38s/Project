@@ -3,28 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thai Foods and Desserts</title>
+    <title>สูตรอาหาร</title>
     <style>
         body {
             margin: 0;
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
         }
-
-        /* Navbar */
         .navbar {
             background-color: #ffffff;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: center; 
             padding: 10px 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-
         .navbar img.logo {
             height: 70px;
         }
-
         .navbar .search-box {
             width: 300px;
             margin: 0 20px;
@@ -33,30 +29,107 @@
             border-radius: 20px;
             padding: 5px 10px;
         }
-
         .navbar .nav-links {
             display: flex;
             align-items: center;
         }
-
         .navbar .nav-links a {
             text-decoration: none;
             color: #000;
-            margin-left: 20px;
+            margin-left: 20px; 
             font-size: 16px;
             display: flex;
             align-items: center;
         }
-
         .navbar .nav-links img.icon {
             margin-right: 5px;
             height: 24px;
         }
-
         .navbar .nav-links a.login {
             color: red;
         }
+        /* Recipe styles */
+        .recipe-container {
+            max-width: 1000px;
+            margin: 0px auto;
+            padding: 20px;
+            background-color: #fcf4ce;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
 
+        .recipe-image {
+            flex: 1;
+            max-width: 45%;
+            margin-right: 20px;
+        }
+
+        .recipe-image img {
+            width: 100%;
+            height: auto;
+        }
+
+        .recipe-details {
+            flex: 1;
+            max-width: 45%;
+        }
+
+        .recipe-details h1 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .recipe-details .rating {
+            margin-bottom: 10px;
+            line-height: 1.6; /* เพิ่มระยะห่างระหว่างบรรทัด */
+        }
+
+        .recipe-details .rating span {
+            font-size: 18px;
+        }
+
+        .recipe-details .rating p {
+            margin: 0 ;
+        }
+
+        .recipe-details h2 {
+            color: #333;
+            font-size: 20px;
+            margin-top: 20px;
+        }
+
+        .recipe-details ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .recipe-details ul li {
+            margin-bottom: 10px;
+        }
+
+        .steps {
+            max-width: 1000px;
+            margin: 0px auto;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+
+        .steps h2 {
+            color: #000000;
+            font-size: 20px;
+            margin-top: 0; /* ให้วิธีทำอยู่ด้านบน */
+            margin-bottom: 10px;
+        }
+
+        /* ลบจุดนำหน้าขั้นตอนการทำ */
+        #steps-list div {
+            list-style: none;
+            margin-bottom: 10px;
+        }
+
+        /* Navbar profile picture */
         .navbar .profile-pic {
             width: 30px;
             height: 30px;
@@ -64,188 +137,200 @@
             object-fit: cover;
             margin-right: 5px;
         }
-
-
-
-        /* Hero Section */
-        .hero {
-            position: relative;
-            width: 100%;
-            height: 400px;
-            background: url('img/2006005.jpg') no-repeat center center/cover;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-            text-align: center;
-        }
-
-        .hero .text {
-            font-size: 48px;
-            font-weight: bold;
-            animation: fadeIn 3s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Main Content */
-        .main-content {
+        .comments-section {
+            max-width: 1000px;
+            margin: 20px auto;
             padding: 20px;
+            background-color: #ffffff;
         }
 
-        /* Highlight Section */
-        .highlight-container {
+        .comment-form {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .star-rating {
             display: flex;
-            justify-content: space-between;
-            background-color: #fcf4ce;
+            flex-direction: row;
             margin-bottom: 10px;
-            padding: 15px;
         }
-
-        .highlight-container .image-container img {
-            width: 100%;
-            height: auto;
+        
+        .star-rating input[type="radio"] {
+            display: none;
         }
-
-        .highlight-container .text-container {
-            flex: 1;
-            background-color: #fcf4ce;
-            padding: 10px;
-            border-radius: 10px;
-        }
-
-        .text-container h1 {
+        
+        .star-rating label {
             font-size: 25px;
-            color: #000;
-            text-align: center;
+            color: #ddd;
+            cursor: pointer;
+        }
+        
+        .star-rating label:hover,
+        .star-rating label:hover ~ label,
+        .star-rating input[type="radio"]:checked ~ label {
+            color: #ffd700;
+        }
+        
+        /* สลับทิศทางของ hover effect */
+        .star-rating {
+            direction: rtl;
+        }
+        
+        .star-rating label {
+            direction: ltr;
         }
 
-        /* Recipe Items */
-        .text-container .recipe-item {
-            display: flex;
-            margin-bottom: 20px;
-            align-items: center;
-            background-color: #fdf5e6;
+        .comment-input {
+            width: 100%;
+            min-height: 80px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        .comment-submit {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .comment-submit:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .comment-submit:hover:not(:disabled) {
+            background-color: #45a049;
+        }
+
+        .comments-list {
+            margin-top: 20px;
+        }
+
+        .comment-item {
+            background-color: #ffffff;
             padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        .text-container .recipe-item img {
-            width: 240px;
-            height: 190px;
-            border-radius: 10px;
-            margin-right: 15px;
-        }
-
-        .text-container .recipe-item h2 {
-            font-size: 18px;
-            margin: 0;
-        }
-
-        .text-container .recipe-item p {
-            font-size: 14px;
-            color: #555;
-        }
-
-        .text-container .recipe-item a {
-            font-size: 14px;
-            color: #d9534f;
-            text-decoration: none;
-        }
-
-        .text-container .recipe-item a:hover {
-            text-decoration: underline;
-        }
-
-         /* Popular Recipes Section */
-         .popular-section {
+        .comment-header {
             display: flex;
             justify-content: space-between;
-        }
-
-        /* Recipe Items */
-        .popular-section .recipe-item {
-            display: flex;
-            margin-bottom: 20px;
             align-items: center;
-            background-color: #fdf5e6;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 8px;
         }
 
-        .popular-section .category {
-            flex: 1;
-            padding: 20px;
-            background-color: #e8f8ff;
-            margin-right: 20px;
-            border-radius: 10px;
+        .comment-stars {
+            color: #ffd700;
+            letter-spacing: 2px;
         }
 
-        .popular-section .category:last-child {
-            margin-right: 0;
+        .comment-text {
+            margin: 8px 0;
+            line-height: 1.4;
         }
 
-        .popular-section h1 {
-            font-size: 25px;
-            color: #000;
-            text-align: center;
-            
-            
+        .comment-user {
+            font-weight: bold;
+            color: #333;
         }
 
-        .category .recipe-item {
-            display: flex;
-            margin-bottom: 20px;
+        .comment-date {
+            color: #666;
+            font-size: 0.85em;
+        }
+
+        .report-link {
+            font-size: 14px;
+            text-decoration: none;
+            background-color: #ff4444;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 4px;
+            margin-left: 10px;
+            transition: background-color 0.3s ease;
+            display: inline-flex;
             align-items: center;
         }
-
-        .category .recipe-item img {
-            width: 240px; 
-            height: 190px; 
-            object-fit: cover; 
-            border-radius: 10px;
-            margin-right: 15px;
-        }
-
-        .category .recipe-item h2 {
-            font-size: 18px;
-            margin: 0;
-        }
-
-        .category .recipe-item p {
-            font-size: 14px;
-            color: #555;
-        }
-
-        .category .recipe-item a {
-            font-size: 14px;
-            color: #d9534f;
+        
+        .report-link:hover {
+            background-color: #cc0000;
             text-decoration: none;
         }
 
-        .category .recipe-item a:hover {
-            text-decoration: underline;
+        .admin-feedback-section {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+        
+        .admin-feedback-form {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-feedback-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        
+        .admin-feedback-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .admin-submit, .admin-cancel {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .admin-submit {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .admin-cancel {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .admin-submit:hover {
+            background-color: #45a049;
+        }
+        
+        .admin-cancel:hover {
+            background-color: #da190b;
         }
 
+        
     </style>
 </head>
 <body>
-   <!-- Navbar -->
+    <!-- ส่วน Navbar  -->
     <div class="navbar">
-        <!-- Logo -->
         <img src="img/logo.png" alt="Logo" class="logo">
-        
         <!-- Search Box -->
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="ค้นหา">
@@ -257,19 +342,18 @@
                 if (e.key === 'Enter') {  // ตรวจสอบว่าเป็นปุ่ม Enter หรือไม่
                     const query = e.target.value.trim();  // รับค่าที่กรอกในช่องค้นหา
                     if (query) {
-                        // ย้ายไปหน้า indexsearch.html พร้อมส่งค่าคำค้นหาเป็น query string
-                        window.location.href = `indexsearch.html?query=${encodeURIComponent(query)}`;
+                        // ย้ายไปหน้า search.html พร้อมส่งค่าคำค้นหาเป็น query string
+                        window.location.href = `search.html?query=${encodeURIComponent(query)}`;
                     }
                 }
             });
         </script>
-
-        
         <div class="nav-links">
             <a href="main.html"><img src="img/homeicon.png" alt="หน้าแรก" class="icon" onclick="location.href='main.html'">หน้าแรก</a>
             <a href="maindish.html"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='maindish.html'">สูตรอาหารคาว</a>
             <a href="dessert.html"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='dessert.html'">สูตรของหวาน</a>
             <a href="recommend.html"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='recommend.html'">แนะนำสูตร</a>
+            <a href="notification.html"><img src="img/noti.png" alt="การแจ้งเตือน" class="icon" onclick="location.href='notification.html'">การแจ้งเตือน</a>
             <a href="userid.html" id="user-link" class="login" onclick="location.href='userid.html'">
                 <img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="profile-pic">
                 <span id="username-display"></span>
@@ -314,134 +398,323 @@
         })
         .catch(error => console.error('เกิดข้อผิดพลาด:', error));
     </script>
+</body>
+</html>
 
-    <!-- Hero Section -->
-    <div class="hero">
-        <div class="text">สำรับคาว - หวานของไทย</div>
+    <!-- Recipe Content -->
+    <div class="recipe-container">
+        <div class="recipe-image">
+            <img id="recipe-image" src="" alt="รูปอาหาร">
+        </div>
+        <div class="recipe-details">
+            <h1 id="recipe-name">
+                <span id="recipe-title">ชื่อสูตร</span>
+                <a href="#" id="report-link" class="report-link">รายงาน</a>
+            </h1>
+            <div class="rating">
+                <p id="recipe-rating">⭐</p>
+                <p id="recipe-source">สร้างโดย </p>
+                <p id="recipe-date">วันที่สร้าง </p>
+                <p id="recipe-updated-date" style="display: none;">วันที่ปรับปรุง </p>
+            </div>
+            
+            <h2>วัตถุดิบ</h2>
+            <ul id="ingredients-list"></ul>
+        </div>
+        
     </div>
-  
-
-    <!-- Main Content Section -->
-    <div class="main-content">
-        <!-- Highlight Section -->
-        <div class="highlight-container">
-            <!-- Dessert image (left side) -->
-            <div class="image-container">
-                <img src="img/สำรับไทย.jpg" alt="สำรับไทย">
-            </div>
-
-            <!-- Text and recipe items (right side) -->
-            <div class="text-container">
-                <h1>สูตรของหวานมาใหม่</h1>
-                <div id="new-dessert-recipes"></div>
-            </div>
-        </div>
-
-        <!-- Popular Recipes Section -->
-        <div class="popular-section">
-            <!-- Popular Desserts -->
-            <div class="category">
-                <h2>สูตรของหวานยอดนิยม</h2>
-                <div id="popular-dessert-recipes"></div>
-            </div>
-
-            <!-- Ancient Desserts -->
-            <div class="category">
-                <h2>สูตรของหวานโบราณหากินยาก</h2>
-                <div id="ancient-dessert-recipes"></div>
-            </div>
-        </div>
+    <div class="steps">
+        <h2>วิธีทำ</h2>
+        <div id="steps-list"></div> <!-- เปลี่ยนจาก ul เป็น div -->
     </div>
 
-    <!-- JavaScript for Fetching Recipes -->
+    <!-- Add this section before the comments-section div -->
+    <div class="admin-feedback-section" id="admin-feedback-form" style="display: none;">
+        <div class="steps">
+            <h2>คำแนะนำจากแอดมิน</h2>
+            <div class="admin-feedback-form">
+                <textarea class="admin-feedback-input" placeholder="เขียนคำแนะนำสำหรับสูตรนี้..."></textarea>
+                <div class="admin-feedback-buttons">
+                    <button type="button" class="admin-submit">ส่งคำแนะนำ</button>
+                    <button type="button" class="admin-cancel">ยกเลิก</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
-        // ฟังก์ชันแปลงวันที่เป็น วัน/เดือน/ปี (พ.ศ.)
-        function formatDateThai(dateStr) {
-            const date = new Date(dateStr);
-            const day = date.getDate();
-            const month = date.toLocaleString('th-TH', { month: 'long' });
-            const year = date.getFullYear() + 543; // แปลงเป็น พ.ศ.
-            return `${day} ${month} ${year}`;
+        document.addEventListener('DOMContentLoaded', function() {
+            // เช็คว่าผู้ใช้เป็น admin หรือไม่
+            fetch('check_admin.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.is_admin) {
+                    document.getElementById('admin-feedback-form').style.display = 'block';
+                    
+                    // เพิ่ม event listeners สำหรับปุ่มต่างๆ
+                    const submitButton = document.querySelector('.admin-submit');
+                    const cancelButton = document.querySelector('.admin-cancel');
+                    const feedbackInput = document.querySelector('.admin-feedback-input');
+                    
+                    submitButton.addEventListener('click', function() {
+                        const feedback = feedbackInput.value.trim();
+                        if (!feedback) {
+                            alert('กรุณากรอกคำแนะนำ');
+                            return;
+                        }
+                        
+                        const formData = new FormData();
+                        formData.append('recipe_id', recipeId);
+                        formData.append('feedback', feedback);
+                        
+                        fetch('save_admin_feedback.php', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('บันทึกคำแนะนำเรียบร้อยแล้ว');
+                                feedbackInput.value = '';
+                            } else {
+                                alert(data.error || 'เกิดข้อผิดพลาดในการบันทึกคำแนะนำ');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('เกิดข้อผิดพลาดในการส่งข้อมูล');
+                        });
+                    });
+                    
+                    cancelButton.addEventListener('click', function() {
+                        feedbackInput.value = '';
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+        </script>
+
+    <div class="comments-section">
+        <h2>แสดงความคิดเห็น</h2>
+        <div class="comment-form">
+            <div class="star-rating">
+                <input type="radio" id="star1" name="rating" value="5">
+                <label for="star1">★</label>
+                <input type="radio" id="star2" name="rating" value="4">
+                <label for="star2">★</label>
+                <input type="radio" id="star3" name="rating" value="3">
+                <label for="star3">★</label>
+                <input type="radio" id="star4" name="rating" value="2">
+                <label for="star4">★</label>
+                <input type="radio" id="star5" name="rating" value="1">
+                <label for="star5">★</label>
+            </div>
+            <textarea class="comment-input" placeholder="เขียนความคิดเห็นของคุณที่นี่..."></textarea>
+            <button type="button" class="comment-submit" disabled>ส่งความคิดเห็น</button>
+        </div>
+        <div class="comments-list">
+            <!-- ความคิดเห็นจะถูกเพิ่มที่นี่ด้วย JavaScript -->
+        </div>
+    </div>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const commentForm = document.querySelector('.comment-form');
+            const commentInput = document.querySelector('.comment-input');
+            const submitButton = document.querySelector('.comment-submit');
+            const ratingInputs = document.querySelectorAll('input[name="rating"]');
+            
+            // ตรวจสอบการกรอกข้อมูล
+            function checkFormValidity() {
+                const rating = document.querySelector('input[name="rating"]:checked');
+                const comment = commentInput.value.trim();
+                submitButton.disabled = !rating || !comment;
+            }
+        
+            // ติดตามการเปลี่ยนแปลงของ input
+            commentInput.addEventListener('input', checkFormValidity);
+            ratingInputs.forEach(input => {
+                input.addEventListener('change', checkFormValidity);
+            });
+    
+            // ฟังก์ชันโหลดความคิดเห็น - แยกออกมาให้เรียกใช้ได้ทั่วไป
+            function loadComments() {
+                fetch(`get_comments.php?recipe_id=${recipeId}`)
+                .then(response => response.json())
+                .then(comments => {
+                    const commentsList = document.querySelector('.comments-list');
+                    commentsList.innerHTML = '';
+                    
+                    if (comments.error) {
+                        commentsList.innerHTML = `<p>ไม่พบความคิดเห็น</p>`;
+                        return;
+                    }
+                    
+                    if (comments.length === 0) {
+                        commentsList.innerHTML = `<p>ยังไม่มีความคิดเห็น</p>`;
+                        return;
+                    }
+                    
+                    comments.forEach(comment => {
+                        const stars = '⭐'.repeat(parseInt(comment.rating));
+                        const commentDate = new Date(comment.created_at).toLocaleDateString('th-TH', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        
+                        const commentHtml = `
+                            <div class="comment-item">
+                                <div class="comment-header">
+                                    <span class="comment-user">${comment.username}</span>
+                                    <span class="comment-stars">${stars}</span>
+                                </div>
+                                <div class="comment-text">${comment.comment_text}</div>
+                                <small class="comment-date">${commentDate}</small>
+                            </div>
+                        `;
+                        commentsList.insertAdjacentHTML('beforeend', commentHtml);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.querySelector('.comments-list').innerHTML = 
+                        '<p>เกิดข้อผิดพลาดในการโหลดความคิดเห็น</p>';
+                });
+            }
+    
+            // เช็คสถานะการล็อกอินก่อนแสดงฟอร์มความคิดเห็น
+            fetch('check_session.php')
+            .then(response => response.json())
+            .then(data => {
+                if (!data.logged_in) {
+                    commentForm.innerHTML = '<p>กรุณาเข้าสู่ระบบก่อนแสดงความคิดเห็น</p>';
+                    return;
+                }
+        
+                // จัดการการส่งความคิดเห็น
+                submitButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const rating = document.querySelector('input[name="rating"]:checked');
+                    const comment = commentInput.value.trim();
+                    
+                    if (!rating || !comment) {
+                        alert('กรุณาให้คะแนนและเขียนความคิดเห็น');
+                        return;
+                    }
+            
+                    const formData = new FormData();
+                    formData.append('recipe_id', recipeId);
+                    formData.append('rating', rating.value);
+                    formData.append('comment', comment);
+            
+                    fetch('save_comment.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // อัปเดตคะแนนเฉลี่ย
+                            document.getElementById('recipe-rating').innerText = 
+                                `${'⭐'.repeat(Math.round(data.avg_rating))} (${data.avg_rating})`;
+                            
+                            // รีเซ็ตฟอร์ม
+                            commentInput.value = '';
+                            const checkedRating = document.querySelector('input[name="rating"]:checked');
+                            if (checkedRating) checkedRating.checked = false;
+                            submitButton.disabled = true;
+                            
+                            // โหลดความคิดเห็นใหม่ทันที
+                            loadComments();
+                            
+                            alert('บันทึกความคิดเห็นเรียบร้อยแล้ว');
+                        } else {
+                            alert(data.error || 'เกิดข้อผิดพลาดในการบันทึกความคิดเห็น');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('เกิดข้อผิดพลาดในการส่งข้อมูล');
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('เกิดข้อผิดพลาดในการตรวจสอบสถานะการเข้าสู่ระบบ');
+            });
+            
+            // โหลดความคิดเห็นตั้งแต่เริ่มต้น
+            loadComments();
+            
+            // ตั้งเวลาโหลดความคิดเห็นใหม่ทุก 30 วินาที
+            setInterval(loadComments, 30000);
+        });
+    </script>
+
+    <script>
+        // ดึงค่า recipe_id จาก URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const recipeId = urlParams.get('recipe_id');
+    
+        // ฟังก์ชันสำหรับแปลงวันที่เป็นภาษาไทยโดยไม่แสดงเวลา
+        function formatDateThai(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('th-TH', options);
         }
-
-        // Fetch New Dessert Recipes
-        fetch('get_recipes.php?category=ของหวาน&type=new')
-            .then(response => response.json())
-            .then(data => {
-                const newDessertsContainer = document.getElementById('new-dessert-recipes');
-                data.forEach(recipe => {
-                    const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
-
-                    const recipeElement = document.createElement('div');
-                    recipeElement.classList.add('recipe-item');
-                    recipeElement.innerHTML = `
-                        <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
-                        <div>
-                            <h2>${recipe.recipe_name}</h2>
-                            <p>⭐ ${rating.toFixed(1)}</p>
-                            <p>สร้างโดย ${recipe.source}</p>
-                            <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
-                            ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
-                            <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
-                        </div>
-                    `;
-                    newDessertsContainer.appendChild(recipeElement);
-                });
-            })
-            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
-
-        // Fetch Popular Dessert Recipes
-        fetch('get_recipes.php?category=ของหวาน&type=popular')
-            .then(response => response.json())
-            .then(data => {
-                const popularDessertsContainer = document.getElementById('popular-dessert-recipes');
-                data.forEach(recipe => {
-                    const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
-
-                    const recipeElement = document.createElement('div');
-                    recipeElement.classList.add('recipe-item');
-                    recipeElement.innerHTML = `
-                        <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
-                        <div>
-                            <h2>${recipe.recipe_name}</h2>
-                            <p>⭐ ${rating.toFixed(1)}</p>
-                            <p>สร้างโดย ${recipe.source}</p>
-                            <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
-                            ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
-                            <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
-                        </div>
-                    `;
-                    popularDessertsContainer.appendChild(recipeElement);
-                });
-            })
-            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
-
-        // Fetch Ancient Dessert Recipes
-        fetch('get_recipes.php?category=ของหวาน&type=ancient')
-            .then(response => response.json())
-            .then(data => {
-                const ancientDessertsContainer = document.getElementById('ancient-dessert-recipes');
-                data.forEach(recipe => {
-                    const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
-
-                    const recipeElement = document.createElement('div');
-                    recipeElement.classList.add('recipe-item');
-                    recipeElement.innerHTML = `
-                        <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
-                        <div>
-                            <h2>${recipe.recipe_name}</h2>
-                            <p>⭐ ${rating.toFixed(1)}</p>
-                            <p>สร้างโดย ${recipe.source}</p>
-                            <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
-                            ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
-                            <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
-                        </div>
-                    `;
-                    ancientDessertsContainer.appendChild(recipeElement);
-                });
-            })
-            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+    
+        if (recipeId) {
+            fetch(`get_recipes.php?recipe_id=${recipeId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('เกิดข้อผิดพลาด: ' + data.error);
+                    } else {
+                        // ตั้งค่าชื่อสูตรและข้อมูลอื่นๆ
+                        document.getElementById('recipe-title').innerText = data.recipe_name;
+                        document.getElementById('recipe-rating').innerText += data.rating;
+                        document.getElementById('recipe-source').innerText += " " + data.source;
+                        document.getElementById('recipe-date').innerText += formatDateThai(data.created_at);
+                        document.getElementById('recipe-image').src = data.image_path;
+    
+                        // เพิ่ม URL สำหรับปุ่มรายงาน
+                        document.getElementById('report-link').href = `report.html?recipe_id=${recipeId}`;
+    
+                        // แสดงวันที่ปรับปรุงถ้ามี
+                        if (data.updated_at) {
+                            const updatedDateElement = document.getElementById('recipe-updated-date');
+                            updatedDateElement.innerText += formatDateThai(data.updated_at);
+                            updatedDateElement.style.display = "block";
+                        }
+    
+                        // เพิ่มวัตถุดิบ
+                        data.ingredients.split('\n').forEach(item => {
+                            const li = document.createElement('li');
+                            li.innerText = item.trim();
+                            document.getElementById('ingredients-list').appendChild(li);
+                        });
+    
+                        // เพิ่มขั้นตอนการทำ
+                        data.steps.split('\n').forEach(step => {
+                            const div = document.createElement('div');
+                            div.innerText = step.trim();
+                            document.getElementById('steps-list').appendChild(div);
+                        });
+                    }
+                })
+                .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+        } else {
+            alert('ไม่พบ ID ของสูตรอาหาร');
+        }
     </script>
     
+    
+
 </body>
 </html>

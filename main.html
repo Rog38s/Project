@@ -368,7 +368,7 @@
                             <p>สร้างโดย ${recipe.source}</p>
                             <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
                             ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
-                            <a href="indexrecipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
+                            <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
                         </div>
                     `;
                     newRecipesContainer.appendChild(recipeElement);
@@ -415,7 +415,7 @@
                             <p>สร้างโดย ${recipe.source}</p>
                             <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
                             ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
-                            <a href="indexrecipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
+                            <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
                         </div>
                     `;
                     popularRecipesContainer.appendChild(recipeElement);
@@ -441,7 +441,7 @@
                             <p>สร้างโดย ${recipe.source}</p>
                             <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
                             ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
-                            <a href="indexrecipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
+                            <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
                         </div>
                     `;
                     popularDessertsContainer.appendChild(recipeElement);
