@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการรายงานสูตรอาหาร</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Noto Serif Thai', serif;
+            background-color: #F8F1E5;
+        }
+        .navbar {
+            background-color: #F8F1E5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar img.logo {
+            height: 70px;
+        }
+
+        .navbar .search-box {
+            width: 300px;
+            margin: 0 20px;
+            display: flex;
+            align-items: center;
+            border-radius: 20px;
+            padding: 5px 10px;
+        }
+
+        .navbar .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .nav-links a {
+            text-decoration: none;
+            color: #000;
+            margin-left: 20px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .nav-links img.icon {
+            margin-right: 5px;
+            height: 24px;
+        }
+
+        .navbar .nav-links a.login {
+            color: red;
+        }
+        
+        .admin-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #F8F1E5;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .report-item {
+            display: flex;
+            background-color: #fcf4ce;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            gap: 20px;
+        }
+
+        .recipe-image {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .report-details {
+            flex-grow: 1;
+        }
+
+        .recipe-title {
+            color: black;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .recipe-title:hover {
+            color: #ff6b6b;
+        }
+
+        .report-info {
+            color: black;
+            margin: 5px 0;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .delete-btn, .keep-btn {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            min-width: 120px;
+        }
+
+        .keep-btn {
+            background-color: #5cb85c;
+        }
+
+        .navbar .profile-pic {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 5px;
+        }
+
+        .notifications-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    
+        .notifications-container h1 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: black;
+        }
+    
+        .notification-item {
+            display: flex;
+            align-items: flex-start;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            gap: 20px;
+        }
+    
+        .notification-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+    
+        .notification-details {
+            flex-grow: 1;
+        }
+    
+        .notification-details h2 {
+            font-size: 1.2em;
+            margin: 0 0 10px;
+            color: black;
+        }
+    
+        .notification-details h2 a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+    
+        .notification-details h2 a:hover {
+            text-decoration: underline;
+        }
+    
+        .notification-details p {
+            margin: 0 0 5px;
+            color: black;
+            font-size: 0.9em;
+        }
+    
+        .notification-date {
+            font-size: 0.8em;
+            color: black;
+            margin-top: 5px;
+        }
+
+        #notification-count {
+            background-color: red;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+        }
+        
+
+    </style>
+</head>
+<body>
+    <!-- ส่วน Navbar  -->
+    <div class="navbar">
+        <img src="img/logo.png" alt="Logo" class="logo">
+        <!-- Search Box -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="ค้นหา">
+        </div>
+
+        <script>
+            // จับเหตุการณ์เมื่อผู้ใช้กด Enter ในช่องค้นหา
+            document.getElementById('searchInput').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {  // ตรวจสอบว่าเป็นปุ่ม Enter หรือไม่
+                    const query = e.target.value.trim();  // รับค่าที่กรอกในช่องค้นหา
+                    if (query) {
+                        // ย้ายไปหน้า search.html พร้อมส่งค่าคำค้นหาเป็น query string
+                        window.location.href = `search.html?query=${encodeURIComponent(query)}`;
+                    }
+                }
+            });
+        </script>
+        <div class="nav-links">
+            <a href="main.html"><img src="img/homeicon.png" alt="หน้าแรก" class="icon" onclick="location.href='main.html'">หน้าแรก</a>
+            <a href="maindish.html"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='maindish.html'">สูตรอาหารคาว</a>
+            <a href="dessert.html"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='dessert.html'">สูตรของหวาน</a>
+            <a href="recommend.html"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='recommend.html'">แนะนำสูตร</a>
+            <a href="notification.html"><img src="img/noti.png" alt="การแจ้งเตือน" class="icon" onclick="location.href='notification.html'"></a>
+            <a href="userid.html" id="user-link" class="login" onclick="location.href='userid.html'">
+                <img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="profile-pic">
+                <span id="username-display"></span>
+            </a>
+            <a href="logout.php" class="logout">
+                <img src="img/logout.png" alt="ลงชื่อออก" class="icon">
+                ลงชื่อออก
+            </a>
+            <a href="admin_menu.html" id="admin-menu-button" style="display: none;">
+                <img src="img/reporticon.png" alt="หน้ารายงานสูตร" class="icon">
+                หน้ารายงานสูตร
+            </a>
+            
+        </div>
+    </div>
+
+    <script>
+        // ฟังก์ชันดึงจำนวนการแจ้งเตือน
+        function fetchUnreadNotifications() {
+            fetch('get_unread_notifications_count.php')
+                .then(response => response.json())
+                .then(data => {
+                    const notificationCount = document.getElementById('notification-count');
+                    if (data.unread_count > 0) {
+                        notificationCount.textContent = data.unread_count;
+                        notificationCount.style.display = 'inline-block';
+                    } else {
+                        notificationCount.style.display = 'none';
+                    }
+                })
+                .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+        }
+    
+        document.addEventListener('DOMContentLoaded', fetchUnreadNotifications);
+    </script>
+
+    <script>
+        // ตรวจสอบและอัปเดตจำนวนการแจ้งเตือนเมื่อมีการกลับจากหน้าอื่น
+        document.addEventListener('DOMContentLoaded', () => {
+            // ตรวจสอบว่าเคยอัปเดตแจ้งเตือนในหน้าอื่นหรือไม่
+            if (localStorage.getItem('notificationsUpdated') === 'true') {
+                fetchUnreadNotifications(); // เรียกอัปเดตจำนวนการแจ้งเตือน
+                localStorage.removeItem('notificationsUpdated'); // ลบสถานะหลังอัปเดต
+            } else {
+                fetchUnreadNotifications(); // โหลดจำนวนการแจ้งเตือนปกติ
+            }
+        });
+    </script>
+    
+
+    <script>
+        // ดึงข้อมูลผู้ใช้จาก backend
+        fetch('get_user_data.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.error);
+                alert('เกิดข้อผิดพลาด: ' + data.error);
+            } else {
+                // แสดงชื่อผู้ใช้
+                const usernameDisplay = document.getElementById('username-display');
+                usernameDisplay.innerText = data.username;
+
+                // อัปเดตภาพโปรไฟล์ใน navbar ถ้ามีข้อมูลโปรไฟล์ ถ้าไม่มีก็ใช้รูปเริ่มต้น
+                const navbarProfileImage = document.getElementById('navbar-profile-image');
+                navbarProfileImage.src = data.profile_image ? data.profile_image : 'img/usericon.png';
+
+                // ตรวจสอบค่า role ของผู้ใช้และแสดง/ซ่อนปุ่ม "หน้ารายงานสูตร"
+                const adminMenuButton = document.getElementById('admin-menu-button');
+                if (data.role === 'admin') {
+                    adminMenuButton.style.display = 'inline-block';
+                } else {
+                    adminMenuButton.style.display = 'none';
+                }
+            }
+        })
+        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+    </script>
+
+    <div class="notifications-container">
+        <h1>การแจ้งเตือน</h1>
+        <div id="notifications-list">
+            <!-- รายการแจ้งเตือน -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // ดึงข้อมูลการแจ้งเตือน
+            fetch('get_notifications.php')
+                .then(response => response.json())
+                .then(notifications => {
+                    const notificationsList = document.getElementById('notifications-list');
+    
+                    if (notifications.error) {
+                        notificationsList.innerHTML = `<p>${notifications.error}</p>`;
+                        return;
+                    }
+    
+                    if (notifications.length === 0) {
+                        notificationsList.innerHTML = `<p>ไม่มีการแจ้งเตือน</p>`;
+                        return;
+                    }
+    
+                    // แสดงการแจ้งเตือน
+                    notifications.forEach(notification => {
+                        const item = document.createElement('div');
+                        item.classList.add('notification-item');
+    
+                        // รูปภาพ (ถ้ามี)
+                        if (notification.image_path) {
+                            const img = document.createElement('img');
+                            img.src = notification.image_path;
+                            img.alt = notification.recipe_name || 'ภาพแจ้งเตือน';
+                            item.appendChild(img);
+                        }
+    
+                        // รายละเอียดการแจ้งเตือน
+                        const details = document.createElement('div');
+                        details.classList.add('notification-details');
+    
+                        const message = document.createElement('p');
+                        message.textContent = notification.message;
+                        details.appendChild(message);
+    
+                        const date = document.createElement('p');
+                        date.classList.add('notification-date');
+                        date.textContent = `วันที่แจ้งเตือน: ${new Date(notification.created_at).toLocaleDateString('th-TH', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                        })}`;
+                        details.appendChild(date);
+    
+                        // อัปเดตสถานะการแจ้งเตือนเมื่อคลิก
+                        item.addEventListener('click', () => {
+                            markNotificationAsRead(notification.id);
+                        });
+    
+                        item.appendChild(details);
+                        notificationsList.appendChild(item);
+                    });
+                })
+                .catch(error => {
+                    console.error('เกิดข้อผิดพลาด:', error);
+                    document.getElementById('notifications-list').innerHTML = `<p>ไม่สามารถโหลดการแจ้งเตือนได้</p>`;
+                });
+        });
+    
+        document.addEventListener('DOMContentLoaded', () => {
+            markAllNotificationsAsRead(); // ฟังก์ชันอัปเดตสถานะการแจ้งเตือน
+        });
+        
+        // ฟังก์ชันอัปเดตสถานะแจ้งเตือนทั้งหมดเป็น "อ่านแล้ว"
+        function markAllNotificationsAsRead() {
+            fetch('mark_all_notifications_as_read.php', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('อัปเดตสถานะการแจ้งเตือนทั้งหมดสำเร็จ');
+                        // ตั้งค่า LocalStorage เพื่อแจ้งหน้าอื่นว่าแจ้งเตือนถูกอัปเดตแล้ว
+                        localStorage.setItem('notificationsUpdated', 'true');
+                    } else {
+                        console.error('เกิดข้อผิดพลาดในการอัปเดตแจ้งเตือน:', data.error);
+                    }
+                })
+                .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+        }
+        
+    </script>
+    
+    
+    

@@ -16,10 +16,11 @@ try {
     // รับค่าคำค้นหาจาก URL
     $searchQuery = isset($_GET['query']) ? $_GET['query'] : '';
 
-    // ค้นหาข้อมูลในฐานข้อมูล
+    // ค้นหาข้อมูลในฐานข้อมูลโดยเรียงลำดับจากสูตรใหม่ไปสูตรเก่า
     $stmt = $pdo->prepare("SELECT id, recipe_name, rating, source, created_at, image_path 
                            FROM recipe 
-                           WHERE recipe_name LIKE :query");
+                           WHERE recipe_name LIKE :query
+                           ORDER BY created_at DESC"); // เรียงลำดับจากใหม่ไปเก่า
     $stmt->execute([':query' => "%$searchQuery%"]);
     $recipes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

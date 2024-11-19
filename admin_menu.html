@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>จัดการรายงานสูตรอาหาร</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* ใช้สไตล์จาก navbar เดิม */
+        body {
+            margin: 0;
+            font-family: 'Noto Serif Thai', serif;
+            background-color: #f4f4f4;
+        }
         .navbar {
             background-color: #ffffff;
             display: flex;
@@ -50,14 +55,22 @@
         .navbar .nav-links a.login {
             color: red;
         }
-        
+
+        .navbar .profile-pic {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 5px;
+        }
+
         .admin-container {
             max-width: 900px;
             margin: 20px auto;
             padding: 20px;
             background-color: #fff;
             border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .report-item {
@@ -81,7 +94,7 @@
         }
 
         .recipe-title {
-            color: #333;
+            color: black;
             text-decoration: none;
             font-weight: bold;
             font-size: 1.2em;
@@ -94,7 +107,7 @@
         }
 
         .report-info {
-            color: #666;
+            color: black;
             margin: 5px 0;
         }
 
@@ -120,19 +133,66 @@
             background-color: #5cb85c;
         }
 
-        .navbar .profile-pic {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 5px;
+        /* Modal Styling */
+        #reason-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            z-index: 1000;
         }
+
+        #reason-modal textarea {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        #reason-modal button {
+            margin-top: 10px;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #reason-modal #confirm-delete-btn {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+        }
+
+        #reason-modal #cancel-delete-btn {
+            background-color: #ccc;
+            border: none;
+        }
+
+        #notification-count {
+            background-color: red;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+        }
+        
     </style>
 </head>
 <body>
-    <!-- ส่วน Navbar  -->
+    <!-- Navbar -->
     <div class="navbar">
+        <!-- Logo -->
         <img src="img/logo.png" alt="Logo" class="logo">
+        
         <!-- Search Box -->
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="ค้นหา">
@@ -150,11 +210,18 @@
                 }
             });
         </script>
+
+        
         <div class="nav-links">
             <a href="main.html"><img src="img/homeicon.png" alt="หน้าแรก" class="icon" onclick="location.href='main.html'">หน้าแรก</a>
             <a href="maindish.html"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='maindish.html'">สูตรอาหารคาว</a>
             <a href="dessert.html"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='dessert.html'">สูตรของหวาน</a>
             <a href="recommend.html"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='recommend.html'">แนะนำสูตร</a>
+            <a href="notification.html" id="notification-link">
+                <img src="img/noti.png" alt="การแจ้งเตือน" class="icon">
+                <span id="notification-count" style="display: none;">0</span>
+            </a>
+            
             <a href="userid.html" id="user-link" class="login" onclick="location.href='userid.html'">
                 <img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="profile-pic">
                 <span id="username-display"></span>
@@ -170,6 +237,40 @@
             
         </div>
     </div>
+
+    <script>
+        // ฟังก์ชันดึงจำนวนการแจ้งเตือน
+        function fetchUnreadNotifications() {
+            fetch('get_unread_notifications_count.php')
+                .then(response => response.json())
+                .then(data => {
+                    const notificationCount = document.getElementById('notification-count');
+                    if (data.unread_count > 0) {
+                        notificationCount.textContent = data.unread_count;
+                        notificationCount.style.display = 'inline-block';
+                    } else {
+                        notificationCount.style.display = 'none';
+                    }
+                })
+                .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+        }
+    
+        document.addEventListener('DOMContentLoaded', fetchUnreadNotifications);
+    </script>
+
+    <script>
+        // ตรวจสอบและอัปเดตจำนวนการแจ้งเตือนเมื่อมีการกลับจากหน้าอื่น
+        document.addEventListener('DOMContentLoaded', () => {
+            // ตรวจสอบว่าเคยอัปเดตแจ้งเตือนในหน้าอื่นหรือไม่
+            if (localStorage.getItem('notificationsUpdated') === 'true') {
+                fetchUnreadNotifications(); // เรียกอัปเดตจำนวนการแจ้งเตือน
+                localStorage.removeItem('notificationsUpdated'); // ลบสถานะหลังอัปเดต
+            } else {
+                fetchUnreadNotifications(); // โหลดจำนวนการแจ้งเตือนปกติ
+            }
+        });
+    </script>
+    
 
     <script>
         // ดึงข้อมูลผู้ใช้จาก backend
@@ -208,106 +309,105 @@
         </div>
     </div>
 
+    <!-- Modal สำหรับใส่เหตุผล -->
+    <div id="reason-modal">
+        <h3>กรุณาใส่เหตุผลสำหรับการลบสูตรอาหารนี้</h3>
+        <textarea id="delete-reason" rows="5"></textarea>
+        <div>
+            <button id="confirm-delete-btn">ยืนยัน</button>
+            <button id="cancel-delete-btn">ยกเลิก</button>
+        </div>
+    </div>
+
     <script>
+        let selectedRecipeId = null;
 
         // Fetch reported recipes
         fetch('get_reported_recipes.php')
-        .then(response => response.json())
-        .then(data => {
-            const reportList = document.getElementById('report-list');
-            
-            if (data.length === 0) {
-                reportList.innerHTML = '<p>ไม่มีรายงานสูตรอาหาร</p>';
-            } else {
-                data.forEach(report => {
-                    const reportItem = document.createElement('div');
-                    reportItem.className = 'report-item';
-                    
-                    // Set the image source to the recipe's image path directly
-                    const imagePath = report.recipe_image ? report.recipe_image : 'img/default-recipe.jpg';
-                    
-                    reportItem.innerHTML = `
-                        <img src="${imagePath}" alt="${report.recipe_name}" class="recipe-image"
-                            onerror="this.src='img/default-recipe.jpg'">
-                        <div class="report-details">
-                            <a href="recipe.html?recipe_id=${report.recipe_id}" class="recipe-title">${report.recipe_name}</a>
-                            <p class="report-info">ผู้รายงาน: ${report.reporter_name}</p>
-                            <p class="report-info">รายละเอียดการรายงาน: ${report.report_text}</p>
-                            <p class="report-info">วันที่รายงาน: ${new Date(report.report_date).toLocaleDateString('th-TH')}</p>
-                        </div>
-                        <div class="button-group">
-                            <button class="keep-btn" onclick="deleteReport(${report.recipe_id})">เก็บสูตร</button>
-                            <button class="delete-btn" onclick="deleteRecipe(${report.recipe_id})">ลบสูตรนี้</button>
-                        </div>
-                    `;
-                    reportList.appendChild(reportItem);
-                });
-            }
-        })
-        .catch(error => {
-            console.error('เกิดข้อผิดพลาด:', error);
-            const reportList = document.getElementById('report-list');
-            reportList.innerHTML = '<p>เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
-        });
+            .then(response => response.json())
+            .then(data => {
+                const reportList = document.getElementById('report-list');
+                if (data.length === 0) {
+                    reportList.innerHTML = '<p>ไม่มีรายงานสูตรอาหาร</p>';
+                } else {
+                    data.forEach(report => {
+                        const reportItem = document.createElement('div');
+                        reportItem.className = 'report-item';
 
+                        const imagePath = report.recipe_image || 'img/default-recipe.jpg';
+                        reportItem.innerHTML = `
+                            <img src="${imagePath}" alt="${report.recipe_name}" class="recipe-image">
+                            <div class="report-details">
+                                <a href="recipe.html?recipe_id=${report.recipe_id}" class="recipe-title">${report.recipe_name}</a>
+                                <p class="report-info">ผู้รายงาน: ${report.reporter_name}</p>
+                                <p class="report-info">รายละเอียดการรายงาน: ${report.report_text}</p>
+                                <p class="report-info">วันที่รายงาน: ${new Date(report.report_date).toLocaleDateString('th-TH')}</p>
+                            </div>
+                            <div class="button-group">
+                                <button class="keep-btn" onclick="deleteReport(${report.recipe_id})">ปฏิเสธรายงาน</button>
+                                <button class="delete-btn" onclick="deleteRecipe(${report.recipe_id})">ยอมรับรายงาน</button>
+                            </div>
+                        `;
+                        reportList.appendChild(reportItem);
+                    });
+                }
+            });
 
-        // ฟังก์ชันสำหรับเก็บสูตรที่ถูกรายงาน
         function deleteReport(recipeId) {
             if (confirm('คุณต้องการเก็บสูตรนี้และลบรายงานออกหรือไม่?')) {
-                // Log เพื่อดูค่า recipeId ที่ได้รับ
-                console.log('Recipe ID:', recipeId);
-                
-                const formData = new FormData();
-                formData.append('recipe_id', recipeId.toString()); // แปลงเป็น string ก่อนส่ง
-        
                 fetch('delete_report.php', {
                     method: 'POST',
-                    body: formData
-                })
-                .then(response => {
-                    // Log ค่า response เพื่อ debug
-                    console.log('Response:', response);
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Data received:', data); // Log ข้อมูลที่ได้รับกลับมา
-                    if (data.success) {
-                        alert(data.message || 'ลบรายงานสำเร็จ');
-                        location.reload();
-                    } else {
-                        alert('เกิดข้อผิดพลาด: ' + (data.error || 'ไม่สามารถลบรายงานได้'));
-                    }
-                })
-                .catch(error => {
-                    console.error('เกิดข้อผิดพลาด:', error);
-                    alert('เกิดข้อผิดพลาดในการส่งคำขอ');
-                });
+                    body: JSON.stringify({ recipe_id: recipeId }),
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(response => response.json())
+                  .then(data => {
+                      alert(data.message || 'ลบรายงานสำเร็จ');
+                      location.reload();
+                  });
             }
         }
-        
-        
-        // Function to delete recipe
+
         function deleteRecipe(recipeId) {
-            if (confirm('คุณต้องการลบสูตรอาหารนี้หรือไม่?')) {
-                const formData = new FormData();
-                formData.append('recipe_id', recipeId.toString());
+            selectedRecipeId = recipeId;
+            document.getElementById('reason-modal').style.display = 'block';
+        
+            document.getElementById('cancel-delete-btn').onclick = () => {
+                document.getElementById('reason-modal').style.display = 'none';
+                selectedRecipeId = null;
+            };
+        
+            document.getElementById('confirm-delete-btn').onclick = () => {
+                const reason = document.getElementById('delete-reason').value.trim();
+                if (!reason) {
+                    alert('กรุณาใส่เหตุผลสำหรับการลบสูตร');
+                    return;
+                }
+        
+                console.log({ recipe_id: selectedRecipeId, reason });
         
                 fetch('admin_delete_recipe.php', {
                     method: 'POST',
-                    body: formData
+                    body: JSON.stringify({ recipe_id: selectedRecipeId, reason }),
+                    headers: { 'Content-Type': 'application/json' }
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        location.reload();
-                    } else {
-                        alert('เกิดข้อผิดพลาด: ' + (data.error || 'ไม่สามารถลบสูตรอาหารได้'));
-                    }
-                })
-                .catch(error => console.error('เกิดข้อผิดพลาด:', error));
-            }
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        if (data.success) {
+                            alert(data.message || 'ลบสูตรสำเร็จ');
+                            location.reload();
+                        } else {
+                            alert(data.error || 'เกิดข้อผิดพลาด');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('เกิดข้อผิดพลาดในการส่งคำขอ');
+                    });
+            };
         }
+        
+                
     </script>
 </body>
 </html>

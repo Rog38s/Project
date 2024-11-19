@@ -1,6 +1,6 @@
 <?php
 // เชื่อมต่อฐานข้อมูล
-$dsn = 'mysql:host=localhost;dbname=recipe_database;charset=utf8'; // ใช้ชื่อฐานข้อมูล recipe_database
+$dsn = 'mysql:host=localhost;dbname=recipe_database;charset=utf8';
 $username = 'root';
 $password = '';
 
@@ -43,10 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['recipe_id'], $_POST['
     }
 
     // ตรวจสอบว่า recipe_id มีอยู่ในฐานข้อมูล
-    $stmt = $pdo->prepare('SELECT COUNT(*) FROM recipe WHERE id = :recipe_id');
+    $stmt = $pdo->prepare('SELECT user_id FROM recipe WHERE id = :recipe_id');
     $stmt->bindParam(':recipe_id', $recipe_id, PDO::PARAM_INT);
     $stmt->execute();
-    if ($stmt->fetchColumn() == 0) {
+    $owner_id = $stmt->fetchColumn();
+
+    if (!$owner_id) {
         echo json_encode(['success' => false, 'error' => 'RECIPE_NOT_FOUND']);
         exit();
     }
@@ -60,15 +62,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['recipe_id'], $_POST['
         exit();
     }
 
-    // บันทึกคำแนะนำลงฐานข้อมูล
+    // บันทึกข้อความ Feedback ลงในตาราง notifications
     try {
         $stmt = $pdo->prepare(
-            'INSERT INTO admin_feedback (recipe_id, admin_id, feedback_text, created_at) 
-             VALUES (:recipe_id, :admin_id, :feedback_text, NOW())'
+            'INSERT INTO notifications (user_id, recipe_id, message, created_at)
+             VALUES (:user_id, :recipe_id, :message, NOW())'
         );
+        $stmt->bindParam(':user_id', $owner_id, PDO::PARAM_INT); // เจ้าของสูตร
         $stmt->bindParam(':recipe_id', $recipe_id, PDO::PARAM_INT);
-        $stmt->bindParam(':admin_id', $admin_id, PDO::PARAM_INT);
-        $stmt->bindParam(':feedback_text', $feedback_text, PDO::PARAM_STR);
+        $stmt->bindParam(':message', $feedback_text, PDO::PARAM_STR);
         $stmt->execute();
 
         echo json_encode(['success' => true]);

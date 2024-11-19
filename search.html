@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Noto Serif Thai', serif;
+            background-color: #F8F1E5;
         }
 
         .search-results {
@@ -110,6 +111,19 @@
         
         }
 
+        #notification-count {
+            background-color: red;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+        }
+        
+
 
     </style>
 </head>
@@ -139,6 +153,11 @@
             <a href="maindish.html"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='maindish.html'">สูตรอาหารคาว</a>
             <a href="dessert.html"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='dessert.html'">สูตรของหวาน</a>
             <a href="recommend.html"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='recommend.html'">แนะนำสูตร</a>
+            <a href="notification.html" id="notification-link">
+                <img src="img/noti.png" alt="การแจ้งเตือน" class="icon">
+                <span id="notification-count" style="display: none;">0</span>
+            </a>
+            
             <a href="userid.html" id="user-link" class="login" onclick="location.href='userid.html'">
                 <img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="profile-pic">
                 <span id="username-display"></span>
@@ -147,9 +166,47 @@
                 <img src="img/logout.png" alt="ลงชื่อออก" class="icon">
                 ลงชื่อออก
             </a>
+            <a href="admin_menu.html" id="admin-menu-button" style="display: none;">
+                <img src="img/reporticon.png" alt="หน้ารายงานสูตร" class="icon">
+                หน้ารายงานสูตร
+            </a>
             
         </div>
     </div>
+
+    <script>
+        // ฟังก์ชันดึงจำนวนการแจ้งเตือน
+        function fetchUnreadNotifications() {
+            fetch('get_unread_notifications_count.php')
+                .then(response => response.json())
+                .then(data => {
+                    const notificationCount = document.getElementById('notification-count');
+                    if (data.unread_count > 0) {
+                        notificationCount.textContent = data.unread_count;
+                        notificationCount.style.display = 'inline-block';
+                    } else {
+                        notificationCount.style.display = 'none';
+                    }
+                })
+                .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+        }
+    
+        document.addEventListener('DOMContentLoaded', fetchUnreadNotifications);
+    </script>
+
+    <script>
+        // ตรวจสอบและอัปเดตจำนวนการแจ้งเตือนเมื่อมีการกลับจากหน้าอื่น
+        document.addEventListener('DOMContentLoaded', () => {
+            // ตรวจสอบว่าเคยอัปเดตแจ้งเตือนในหน้าอื่นหรือไม่
+            if (localStorage.getItem('notificationsUpdated') === 'true') {
+                fetchUnreadNotifications(); // เรียกอัปเดตจำนวนการแจ้งเตือน
+                localStorage.removeItem('notificationsUpdated'); // ลบสถานะหลังอัปเดต
+            } else {
+                fetchUnreadNotifications(); // โหลดจำนวนการแจ้งเตือนปกติ
+            }
+        });
+    </script>
+    
 
     <script>
         // ดึงข้อมูลผู้ใช้จาก backend
@@ -173,41 +230,50 @@
     </script>
 
 
-<div class="search-results" id="search-results">
-    <!-- Results will be appended here -->
-</div>
-
-<script>
-    // Get the search query from the URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const query = urlParams.get('query');
-
-    // Fetch search results
-    fetch(`search_recipes.php?query=${encodeURIComponent(query)}`)
-        .then(response => response.json())
-        .then(data => {
-            const searchResultsContainer = document.getElementById('search-results');
-            data.forEach(recipe => {
-                const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
-
-                const recipeElement = document.createElement('div');
-                recipeElement.classList.add('recipe-item');
-                recipeElement.innerHTML = `
-                    <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
-                    <div class="recipe-details">
-                        <h2>${recipe.recipe_name}</h2>
-                        <p>⭐ ${rating.toFixed(1)}</p>
-                        <p>สร้างโดย ${recipe.source}</p>
-                        <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
-                        ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
-                        <a href="indexrecipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
-                    </div>
-                `;
-                searchResultsContainer.appendChild(recipeElement);
-            });
-        })
-        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
-</script>
+    <div class="search-results" id="search-results">
+        <!-- Results will be appended here -->
+    </div>
+    
+    <script>
+        // ฟังก์ชันแปลงวันที่เป็น วัน/เดือน/ปี (พ.ศ.)
+        function formatDateThai(dateStr) {
+            const date = new Date(dateStr);
+            const day = date.getDate();
+            const month = date.toLocaleString('th-TH', { month: 'long' });
+            const year = date.getFullYear() + 543; // แปลงเป็น พ.ศ.
+            return `${day} ${month} ${year}`;
+        }
+        
+        // Get the search query from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const query = urlParams.get('query');
+    
+        // Fetch search results
+        fetch(`search_recipes.php?query=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                const searchResultsContainer = document.getElementById('search-results');
+                data.forEach(recipe => {
+                    const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
+    
+                    const recipeElement = document.createElement('div');
+                    recipeElement.classList.add('recipe-item');
+                    recipeElement.innerHTML = `
+                        <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
+                        <div class="recipe-details">
+                            <h2>${recipe.recipe_name}</h2>
+                            <p>⭐ ${rating.toFixed(1)}</p>
+                            <p>สร้างโดย ${recipe.source}</p>
+                            <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
+                            ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
+                            <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
+                        </div>
+                    `;
+                    searchResultsContainer.appendChild(recipeElement);
+                });
+            })
+            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+    </script>
 
 </body>
 </html>

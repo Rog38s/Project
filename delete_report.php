@@ -2,11 +2,9 @@
 session_start();
 header('Content-Type: application/json');
 
-// Debug: แสดงข้อมูลที่ได้รับ
-error_log('POST data: ' . print_r($_POST, true));
-
+// ตรวจสอบว่าเป็นแอดมินหรือไม่
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    echo json_encode(['error' => 'Unauthorized access']);
+    echo json_encode(['success' => false, 'error' => 'Unauthorized access']);
     exit;
 }
 
@@ -14,24 +12,16 @@ try {
     $pdo = new PDO('mysql:host=localhost;dbname=recipe_database', 'root', '');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    echo json_encode(['error' => 'Database connection failed: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'error' => 'Database connection failed: ' . $e->getMessage()]);
     exit;
 }
 
-// ตรวจสอบการรับค่า recipe_id
-if (!isset($_POST['recipe_id'])) {
-    echo json_encode(['error' => 'No recipe_id provided']);
-    exit;
-}
+// รับข้อมูล JSON และแปลงค่า
+$input = json_decode(file_get_contents('php://input'), true);
+$recipe_id = isset($input['recipe_id']) ? intval($input['recipe_id']) : 0;
 
-// แปลงค่าและตรวจสอบความถูกต้อง
-$recipe_id = filter_var($_POST['recipe_id'], FILTER_SANITIZE_NUMBER_INT);
-
-// Debug: แสดงค่า recipe_id หลังจาก sanitize
-error_log('Sanitized recipe_id: ' . $recipe_id);
-
-if ($recipe_id === '' || $recipe_id === false || $recipe_id === null) {
-    echo json_encode(['error' => 'Invalid recipe_id format']);
+if ($recipe_id <= 0) {
+    echo json_encode(['success' => false, 'error' => 'Invalid recipe_id']);
     exit;
 }
 
@@ -39,42 +29,57 @@ try {
     // เริ่ม transaction
     $pdo->beginTransaction();
 
-    // ตรวจสอบว่ามีรายงานอยู่หรือไม่
-    $checkStmt = $pdo->prepare("SELECT COUNT(*) FROM reports WHERE recipe_id = :recipe_id");
-    $checkStmt->bindValue(':recipe_id', $recipe_id, PDO::PARAM_INT);
-    $checkStmt->execute();
-    $exists = $checkStmt->fetchColumn();
+    // ตรวจสอบว่ามีรายงานนี้อยู่หรือไม่
+    $checkStmt = $pdo->prepare("
+        SELECT r.recipe_name, rep.user_id AS reporter_id
+        FROM recipe r
+        LEFT JOIN reports rep ON r.id = rep.recipe_id
+        WHERE r.id = :recipe_id
+    ");
+    $checkStmt->execute([':recipe_id' => $recipe_id]);
+    $result = $checkStmt->fetch(PDO::FETCH_ASSOC);
 
-    // Debug: แสดงผลการตรวจสอบ
-    error_log('Report exists: ' . ($exists ? 'true' : 'false'));
+    if ($result && $result['reporter_id']) {
+        $reporter_id = $result['reporter_id'];
+        $recipe_name = $result['recipe_name'];
 
-    if ($exists) {
         // ลบรายงาน
         $stmt = $pdo->prepare("DELETE FROM reports WHERE recipe_id = :recipe_id");
-        $stmt->bindValue(':recipe_id', $recipe_id, PDO::PARAM_INT);
-        $success = $stmt->execute();
+        $stmt->execute([':recipe_id' => $recipe_id]);
 
-        if ($success) {
-            $pdo->commit();
-            echo json_encode([
-                'success' => true,
-                'message' => 'รายงานถูกลบเรียบร้อยแล้ว',
-                'recipe_id' => $recipe_id // ส่งค่ากลับเพื่อตรวจสอบ
-            ]);
-        } else {
-            $pdo->rollBack();
-            echo json_encode(['error' => 'Failed to delete report']);
-        }
-    } else {
-        $pdo->rollBack();
+        // เพิ่มการแจ้งเตือนไปยังผู้รายงาน
+        $notificationStmt = $pdo->prepare("
+            INSERT INTO notifications (user_id, message, created_at) 
+            VALUES (:user_id, :message, NOW())
+        ");
+        $notificationStmt->execute([
+            ':user_id' => $reporter_id,
+            ':message' => "การรายงานสูตร '{$recipe_name}' ของคุณไม่ได้รับการอนุมัติ"
+        ]);
+
+        // ยืนยันการเปลี่ยนแปลง
+        $pdo->commit();
+
         echo json_encode([
+            'success' => true,
+            'message' => 'รายงานถูกลบเรียบร้อยแล้ว',
+            'recipe_id' => $recipe_id
+        ]);
+    } else {
+        // ไม่มีรายงานในระบบ
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        echo json_encode([
+            'success' => false,
             'error' => 'ไม่พบรายงานนี้ในระบบ',
-            'recipe_id' => $recipe_id // ส่งค่ากลับเพื่อตรวจสอบ
+            'recipe_id' => $recipe_id
         ]);
     }
-
 } catch (PDOException $e) {
-    $pdo->rollBack();
-    echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+    // Rollback transaction
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
 }
-?>

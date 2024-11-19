@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thai Foods and Desserts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Noto Serif Thai', serif;
+            background-color: #F8F1E5;
         }
 
         /* Navbar */
         .navbar {
-            background-color: #ffffff;
+            background-color: #F8F1E5;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -76,7 +77,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #fff;
+            color: #F8F1E5;
             text-align: center;
         }
 
@@ -106,7 +107,7 @@
         .highlight-container {
             display: flex;
             justify-content: space-between;
-            background-color: #fcf4ce;
+            background-color: #6A994E;
             margin-bottom: 10px;
             padding: 15px;
         }
@@ -118,7 +119,7 @@
 
         .highlight-container .text-container {
             flex: 1;
-            background-color: #fcf4ce;
+            background-color: #6A994E;
             padding: 10px;
             border-radius: 10px;
         }
@@ -134,7 +135,7 @@
             display: flex;
             margin-bottom: 20px;
             align-items: center;
-            background-color: #fdf5e6;
+            background-color: #F8F1E5;
             padding: 15px;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -154,7 +155,7 @@
 
         .text-container .recipe-item p {
             font-size: 14px;
-            color: #555;
+            color: black;
         }
 
         .text-container .recipe-item a {
@@ -178,7 +179,7 @@
             display: flex;
             margin-bottom: 20px;
             align-items: center;
-            background-color: #fdf5e6;
+            background-color: #F8F1E5;
             padding: 15px;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -187,7 +188,7 @@
         .popular-section .category {
             flex: 1;
             padding: 20px;
-            background-color: #e8f8ff;
+            background-color: #A7C957;
             margin-right: 20px;
             border-radius: 10px;
         }
@@ -198,7 +199,7 @@
 
         .popular-section h1 {
             font-size: 25px;
-            color: #000;
+            color: black;
             text-align: center;
             
             
@@ -225,7 +226,7 @@
 
         .category .recipe-item p {
             font-size: 14px;
-            color: #555;
+            color: black;
         }
 
         .category .recipe-item a {
@@ -237,6 +238,19 @@
         .category .recipe-item a:hover {
             text-decoration: underline;
         }
+
+        #notification-count {
+            background-color: red;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+        }
+        
 
     </style>
 </head>
@@ -258,7 +272,7 @@
                     const query = e.target.value.trim();  // รับค่าที่กรอกในช่องค้นหา
                     if (query) {
                         // ย้ายไปหน้า indexsearch.html พร้อมส่งค่าคำค้นหาเป็น query string
-                        window.location.href = `indexsearch.html?query=${encodeURIComponent(query)}`;
+                        window.location.href = `search.html?query=${encodeURIComponent(query)}`;
                     }
                 }
             });
@@ -270,6 +284,11 @@
             <a href="maindish.html"><img src="img/foodicon.png" alt="สูตรอาหารคาว" class="icon" onclick="location.href='maindish.html'">สูตรอาหารคาว</a>
             <a href="dessert.html"><img src="img/desserticon.png" alt="สูตรของหวาน" class="icon" onclick="location.href='dessert.html'">สูตรของหวาน</a>
             <a href="recommend.html"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='recommend.html'">แนะนำสูตร</a>
+            <a href="notification.html" id="notification-link">
+                <img src="img/noti.png" alt="การแจ้งเตือน" class="icon">
+                <span id="notification-count" style="display: none;">0</span>
+            </a>
+            
             <a href="userid.html" id="user-link" class="login" onclick="location.href='userid.html'">
                 <img id="navbar-profile-image" src="img/usericon.png" alt="User Profile" class="profile-pic">
                 <span id="username-display"></span>
@@ -285,6 +304,41 @@
             
         </div>
     </div>
+
+    <script>
+        // ฟังก์ชันดึงจำนวนการแจ้งเตือน
+        function fetchUnreadNotifications() {
+            fetch('get_unread_notifications_count.php')
+                .then(response => response.json())
+                .then(data => {
+                    const notificationCount = document.getElementById('notification-count');
+                    if (data.unread_count > 0) {
+                        notificationCount.textContent = data.unread_count;
+                        notificationCount.style.display = 'inline-block';
+                    } else {
+                        notificationCount.style.display = 'none';
+                    }
+                })
+                .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+        }
+    
+        document.addEventListener('DOMContentLoaded', fetchUnreadNotifications);
+    </script>
+
+    <script>
+        // ตรวจสอบและอัปเดตจำนวนการแจ้งเตือนเมื่อมีการกลับจากหน้าอื่น
+        document.addEventListener('DOMContentLoaded', () => {
+            // ตรวจสอบว่าเคยอัปเดตแจ้งเตือนในหน้าอื่นหรือไม่
+            if (localStorage.getItem('notificationsUpdated') === 'true') {
+                fetchUnreadNotifications(); // เรียกอัปเดตจำนวนการแจ้งเตือน
+                localStorage.removeItem('notificationsUpdated'); // ลบสถานะหลังอัปเดต
+            } else {
+                fetchUnreadNotifications(); // โหลดจำนวนการแจ้งเตือนปกติ
+            }
+        });
+    </script>
+    
+
 
     <script>
         // ดึงข้อมูลผู้ใช้จาก backend
@@ -326,8 +380,8 @@
         <!-- Highlight Section -->
         <div class="highlight-container">
             <!-- Thai food image (left side) -->
-            <div class="image-container">
-                <img src="img/สำรับไทย.jpg" alt="สำรับไทย">
+            <div class="image-container"><br><br><br><br>
+                <img src="img/กับข้าว1.jpg" alt="">
             </div>
 
             <!-- Text and recipe items (right side) -->
