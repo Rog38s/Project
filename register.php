@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($stmt->execute()) {
             echo "<script>alert('ลงทะเบียนสำเร็จ');</script>"; // แจ้งเตือนเมื่อสมัครสมาชิกสำเร็จ
-            echo "<script>window.location.href = 'main.html';</script>"; // นำไปยังหน้าอื่น
+            echo "<script>window.location.href = 'index.html';</script>"; // นำไปยังหน้าอื่น
             exit();
         } else {
             echo "<script>alert('เกิดข้อผิดพลาดในการลงทะเบียน');</script>"; // แจ้งเตือนหากเกิดข้อผิดพลาด
