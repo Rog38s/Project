@@ -49,8 +49,8 @@ if (isset($_POST['email'])) {
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'tanatdith2545@gmail.com'; // เปลี่ยนเป็นอีเมลจริงของคุณ
-            $mail->Password = 'ifvpfmyqmhvndslq'; // เปลี่ยนเป็น App Password
+            $mail->Username = 'thaifoodanddessert67@gmail.com'; // เปลี่ยนเป็นอีเมลจริงของคุณ
+            $mail->Password = 'dcpxkocbjpynktdf'; // เปลี่ยนเป็น App Password
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
