@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 18, 2024 at 02:38 PM
+-- Generation Time: Nov 19, 2024 at 01:48 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,27 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `recipe_database`
 --
-
--- --------------------------------------------------------
-
---
--- Table structure for table `admin_feedback`
---
-
-CREATE TABLE `admin_feedback` (
-  `id` int(11) NOT NULL,
-  `recipe_id` int(11) NOT NULL,
-  `admin_id` int(11) NOT NULL,
-  `feedback_text` text NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `admin_feedback`
---
-
-INSERT INTO `admin_feedback` (`id`, `recipe_id`, `admin_id`, `feedback_text`, `created_at`) VALUES
-(3, 14, 4, 'สูตรไม่ครบ', '2024-11-18 12:59:56');
 
 -- --------------------------------------------------------
 
@@ -67,6 +46,32 @@ INSERT INTO `comments` (`id`, `recipe_id`, `user_id`, `rating`, `comment_text`, 
 (9, 9, 4, 5, 'น่ากิน', '2024-11-11 10:08:18'),
 (10, 3, 3, 5, 'ทำง่ายมากครับ', '2024-11-11 10:13:27'),
 (11, 6, 5, 2, 'ไม่ค่อยอร่อย', '2024-11-13 18:46:39');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `recipe_name` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `is_read` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `user_id`, `recipe_name`, `message`, `created_at`, `is_read`) VALUES
+(1, 1, 'dada', 'สูตร \'dada\' ของคุณถูกลบด้วยเหตุผล: สูตรมั่ว', '2024-11-18 20:58:14', 1),
+(2, 3, 'dada', 'การรายงานสูตร \'dada\' ของคุณได้รับการอนุมัติ', '2024-11-18 20:58:14', 1),
+(3, 1, '', 'การรายงานสูตร \'กะเพรา\' ของคุณไม่ได้รับการอนุมัติ', '2024-11-18 21:13:47', 1),
+(4, 3, 'ใบกะเพา', 'สูตร \'ใบกะเพา\' ของคุณถูกลบด้วยเหตุผล: สูตรไม่มีรายละเอียด', '2024-11-18 22:32:49', 0),
+(5, 1, 'ใบกะเพา', 'การรายงานสูตร \'ใบกะเพา\' ของคุณได้รับการอนุมัติ', '2024-11-18 22:32:49', 1);
 
 -- --------------------------------------------------------
 
@@ -99,7 +104,6 @@ INSERT INTO `recipe` (`id`, `recipe_name`, `ingredients`, `steps`, `source`, `fo
 (7, 'อาลัวกุหลาบนมสด', '1.แป้งเค้ก 1/2 ถ้วย\n2.กะทิ 1/4 ถ้วย\n3.นมสด 1 ถ้วย\n4.น้ำตาลทรายขาวบริสุทธิ์ ตรามิตรผล 1/3 ถ้วย\n5.สีผสมอาหารสีเขียวและสีชมพู', '1.ผสมแป้งเค้กกับน้ำตาลทรายขาวบริสุทธิ์ ตรามิตรผล ใส่กะทิ คนให้เข้ากัน\nใส่นมสด คนให้แป้งละลายเข้ากัน กรองด้วยกระชอนใส่กระทะเทฟลอน\n2.ยกกระทะตั้งไฟปานกลาง กวนให้สุกจนข้น ยกลง\n3.แบ่งส่วนผสมแป้งเล็กน้อยใส่สีเขียว คนให้เข้ากัน ตักใส่ถุงบีบหัวใบไม้\n4.ส่วนแป้งที่เหลือใส่สีชมพู คนให้เข้ากัน ใส่ถุงบีบหัวกลีบกุหลาบ\n5.วางกระดาษรองอบบนร่มแต่งหน้าเค้ก (อุปกรณ์สำหรับทำกุหลาบแต่งหน้าเค้ก)บีบสีชมพูวนให้เป็นกลีบกุหลาบชั้นใน แล้วบีบต่อให้เป็นกลีบกุหลาบชั้นนอกให้ซ้อนกันเล็กน้อยอย่างสวยงาม\n6.นำขนมออกจากร่ม เรียงใส่ถาดอบ นำไปอบลมร้อนที่อุณหภูมิ 50-60\nองศาเซลเซียสประมาณ 5-6 ชั่วโมง (ถ้าไม่มีเตาอบสามารถตากแดดจัดๆ 1-2 แดด)จนแป้งด้านนอกแห้ง เรียงใส่ภาชนะมีฝา แล้วนำไปอบควันเทียนไว้ให้หอมๆเป็นอันเสร็จ', 'Admin', 'ของหวาน', 'dessert_recipe/อาลัวกุหลาบนมสด.png', '2024-11-08 01:43:39', 5.0, 4, NULL),
 (9, 'ลูกตาลลอยแก้ว', '1.ลูกตาลอ่อน 1 กิโลกรัม\r\n2.ใบเตยสดหั่นท่อนยาว 3-4 นิ้ว 4-5 ใบ\r\n3.น้ำตาลทรายขาว 1 ถ้วย\r\n4.น้ำตาลกรวด ตรามิตรผล 1/2 ถ้วย\r\n5.น้ำเปล่า 2 ถ้วย', '1.นำลูกตาลใส่ภาชนะแล้วแช่ช่องแช่แข็งไว้ 1 คืน\r\n2.ใส่ลูกตาลแช่แข็งลงแช่ในน้ำให้ลูกตาลแยกออกเป็นชิ้นๆ\r\n3.ค่อยๆใช้มือบี้ให้เปลือกลูกตาลออกซึ่งจะลอกออกง่ายมาก\r\n4.หั่นเนื้อลูกตาลเป็นชิ้นบางๆพักไว้\r\n5.ต้มน้ำกับ น้ำตาลทราย น้ำตาลกรวด ตรามิตรผล ใส่ใบเตยต้มต่อให้น้ำตาลละลายหมดและมีกลิ่นหอมของใบเตย ตักใบเตยออก\r\n6.ใส่เนื้อลูกตาลที่หั่นไว้ คนให้เข้ากัน\r\n7.ตักลูกตาลลอยแก้วใส่ถ้วย ใส่น้ำแข็ง เสิร์ฟเย็นๆ', 'Admin', 'ของหวาน', 'dessert_recipe/ลูกตาลลอยแก้ว.png', '2024-11-08 23:57:03', 4.7, 4, NULL),
 (13, 'กะเพรา', '1.เนื้อสับ 120 กรัม\r\n2.น้ำมันหอย 2 ช้อนโต๊ะ\r\n3.น้ำปลา ½ ช้อนโต๊ะ\r\n4.ซอสถั่วเหลือง ½ ช้อนโต๊ะ\r\n5.น้ำตาลปี๊บ ½ ช้อนชา\r\n6.กระเทียมสับ 5 กรัม\r\n7.พริกขี้หนู 5 เม็ด\r\n8.ใบกะเพรา 10 กรัม (เต็มหยิบมือ)\r\n9.ลูกผักชีคั่ว และยี่หร่าป่น (สำหรับโรยหน้า)\r\n10.น้ำมันปรุงอาหาร\r\n11.ข้าวสวย 1 จาน\r\n12.ไข่ 1 ฟอง', '1.ใส่น้ำมันในกระทะร้อน\r\n2.ผัดพริกและกระเทียมในน้ำมันจนขึ้นสีอ่อน ๆ\r\n3.ใส่เนื้อสับและผัดต่อจนสุก 75%\r\n4.ใส่เครื่องปรุงรสแล้วผัดให้เข้ากัน\r\n5.ใส่ใบกะเพราท้ายสุด คลุกให้เข้ากันดีแล้วปิดเตาทันที\r\n6.ทอดไข่ดาวโดยเลือกความสุกตามใจชอบ\r\n7.นำข้าวสวยใส่จาน ราดด้วยผัดกะเพรา แล้วตบท้ายด้วยไข่ดาวที่เตรียมไว้\r\n8.โรยหน้าด้วยลูกผักชีคั่วและยี่หร่าป่น', 'Admin', 'อาหารคาว', 'maindish_recipe/กะเพา.png', '2024-11-13 19:05:16', 5.0, 4, NULL),
-(14, 'ขนมชั้นใบเตยโรล', '1.', '1.', 'cat', 'ของหวาน', 'dessert_recipe/ผัดไทยกุ้งสด.png', '2024-11-14 09:18:08', 5.0, 1, NULL),
 (15, 'ข้าวเหนียวมะม่วง', '1. ข้าวเหนียวเขี้ยวงู 1 กิโลกรัม\n2. น้ำตาลทรายขาว 2 ช้อนโต๊ะ\n3. กะทิ 100% 750 มิลลิลิตร\n4. เกลือ 1 ช้อนชา\n5. ใบเตยสำหรับจัดเสิร์ฟ', '1.นึ่งข้าวเหนียว ซาวข้าวเหนียวเขี้ยวงู และแช่ทิ้งไว้จนครบสามชั่วโมง ตั้งหม้อใส่น้ำสำหรับนึ่ง จากนั้นนำผ้าขาวบางมาปูในซึ้ง ตักข้าวเหนียวที่ซาวไว้ใส่ลงไปโดยเว้นตรงกลางเป็นวงกลม แล้วปิดผ้าขาวบางห่อข้าวเหนียวเอาไว้ นึ่งประมาณ 20 นาที พอครบ 20 นาที ใช้ทัพพีกลับข้าวเหนียวเพื่อให้สุกทั่วถึง แล้วนึ่งต่ออีก 10 นาที\n\n2.มูนข้าวเหนียว นำ อัมพวา กะทิ 100% น้ำตาลทราย และเกลือป่น เทผสมให้เข้ากัน นำไปตั้งไฟอ่อน ๆ เคี่ยวจนน้ำตาลละลายหมด นำข้าวเหนียวที่นึ่งสุกแล้วใส่ชาม จากนั้นเทน้ำกะทิลงไป คนให้เข้ากัน จากนั้นนำผ้าขาวบางปิดไว้ พักข้าว 30 นาทีเพื่อให้ข้าวเหนียวมูนดูดน้ำกะท\n\n3.ทำน้ำราดกะทิและจัดเสิร์ฟ นำ อัมพวา กะทิ 100% เกลือ และแป้งข้าวเจ้ามาตั้งไฟอ่อน ๆ หมั่นคนเรื่อย ๆ พอกะทิข้นขึ้น ยกลงพักไว้ ปอกมะม่วงสุกจัดใส่จาน เสิร์ฟพร้อมข้าวเหนียวมูน ราดด้วยน้ำกะทิ เท่านี้ก็พร้อมเสิร์ฟแล้วครับ', 'cat', 'ของหวาน', 'dessert_recipe/ข้าวเหนียวมะม่วง.png', '2024-11-16 19:39:38', 5.0, 1, '2024-11-16 19:43:30');
 
 --
@@ -127,22 +131,8 @@ CREATE TABLE `reports` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `reports`
---
-
-INSERT INTO `reports` (`id`, `recipe_id`, `user_id`, `report_text`, `report_date`) VALUES
-(5, 14, 3, 'สูตรผิด', '2024-11-14 02:23:45');
-
---
 -- Indexes for dumped tables
 --
-
---
--- Indexes for table `admin_feedback`
---
-ALTER TABLE `admin_feedback`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `recipe_id` (`recipe_id`);
 
 --
 -- Indexes for table `comments`
@@ -150,6 +140,13 @@ ALTER TABLE `admin_feedback`
 ALTER TABLE `comments`
   ADD PRIMARY KEY (`id`),
   ADD KEY `recipe_id` (`recipe_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`);
 
 --
@@ -171,38 +168,32 @@ ALTER TABLE `reports`
 --
 
 --
--- AUTO_INCREMENT for table `admin_feedback`
---
-ALTER TABLE `admin_feedback`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `recipe`
 --
 ALTER TABLE `recipe`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- Constraints for dumped tables
 --
-
---
--- Constraints for table `admin_feedback`
---
-ALTER TABLE `admin_feedback`
-  ADD CONSTRAINT `admin_feedback_ibfk_1` FOREIGN KEY (`recipe_id`) REFERENCES `recipe` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `comments`
@@ -210,6 +201,12 @@ ALTER TABLE `admin_feedback`
 ALTER TABLE `comments`
   ADD CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`recipe_id`) REFERENCES `recipe` (`id`),
   ADD CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user_management`.`users` (`id`);
+
+--
+-- Constraints for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user_management`.`users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `reports`

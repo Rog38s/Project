@@ -339,150 +339,142 @@
     </div>
 
     <script>
-
         document.addEventListener('DOMContentLoaded', function() {
             const commentForm = document.querySelector('.comment-form');
             const commentInput = document.querySelector('.comment-input');
             const submitButton = document.querySelector('.comment-submit');
             const ratingInputs = document.querySelectorAll('input[name="rating"]');
-            
-            // ตรวจสอบการกรอกข้อมูล
+        
+            // ดึงค่า recipe_id จาก URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const recipeId = urlParams.get('recipe_id');
+        
+            if (!recipeId) {
+                alert('ไม่พบ ID ของสูตรอาหาร');
+                return;
+            }
+        
+            // ฟังก์ชันตรวจสอบการกรอกข้อมูล
             function checkFormValidity() {
                 const rating = document.querySelector('input[name="rating"]:checked');
                 const comment = commentInput.value.trim();
                 submitButton.disabled = !rating || !comment;
             }
         
-            // ติดตามการเปลี่ยนแปลงของ input
-            commentInput.addEventListener('input', checkFormValidity);
-            ratingInputs.forEach(input => {
-                input.addEventListener('change', checkFormValidity);
-            });
-    
-            // ฟังก์ชันโหลดความคิดเห็น - แยกออกมาให้เรียกใช้ได้ทั่วไป
-            function loadComments() {
-                fetch(`get_comments.php?recipe_id=${recipeId}`)
+            // ตรวจสอบการล็อกอินก่อนแสดงฟอร์มความคิดเห็น
+            fetch('check_session.php')
                 .then(response => response.json())
-                .then(comments => {
-                    const commentsList = document.querySelector('.comments-list');
-                    commentsList.innerHTML = '';
-                    
-                    if (comments.error) {
-                        commentsList.innerHTML = `<p>ไม่พบความคิดเห็น</p>`;
-                        return;
-                    }
-                    
-                    if (comments.length === 0) {
-                        commentsList.innerHTML = `<p>ยังไม่มีความคิดเห็น</p>`;
-                        return;
-                    }
-                    
-                    comments.forEach(comment => {
-                        const stars = '⭐'.repeat(parseInt(comment.rating));
-                        const commentDate = new Date(comment.created_at).toLocaleDateString('th-TH', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        });
-                        
-                        const commentHtml = `
-                            <div class="comment-item">
-                                <div class="comment-header">
-                                    <span class="comment-user">${comment.username}</span>
-                                    <span class="comment-stars">${stars}</span>
-                                </div>
-                                <div class="comment-text">${comment.comment_text}</div>
-                                <small class="comment-date">${commentDate}</small>
-                            </div>
+                .then(data => {
+                    if (!data.logged_in) {
+                        commentForm.innerHTML = `
+                            <p>
+                                กรุณาเข้าสู่ระบบก่อนแสดงความคิดเห็น 
+                                <a href="login.html" style="color: blue; text-decoration: underline;">เข้าสู่ระบบ</a>
+                            </p>
                         `;
-                        commentsList.insertAdjacentHTML('beforeend', commentHtml);
+                        return;
+                    }
+        
+                    // ฟังก์ชันโหลดความคิดเห็น
+                    function loadComments() {
+                        fetch(`get_comments.php?recipe_id=${recipeId}`)
+                            .then(response => response.json())
+                            .then(comments => {
+                                const commentsList = document.querySelector('.comments-list');
+                                commentsList.innerHTML = '';
+        
+                                if (!comments || comments.error || comments.length === 0) {
+                                    commentsList.innerHTML = '<p>ยังไม่มีความคิดเห็น</p>';
+                                    return;
+                                }
+        
+                                comments.forEach(comment => {
+                                    const stars = '⭐'.repeat(parseInt(comment.rating));
+                                    const commentDate = new Date(comment.created_at).toLocaleDateString('th-TH', {
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    });
+        
+                                    const commentHtml = `
+                                        <div class="comment-item">
+                                            <div class="comment-header">
+                                                <span class="comment-user">${comment.username}</span>
+                                                <span class="comment-stars">${stars}</span>
+                                            </div>
+                                            <div class="comment-text">${comment.comment_text}</div>
+                                            <small class="comment-date">${commentDate}</small>
+                                        </div>
+                                    `;
+                                    commentsList.insertAdjacentHTML('beforeend', commentHtml);
+                                });
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                document.querySelector('.comments-list').innerHTML = 
+                                    '<p>เกิดข้อผิดพลาดในการโหลดความคิดเห็น</p>';
+                            });
+                    }
+        
+                    // โหลดความคิดเห็นตั้งแต่เริ่มต้น
+                    loadComments();
+        
+                    // จัดการการส่งความคิดเห็น
+                    submitButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const rating = document.querySelector('input[name="rating"]:checked');
+                        const comment = commentInput.value.trim();
+        
+                        if (!rating || !comment) {
+                            alert('กรุณาให้คะแนนและเขียนความคิดเห็น');
+                            return;
+                        }
+        
+                        fetch('save_comment.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                recipe_id: recipeId,
+                                rating: rating.value,
+                                comment: comment
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                document.getElementById('recipe-rating').innerText =
+                                    `${'⭐'.repeat(Math.round(data.avg_rating))} (${data.avg_rating})`;
+                                commentInput.value = '';
+                                document.querySelector('input[name="rating"]:checked').checked = false;
+                                submitButton.disabled = true;
+                                loadComments();
+                                alert('บันทึกความคิดเห็นเรียบร้อยแล้ว');
+                            } else {
+                                alert(data.error || 'เกิดข้อผิดพลาดในการบันทึกความคิดเห็น');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('เกิดข้อผิดพลาดในการส่งข้อมูล');
+                        });
                     });
+        
+                    // ตั้งเวลาโหลดความคิดเห็นใหม่ทุก 30 วินาที
+                    setInterval(() => loadComments(), 30000);
+        
+                    // ติดตามการเปลี่ยนแปลงของ input
+                    commentInput.addEventListener('input', checkFormValidity);
+                    ratingInputs.forEach(input => input.addEventListener('change', checkFormValidity));
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    document.querySelector('.comments-list').innerHTML = 
-                        '<p>เกิดข้อผิดพลาดในการโหลดความคิดเห็น</p>';
+                    alert('เกิดข้อผิดพลาดในการตรวจสอบสถานะการเข้าสู่ระบบ');
                 });
-            }
-    
-            // เช็คสถานะการล็อกอินก่อนแสดงฟอร์มความคิดเห็น
-            fetch('check_session.php')
-            .then(response => response.json())
-            .then(data => {
-                if (!data.logged_in) {
-                    commentForm.innerHTML = `
-                        <p>
-                            กรุณาเข้าสู่ระบบก่อนแสดงความคิดเห็น 
-                            <a href="login.html" style="color: blue; text-decoration: underline;">เข้าสู่ระบบ</a>
-                        </p>
-                    `;
-                    return;
-                }
-            });
-
-        
-                // จัดการการส่งความคิดเห็น
-                submitButton.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    const rating = document.querySelector('input[name="rating"]:checked');
-                    const comment = commentInput.value.trim();
-                    
-                    if (!rating || !comment) {
-                        alert('กรุณาให้คะแนนและเขียนความคิดเห็น');
-                        return;
-                    }
-            
-                    const formData = new FormData();
-                    formData.append('recipe_id', recipeId);
-                    formData.append('rating', rating.value);
-                    formData.append('comment', comment);
-            
-                    fetch('save_comment.php', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // อัปเดตคะแนนเฉลี่ย
-                            document.getElementById('recipe-rating').innerText = 
-                                `${'⭐'.repeat(Math.round(data.avg_rating))} (${data.avg_rating})`;
-                            
-                            // รีเซ็ตฟอร์ม
-                            commentInput.value = '';
-                            const checkedRating = document.querySelector('input[name="rating"]:checked');
-                            if (checkedRating) checkedRating.checked = false;
-                            submitButton.disabled = true;
-                            
-                            // โหลดความคิดเห็นใหม่ทันที
-                            loadComments();
-                            
-                            alert('บันทึกความคิดเห็นเรียบร้อยแล้ว');
-                        } else {
-                            alert(data.error || 'เกิดข้อผิดพลาดในการบันทึกความคิดเห็น');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('เกิดข้อผิดพลาดในการส่งข้อมูล');
-                    });
-                });
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('เกิดข้อผิดพลาดในการตรวจสอบสถานะการเข้าสู่ระบบ');
-            });
-            
-            // โหลดความคิดเห็นตั้งแต่เริ่มต้น
-            loadComments();
-            
-            // ตั้งเวลาโหลดความคิดเห็นใหม่ทุก 30 วินาที
-            setInterval(loadComments, 30000);
         });
-    </script>
+        </script>
+        
 
     <script>
         // ดึงค่า recipe_id จาก URL
