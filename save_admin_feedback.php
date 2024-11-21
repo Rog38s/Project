@@ -42,34 +42,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['recipe_id'], $_POST['
         exit();
     }
 
-    // ตรวจสอบว่า recipe_id มีอยู่ในฐานข้อมูล
-    $stmt = $pdo->prepare('SELECT user_id FROM recipe WHERE id = :recipe_id');
-    $stmt->bindParam(':recipe_id', $recipe_id, PDO::PARAM_INT);
-    $stmt->execute();
-    $owner_id = $stmt->fetchColumn();
-
-    if (!$owner_id) {
-        echo json_encode(['success' => false, 'error' => 'RECIPE_NOT_FOUND']);
-        exit();
-    }
-
-    // ตรวจสอบว่า admin_id มีอยู่ในฐานข้อมูลและเป็น admin
-    $stmt = $pdo->prepare('SELECT COUNT(*) FROM user_management.users WHERE id = :admin_id AND role = "admin"');
-    $stmt->bindParam(':admin_id', $admin_id, PDO::PARAM_INT);
-    $stmt->execute();
-    if ($stmt->fetchColumn() == 0) {
-        echo json_encode(['success' => false, 'error' => 'ADMIN_NOT_FOUND']);
-        exit();
-    }
-
-    // บันทึกข้อความ Feedback ลงในตาราง notifications
     try {
+        // ตรวจสอบว่า recipe_id มีอยู่ในฐานข้อมูล และดึงข้อมูล recipe_name และ owner_id
+        $stmt = $pdo->prepare('SELECT user_id, recipe_name FROM recipe WHERE id = :recipe_id');
+        $stmt->bindParam(':recipe_id', $recipe_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $recipe = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$recipe) {
+            echo json_encode(['success' => false, 'error' => 'RECIPE_NOT_FOUND']);
+            exit();
+        }
+
+        $owner_id = $recipe['user_id'];
+        $recipe_name = $recipe['recipe_name'];
+
+        // ตรวจสอบว่า admin_id มีอยู่ในฐานข้อมูลและเป็น admin
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM user_management.users WHERE id = :admin_id AND role = "admin"');
+        $stmt->bindParam(':admin_id', $admin_id, PDO::PARAM_INT);
+        $stmt->execute();
+        if ($stmt->fetchColumn() == 0) {
+            echo json_encode(['success' => false, 'error' => 'ADMIN_NOT_FOUND']);
+            exit();
+        }
+
+        // บันทึกข้อความ Feedback ลงในตาราง notifications
         $stmt = $pdo->prepare(
-            'INSERT INTO notifications (user_id, recipe_id, message, created_at)
-             VALUES (:user_id, :recipe_id, :message, NOW())'
+            'INSERT INTO notifications (user_id, recipe_name, message, created_at)
+             VALUES (:user_id, :recipe_name, :message, NOW())'
         );
         $stmt->bindParam(':user_id', $owner_id, PDO::PARAM_INT); // เจ้าของสูตร
-        $stmt->bindParam(':recipe_id', $recipe_id, PDO::PARAM_INT);
+        $stmt->bindParam(':recipe_name', $recipe_name, PDO::PARAM_STR);
         $stmt->bindParam(':message', $feedback_text, PDO::PARAM_STR);
         $stmt->execute();
 
