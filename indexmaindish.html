@@ -14,6 +14,15 @@
 
         /* Navbar */
         .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-image: url('img/bg4.png');
+            background-size:contain;
+        }
+        .navbarin {
             background-color: #ffffff;
             display: flex;
             align-items: center;
@@ -77,6 +86,9 @@
             font-size: 48px;
             font-weight: bold;
             animation: fadeIn 3s ease-in-out;
+            background-color: rgba(166, 166, 166, 0.5);
+            border-radius: 10px;
+            padding: 10px;
         }
 
         @keyframes fadeIn {
@@ -92,16 +104,18 @@
 
         /* Main Content */
         .main-content {
-            padding: 20px;
+            padding-top: 20px;
         }
 
         /* Highlight Section */
         .highlight-container {
             display: flex;
             justify-content: space-between;
-            background-color: #9C6644;
+            background-color: #9b4022;
             margin-bottom: 10px;
             padding: 15px;
+            background-image: url('img/bg5.png');
+            background-size: 100%;
         }
 
         .highlight-container .image-container img {
@@ -236,6 +250,7 @@
 <body>
    <!-- Navbar -->
     <div class="navbar">
+        <div class="navbarin">
         <!-- Logo -->
         <img src="img/logo.png" alt="Logo" class="logo">
         
@@ -266,6 +281,7 @@
             <a href="login.html"><img src="img/recomendicon.png" alt="แนะนำสูตร" class="icon" onclick="location.href='login.html'">แนะนำสูตร</a>
             <a href="notification.html"><img src="img/noti.png" alt="การแจ้งเตือน" class="icon" onclick="location.href='notification.html'"></a>
             <a href="login.html" class="login"><img src="img/usericon.png" alt="เข้าสู่ระบบ" class="icon" onclick="location.href='login.html'">เข้าสู่ระบบ</a>
+        </div>
         </div>
     </div>
 

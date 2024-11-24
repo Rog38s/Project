@@ -31,6 +31,12 @@
             background-size: cover;
             background-position: center;
             height: 100%; /* Full height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            text-align: center;
+
         }
         
         .form-column {
@@ -108,11 +114,35 @@
         .blue-button {
             background-color: #ADD8E6;
         }
+    
+
+        .image-column .text {
+            font-size: 30px;
+            font-weight: bold;
+            animation: fadeIn 3s ease-in-out;
+            background-color: rgba(130, 130, 130, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
     </style>
 </head>
 <body>
     <div class="sign-in-container">
-        <div class="image-column"></div>
+        <div class="image-column">
+            <div class="text">สำรับคาว - หวานของไทย</div>
+        </div>
         <div class="form-column">
             <form class="form-column" action="login.php" method="post"> <!-- จัดฟอร์มแบบตรงกลาง -->
                 <img src="img/logo.png" alt="Company logo" class="logo"> <!-- เพิ่มโลโก้ -->
