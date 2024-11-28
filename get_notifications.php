@@ -13,13 +13,17 @@ try {
         exit();
     }
 
-    // ดึงข้อมูลการแจ้งเตือน พร้อมตรวจสอบ recipe_name
+    // ดึงข้อมูลการแจ้งเตือนพร้อมตรวจสอบ recipe_id, recipe_name และ user_id
     $stmt = $pdo->prepare("
         SELECT 
+            n.id AS notification_id,
             n.recipe_name,
             n.message,
-            n.created_at
+            n.created_at,
+            r.id AS recipe_id,
+            r.user_id AS owner_id
         FROM notifications n
+        LEFT JOIN recipe r ON n.recipe_name = r.recipe_name
         WHERE n.user_id = :user_id
         ORDER BY n.created_at DESC
     ");
@@ -27,12 +31,16 @@ try {
     $stmt->execute([':user_id' => $user_id]);
     $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // ปรับแต่งผลลัพธ์เพื่อแสดงเฉพาะ message พร้อม recipe_name (ถ้ามี)
-    $formattedNotifications = array_map(function ($notification) {
-        if (!empty($notification['recipe_name'])) {
-            $notification['message'] = $notification['recipe_name'] . ' - ' . $notification['message'];
+    // ปรับแต่งผลลัพธ์เพื่อรวมลิงก์ไปยัง my_recipe_edit.html หรือ recipe.html
+    $formattedNotifications = array_map(function ($notification) use ($user_id) {
+        if ($notification['recipe_id']) {
+            // ตรวจสอบว่าผู้ใช้เป็นเจ้าของสูตรหรือไม่
+            $notification['recipe_link'] = ($notification['owner_id'] == $user_id)
+                ? "my_recipe_edit.html?recipe_id=" . $notification['recipe_id']
+                : "recipe.html?recipe_id=" . $notification['recipe_id'];
+        } else {
+            $notification['recipe_link'] = null; // ไม่มี recipe_id
         }
-        unset($notification['recipe_name']); // ลบ key recipe_name เพื่อไม่ต้องแสดงซ้ำ
         return $notification;
     }, $notifications);
 

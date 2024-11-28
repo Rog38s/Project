@@ -508,6 +508,12 @@
         <h2>วิธีทำ</h2>
         <div id="steps-list"></div> <!-- เปลี่ยนจาก ul เป็น div -->
     </div>
+    <div class="edit-buttons">
+        <button id="editBtn" class="btn btn-edit">แก้ไขสูตร</button>
+        <button id="saveBtn" class="btn btn-save" style="display: none;">บันทึก</button>
+        <button id="cancelBtn" class="btn btn-cancel" style="display: none;">ยกเลิก</button>
+        <button id="deleteBtn" class="btn btn-delete">ลบสูตร</button>
+    </div>
 
     <div class="comments-section">
         <h2>แสดงความคิดเห็น</h2>
@@ -723,13 +729,6 @@
         }
     </script>
 
-    <!-- เพิ่มปุ่มแก้ไขและลบในส่วนบนของหน้าสูตร -->
-    <div class="edit-buttons">
-        <button id="editBtn" class="btn btn-edit">แก้ไขสูตร</button>
-        <button id="saveBtn" class="btn btn-save" style="display: none;">บันทึก</button>
-        <button id="cancelBtn" class="btn btn-cancel" style="display: none;">ยกเลิก</button>
-        <button id="deleteBtn" class="btn btn-delete">ลบสูตร</button>
-    </div>
 
     <!-- Modal ยืนยันการลบ -->
     <div id="deleteModal" class="modal">

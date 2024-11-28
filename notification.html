@@ -185,7 +185,7 @@
     
         .notification-details h2 a {
             text-decoration: none;
-            color: #007BFF;
+            color: black;
         }
     
         .notification-details h2 a:hover {
@@ -326,7 +326,7 @@
     </script>
 
     <div class="notifications-container">
-        <h1>การแจ้งเตือน</h1>
+        <h1>การแจ้งเตือนจากแอดมิน</h1>
         <div id="notifications-list">
             <!-- รายการแจ้งเตือน -->
         </div>
@@ -334,59 +334,57 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // ดึงข้อมูลการแจ้งเตือน
             fetch('get_notifications.php')
                 .then(response => response.json())
                 .then(notifications => {
                     const notificationsList = document.getElementById('notifications-list');
-    
                     if (notifications.error) {
                         notificationsList.innerHTML = `<p>${notifications.error}</p>`;
                         return;
                     }
-    
                     if (notifications.length === 0) {
                         notificationsList.innerHTML = `<p>ไม่มีการแจ้งเตือน</p>`;
                         return;
                     }
-    
-                    // แสดงการแจ้งเตือน
-                    notifications.forEach(notification => {
-                        const item = document.createElement('div');
-                        item.classList.add('notification-item');
-    
-                        // รูปภาพ (ถ้ามี)
-                        if (notification.image_path) {
-                            const img = document.createElement('img');
-                            img.src = notification.image_path;
-                            img.alt = notification.recipe_name || 'ภาพแจ้งเตือน';
-                            item.appendChild(img);
-                        }
-    
-                        // รายละเอียดการแจ้งเตือน
-                        const details = document.createElement('div');
-                        details.classList.add('notification-details');
-    
-                        const message = document.createElement('p');
-                        message.textContent = notification.message;
-                        details.appendChild(message);
-    
-                        const date = document.createElement('p');
-                        date.classList.add('notification-date');
-                        date.textContent = `วันที่แจ้งเตือน: ${new Date(notification.created_at).toLocaleDateString('th-TH', {
+
+                    const formatDate = (dateString) => {
+                        if (!dateString) return "ไม่พบวันที่";
+                        return new Date(dateString).toLocaleDateString('th-TH', {
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric',
                             hour: '2-digit',
                             minute: '2-digit',
-                        })}`;
-                        details.appendChild(date);
-    
-                        // อัปเดตสถานะการแจ้งเตือนเมื่อคลิก
-                        item.addEventListener('click', () => {
-                            markNotificationAsRead(notification.id);
                         });
-    
+                    };
+
+                    notifications.forEach(notification => {
+                        const item = document.createElement('div');
+                        item.classList.add('notification-item');
+
+                        const details = document.createElement('div');
+                        details.classList.add('notification-details');
+
+                        const recipeNameElement = document.createElement('h2');
+                        if (notification.recipe_id) {
+                            const recipeLink = document.createElement('a');
+                            recipeLink.href = notification.recipe_link;
+                            recipeLink.textContent = notification.recipe_name || "สูตรไม่มีชื่อ";
+                            recipeNameElement.appendChild(recipeLink);
+                        } else {
+                            recipeNameElement.textContent = notification.recipe_name || "สูตรที่ถูกลบ";
+                        }
+                        details.appendChild(recipeNameElement);
+
+                        const message = document.createElement('p');
+                        message.textContent = notification.message;
+                        details.appendChild(message);
+
+                        const date = document.createElement('p');
+                        date.classList.add('notification-date');
+                        date.textContent = `วันที่แจ้งเตือน: ${formatDate(notification.created_at)}`;
+                        details.appendChild(date);
+
                         item.appendChild(details);
                         notificationsList.appendChild(item);
                     });
@@ -397,10 +395,11 @@
                 });
         });
     
+    
         document.addEventListener('DOMContentLoaded', () => {
-            markAllNotificationsAsRead(); // ฟังก์ชันอัปเดตสถานะการแจ้งเตือน
+            markAllNotificationsAsRead();
         });
-        
+    
         // ฟังก์ชันอัปเดตสถานะแจ้งเตือนทั้งหมดเป็น "อ่านแล้ว"
         function markAllNotificationsAsRead() {
             fetch('mark_all_notifications_as_read.php', { method: 'POST' })
@@ -408,7 +407,6 @@
                 .then(data => {
                     if (data.success) {
                         console.log('อัปเดตสถานะการแจ้งเตือนทั้งหมดสำเร็จ');
-                        // ตั้งค่า LocalStorage เพื่อแจ้งหน้าอื่นว่าแจ้งเตือนถูกอัปเดตแล้ว
                         localStorage.setItem('notificationsUpdated', 'true');
                     } else {
                         console.error('เกิดข้อผิดพลาดในการอัปเดตแจ้งเตือน:', data.error);
@@ -416,8 +414,8 @@
                 })
                 .catch(error => console.error('เกิดข้อผิดพลาด:', error));
         }
-        
     </script>
+    
     
     
     
