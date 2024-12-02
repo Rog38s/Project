@@ -62,7 +62,7 @@ try {
         $stmtInsertReporter->execute([
             ':user_id' => $reporter_id,
             ':recipe_name' => $recipe_name,
-            ':message' => "การรายงานสูตร '{$recipe_name}' ของคุณได้รับการอนุมัติ"
+            ':message' => "สูตร '{$recipe_name}' ที่คุณรายงานได้รับการตรวจสอบและถูกลบโดยแอดมิน"
         ]);
     }
 

@@ -324,36 +324,48 @@
     <script>
         let selectedRecipeId = null;
 
-        // Fetch reported recipes
-        fetch('get_reported_recipes.php')
-            .then(response => response.json())
-            .then(data => {
-                const reportList = document.getElementById('report-list');
-                if (data.length === 0) {
-                    reportList.innerHTML = '<p>ไม่มีรายงานสูตรอาหาร</p>';
-                } else {
-                    data.forEach(report => {
-                        const reportItem = document.createElement('div');
-                        reportItem.className = 'report-item';
+        // ฟังก์ชันแปลงวันที่และเวลาเป็นภาษาไทย
+    function formatDateTimeThai(dateStr, timeStr) {
+        const date = new Date(`${dateStr}T${timeStr}`);
+        const optionsDate = { year: 'numeric', month: 'long', day: 'numeric' };
+        const optionsTime = { hour: '2-digit', minute: '2-digit' };
+        return date.toLocaleDateString('th-TH', optionsDate) + ' เวลา ' + date.toLocaleTimeString('th-TH', optionsTime);
+    }
 
-                        const imagePath = report.recipe_image || 'img/default-recipe.jpg';
-                        reportItem.innerHTML = `
-                            <img src="${imagePath}" alt="${report.recipe_name}" class="recipe-image">
-                            <div class="report-details">
-                                <a href="recipe.html?recipe_id=${report.recipe_id}" class="recipe-title">${report.recipe_name}</a>
-                                <p class="report-info">ผู้รายงาน: ${report.reporter_name}</p>
-                                <p class="report-info">รายละเอียดการรายงาน: ${report.report_text}</p>
-                                <p class="report-info">วันที่รายงาน: ${new Date(report.report_date).toLocaleDateString('th-TH')}</p>
-                            </div>
-                            <div class="button-group">
-                                <button class="keep-btn" onclick="deleteReport(${report.recipe_id})">ปฏิเสธรายงาน</button>
-                                <button class="delete-btn" onclick="deleteRecipe(${report.recipe_id})">ลบสูตร</button>
-                            </div>
-                        `;
-                        reportList.appendChild(reportItem);
-                    });
-                }
-            });
+    // Fetch reported recipes
+    fetch('get_reported_recipes.php')
+        .then(response => response.json())
+        .then(data => {
+            const reportList = document.getElementById('report-list');
+            if (data.length === 0) {
+                reportList.innerHTML = '<p>ไม่มีรายงานสูตรอาหาร</p>';
+            } else {
+                data.forEach(report => {
+                    const reportItem = document.createElement('div');
+                    reportItem.className = 'report-item';
+
+                    const imagePath = report.recipe_image || 'img/default-recipe.jpg';
+                    reportItem.innerHTML = `
+                        <img src="${imagePath}" alt="${report.recipe_name}" class="recipe-image">
+                        <div class="report-details">
+                            <a href="recipe.html?recipe_id=${report.recipe_id}" class="recipe-title">${report.recipe_name}</a>
+                            <p class="report-info">ผู้รายงาน: ${report.reporter_name}</p>
+                            <p class="report-info">รายละเอียดการรายงาน: ${report.report_text}</p>
+                            <p class="report-info">วันที่รายงาน: ${formatDateTimeThai(report.report_date, report.report_time)}</p>
+                        </div>
+                        <div class="button-group">
+                            <button class="keep-btn" onclick="deleteReport(${report.recipe_id})">ปฏิเสธรายงาน</button>
+                            <button class="delete-btn" onclick="deleteRecipe(${report.recipe_id})">ลบสูตร</button>
+                        </div>
+                    `;
+                    reportList.appendChild(reportItem);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('เกิดข้อผิดพลาด:', error);
+            document.getElementById('report-list').innerHTML = '<p>เกิดข้อผิดพลาดในการโหลดรายงาน</p>';
+        });
 
         function deleteReport(recipeId) {
             if (confirm('คุณต้องการเก็บสูตรนี้และลบรายงานออกหรือไม่?')) {

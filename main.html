@@ -423,6 +423,7 @@
                 const newRecipesContainer = document.getElementById('new-recipes');
                 data.forEach(recipe => {
                     const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
+                    const commentCount = recipe.comment_count || 0; // แสดง 0 หากไม่มีคอมเมนต์
 
                     const recipeElement = document.createElement('div');
                     recipeElement.classList.add('recipe-item');
@@ -430,7 +431,7 @@
                         <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
                         <div>
                             <h2>${recipe.recipe_name}</h2>
-                            <p>⭐ ${rating.toFixed(1)}</p>
+                            <p>⭐ ${rating.toFixed(1)} (${commentCount})</p>
                             <p>สร้างโดย ${recipe.source}</p>
                             <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
                             ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
@@ -470,6 +471,7 @@
                 const popularRecipesContainer = document.getElementById('popular-recipes');
                 data.forEach(recipe => {
                     const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
+                    const commentCount = recipe.comment_count || 0; // แสดง 0 หากไม่มีคอมเมนต์
 
                     const recipeElement = document.createElement('div');
                     recipeElement.classList.add('recipe-item');
@@ -477,7 +479,7 @@
                         <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
                         <div>
                             <h2>${recipe.recipe_name}</h2>
-                            <p>⭐ ${rating.toFixed(1)}</p>
+                            <p>⭐ ${rating.toFixed(1)} (${commentCount})</p>
                             <p>สร้างโดย ${recipe.source}</p>
                             <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
                             ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
@@ -496,6 +498,7 @@
                 const popularDessertsContainer = document.getElementById('popular-dessert-recipes');
                 data.forEach(recipe => {
                     const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
+                    const commentCount = recipe.comment_count || 0; // แสดง 0 หากไม่มีคอมเมนต์
 
                     const recipeElement = document.createElement('div');
                     recipeElement.classList.add('recipe-item');
@@ -503,7 +506,7 @@
                         <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
                         <div>
                             <h2>${recipe.recipe_name}</h2>
-                            <p>⭐ ${rating.toFixed(1)}</p>
+                            <p>⭐ ${rating.toFixed(1)} (${commentCount})</p>
                             <p>สร้างโดย ${recipe.source}</p>
                             <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
                             ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}

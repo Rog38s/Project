@@ -5,26 +5,38 @@ $dbname = 'recipe_database';
 $username = 'root';
 $password = '';
 
-// ตั้งค่า Content-Type ให้เป็น JSON เสมอ
+// ตั้งค่า Content-Type ให้เป็น JSON
 header('Content-Type: application/json');
 
-// เชื่อมต่อฐานข้อมูล
 try {
+    // เชื่อมต่อฐานข้อมูล
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // รับค่า category, type, และ recipe_id จากพารามิเตอร์ใน URL
-    $category = isset($_GET['category']) ? $_GET['category'] : null; // ตั้งค่าเริ่มต้นเป็น null
+    // รับพารามิเตอร์จาก URL
+    $category = isset($_GET['category']) ? $_GET['category'] : null;
     $type = isset($_GET['type']) ? $_GET['type'] : 'new'; // default เป็น 'new'
     $recipe_id = isset($_GET['recipe_id']) ? intval($_GET['recipe_id']) : null;
 
-    // ตรวจสอบว่ามีการส่ง recipe_id มาหรือไม่
+    // ถ้ามี recipe_id ให้ดึงข้อมูลสูตรเดี่ยว
     if ($recipe_id) {
-        // คิวรีดึงข้อมูลสูตรอาหาร
-        $query = "SELECT id, recipe_name, ingredients, steps, rating, source, created_at, updated_at, image_path 
-                  FROM recipe 
-                  WHERE id = :recipe_id";
-
+        $query = "
+            SELECT 
+                r.id, 
+                r.recipe_name, 
+                r.ingredients, 
+                r.steps, 
+                r.rating, 
+                r.source, 
+                r.created_at, 
+                r.updated_at, 
+                r.image_path,
+                COUNT(c.id) AS comment_count
+            FROM recipe r
+            LEFT JOIN comments c ON r.id = c.recipe_id
+            WHERE r.id = :recipe_id
+            GROUP BY r.id
+        ";
         $stmt = $pdo->prepare($query);
         $stmt->execute(['recipe_id' => $recipe_id]);
         $recipe = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -38,34 +50,70 @@ try {
         exit;
     }
 
-    // ตรวจสอบว่า category ที่รับมาเป็นประเภทที่ถูกต้องหรือไม่ (หากไม่ใช่ null)
+    // ตรวจสอบว่า category ถูกต้องหรือไม่
     if ($category !== null && !in_array($category, ['อาหารคาว', 'ของหวาน'])) {
         echo json_encode(['error' => 'ประเภทอาหารไม่ถูกต้อง']);
         exit;
     }
 
-    // เลือกเงื่อนไขการดึงข้อมูลตาม type
+    // เลือก SQL ตามประเภท type
     switch ($type) {
         case 'new':
-            $query = "SELECT id, recipe_name, rating, source, created_at, updated_at, image_path 
-                      FROM recipe 
-                      " . ($category ? "WHERE food_category = :food_category" : "") . "
-                      ORDER BY created_at DESC 
-                      LIMIT 4";
+            $query = "
+                SELECT 
+                    r.id, 
+                    r.recipe_name, 
+                    r.rating, 
+                    r.source, 
+                    r.created_at, 
+                    r.updated_at, 
+                    r.image_path, 
+                    COUNT(c.id) AS comment_count
+                FROM recipe r
+                LEFT JOIN comments c ON r.id = c.recipe_id
+                " . ($category ? "WHERE r.food_category = :food_category" : "") . "
+                GROUP BY r.id
+                ORDER BY r.created_at DESC
+                LIMIT 4
+            ";
             break;
         case 'popular':
-            $query = "SELECT id, recipe_name, rating, source, created_at, updated_at, image_path 
-                      FROM recipe 
-                      " . ($category ? "WHERE food_category = :food_category" : "") . "
-                      ORDER BY rating DESC, created_at DESC
-                      LIMIT 10";
+            $query = "
+                SELECT 
+                    r.id, 
+                    r.recipe_name, 
+                    r.rating, 
+                    r.source, 
+                    r.created_at, 
+                    r.updated_at, 
+                    r.image_path, 
+                    COUNT(c.id) AS comment_count
+                FROM recipe r
+                LEFT JOIN comments c ON r.id = c.recipe_id
+                " . ($category ? "WHERE r.food_category = :food_category" : "") . "
+                GROUP BY r.id
+                ORDER BY r.rating DESC, r.created_at DESC
+                LIMIT 10
+            ";
             break;
         case 'ancient':
-            $query = "SELECT id, recipe_name, rating, source, created_at, updated_at, image_path 
-                      FROM recipe 
-                      " . ($category ? "WHERE food_category = :food_category" : "") . "
-                      ORDER BY rating DESC, created_at ASC
-                      LIMIT 10";
+            $query = "
+                SELECT 
+                    r.id, 
+                    r.recipe_name, 
+                    r.rating, 
+                    r.source, 
+                    r.created_at, 
+                    r.updated_at, 
+                    r.image_path, 
+                    COUNT(c.id) AS comment_count
+                FROM recipe r
+                LEFT JOIN comments c ON r.id = c.recipe_id
+                " . ($category ? "WHERE r.food_category = :food_category" : "") . "
+                GROUP BY r.id
+                ORDER BY r.created_at ASC
+                LIMIT 10
+            ";
             break;
         default:
             echo json_encode(['error' => 'ประเภทข้อมูลไม่ถูกต้อง']);
@@ -75,7 +123,7 @@ try {
     // เตรียมและรันคำสั่ง SQL
     $stmt = $pdo->prepare($query);
 
-    // ถ้ามีการกำหนด category ให้ bind ค่า
+    // ถ้ามีการกรอง category
     if ($category) {
         $stmt->execute(['food_category' => $category]);
     } else {
@@ -88,7 +136,5 @@ try {
     echo json_encode($recipes);
 
 } catch (PDOException $e) {
-    // ส่งข้อมูล JSON ในกรณีที่เกิดข้อผิดพลาด
     echo json_encode(['error' => 'เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล: ' . $e->getMessage()]);
 }
-?>

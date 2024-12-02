@@ -733,14 +733,19 @@
                 });
             }
     
-            // เช็คสถานะการล็อกอินก่อนแสดงฟอร์มความคิดเห็น
+            // ตรวจสอบการล็อกอินก่อนแสดงฟอร์มความคิดเห็น
             fetch('check_session.php')
-            .then(response => response.json())
-            .then(data => {
-                if (!data.logged_in) {
-                    commentForm.innerHTML = '<p>กรุณาเข้าสู่ระบบก่อนแสดงความคิดเห็น</p>';
-                    return;
-                }
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.logged_in) {
+                        commentForm.innerHTML = `
+                            <p>
+                                กรุณาเข้าสู่ระบบก่อนแสดงความคิดเห็น 
+                                <a href="login.html" style="color: blue; text-decoration: underline;">เข้าสู่ระบบ</a>
+                            </p>
+                        `;
+                        return;
+                    }
         
                 // จัดการการส่งความคิดเห็น
                 submitButton.addEventListener('click', function(e) {
@@ -823,7 +828,7 @@
                     } else {
                         // ตั้งค่าชื่อสูตรและข้อมูลอื่นๆ
                         document.getElementById('recipe-title').innerText = data.recipe_name;
-                        document.getElementById('recipe-rating').innerText += data.rating;
+                        document.getElementById('recipe-rating').innerText = `⭐ ${parseFloat(data.rating || 0).toFixed(1)} (${data.comment_count || 0})`;
                         document.getElementById('recipe-source').innerText += " " + data.source;
                         document.getElementById('recipe-date').innerText += formatDateThai(data.created_at);
                         document.getElementById('recipe-image').src = data.image_path;

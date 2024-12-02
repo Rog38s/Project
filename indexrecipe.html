@@ -504,7 +504,7 @@
                     } else {
                         // ตั้งค่าชื่อสูตรและข้อมูลอื่นๆ
                         document.getElementById('recipe-title').innerText = data.recipe_name;
-                        document.getElementById('recipe-rating').innerText += data.rating;
+                        document.getElementById('recipe-rating').innerText = `⭐ ${parseFloat(data.rating || 0).toFixed(1)} (${data.comment_count || 0})`;
                         document.getElementById('recipe-source').innerText += " " + data.source;
                         document.getElementById('recipe-date').innerText += formatDateThai(data.created_at);
                         document.getElementById('recipe-image').src = data.image_path;
@@ -537,6 +537,47 @@
         } else {
             alert('ไม่พบ ID ของสูตรอาหาร');
         }
+
+        // โหลดความคิดเห็น
+        function loadComments() {
+            fetch(`get_comments.php?recipe_id=${recipeId}`)
+                .then(response => response.json())
+                .then(comments => {
+                    const commentsList = document.querySelector('.comments-list');
+                    commentsList.innerHTML = '';
+
+                    if (!comments || comments.error || comments.length === 0) {
+                        commentsList.innerHTML = '<p>ยังไม่มีความคิดเห็น</p>';
+                        return;
+                    }
+
+                    comments.forEach(comment => {
+                        const stars = '⭐'.repeat(parseInt(comment.rating));
+                        const commentDate = new Date(comment.created_at).toLocaleDateString('th-TH', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+
+                        const commentHtml = `
+                            <div class="comment-item">
+                                <div class="comment-header">
+                                    <span class="comment-user">${comment.username}</span>
+                                    <span class="comment-stars">${stars}</span>
+                                </div>
+                                <div class="comment-text">${comment.comment_text}</div>
+                                <small class="comment-date">${commentDate}</small>
+                            </div>
+                        `;
+                        commentsList.insertAdjacentHTML('beforeend', commentHtml);
+                    });
+                })
+                .catch(error => console.error('เกิดข้อผิดพลาดในการโหลดความคิดเห็น:', error));
+        }
+
+        loadComments();
     </script>
 
 

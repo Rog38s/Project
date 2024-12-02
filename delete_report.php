@@ -60,7 +60,7 @@ try {
         $notificationStmt->execute([
             ':user_id' => $reporter_id,
             ':recipe_name' => $recipe_name,
-            ':message' => "การรายงานสูตร '{$recipe_name}' ของคุณไม่ได้รับการอนุมัติ"
+            ':message' => "การรายงานสูตร '{$recipe_name}' ของคุณได้รับการตรวจสอบแล้ว"
         ]);
     }
 

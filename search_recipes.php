@@ -14,21 +14,40 @@ try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // รับค่าคำค้นหาจาก URL
-    $searchQuery = isset($_GET['query']) ? $_GET['query'] : '';
+    $searchQuery = isset($_GET['query']) ? trim($_GET['query']) : '';
 
-    // ค้นหาข้อมูลในฐานข้อมูลโดยเรียงลำดับจากสูตรใหม่ไปสูตรเก่า
-    $stmt = $pdo->prepare("SELECT id, recipe_name, rating, source, created_at, image_path 
-                           FROM recipe 
-                           WHERE recipe_name LIKE :query
-                           ORDER BY created_at DESC"); // เรียงลำดับจากใหม่ไปเก่า
+    if (empty($searchQuery)) {
+        echo json_encode(['error' => 'กรุณาใส่คำค้นหา']);
+        exit;
+    }
+
+    // ค้นหาข้อมูลในฐานข้อมูลเฉพาะชื่อสูตร พร้อมแสดงจำนวนคอมเมนต์
+    $stmt = $pdo->prepare("
+        SELECT 
+            r.id, 
+            r.recipe_name, 
+            r.rating, 
+            r.source, 
+            r.created_at, 
+            r.image_path, 
+            COUNT(c.id) AS comment_count
+        FROM recipe r
+        LEFT JOIN comments c ON r.id = c.recipe_id
+        WHERE r.recipe_name LIKE :query
+        GROUP BY r.id
+        ORDER BY r.created_at DESC
+    ");
     $stmt->execute([':query' => "%$searchQuery%"]);
     $recipes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // ส่งผลลัพธ์เป็น JSON
-    echo json_encode($recipes);
+    // ตรวจสอบว่ามีผลลัพธ์หรือไม่
+    if (empty($recipes)) {
+        echo json_encode(['message' => 'ไม่พบผลลัพธ์ที่ตรงกับคำค้นหา']);
+    } else {
+        echo json_encode($recipes);
+    }
 
 } catch (Exception $e) {
     // ส่งข้อความแสดงข้อผิดพลาดเมื่อมีปัญหากับฐานข้อมูล
     echo json_encode(['error' => 'เกิดข้อผิดพลาดในการค้นหา: ' . $e->getMessage()]);
 }
-?>

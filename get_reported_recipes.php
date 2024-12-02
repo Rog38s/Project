@@ -23,9 +23,10 @@ try {
             r.recipe_id,
             r.user_id as reporter_id,
             r.report_text,
-            r.report_date,
+            DATE(r.report_date) AS report_date,      -- แยกเฉพาะวันที่
+            TIME(r.report_date) AS report_time,      -- แยกเฉพาะเวลา
             rc.recipe_name,
-            rc.image_path AS recipe_image,  -- เพิ่ม field image_path
+            rc.image_path AS recipe_image,
             u.username as reporter_name
         FROM recipe_database.reports r
         INNER JOIN recipe_database.recipe rc ON r.recipe_id = rc.id
@@ -42,4 +43,3 @@ try {
 } catch (PDOException $e) {
     echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
 }
-?>

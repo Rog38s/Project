@@ -696,7 +696,7 @@
                     } else {
                         // ตั้งค่าชื่อสูตร, คะแนน, ผู้เขียน, วันที่ และรูปภาพ
                         document.getElementById('recipe-name').innerText = data.recipe_name;
-                        document.getElementById('recipe-rating').innerText += data.rating;
+                        document.getElementById('recipe-rating').innerText = `⭐ ${parseFloat(data.rating || 0).toFixed(1)} (${data.comment_count || 0})`;
                         document.getElementById('recipe-source').innerText += " " + data.source; // เพิ่มเว้นวรรคก่อนชื่อผู้ใช้
                         document.getElementById('recipe-date').innerText += formatDateThai(data.created_at);
                         document.getElementById('recipe-image').src = data.image_path;
