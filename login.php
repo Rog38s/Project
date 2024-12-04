@@ -31,10 +31,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             exit();
         } else {
-            echo "<script>alert('รหัสผ่านไม่ถูกต้อง');</script>"; // แจ้งเตือนเมื่อรหัสผ่านไม่ถูกต้อง
+            // รหัสผ่านไม่ถูกต้อง
+            echo "<script>
+                    alert('รหัสผ่านไม่ถูกต้อง');
+                    window.location.href = 'login.html';
+                  </script>";
         }
     } else {
-        echo "<script>alert('ไม่พบผู้ใช้');</script>"; // แจ้งเตือนเมื่อไม่พบผู้ใช้
+        // ไม่พบผู้ใช้
+        echo "<script>
+                alert('ไม่พบผู้ใช้');
+                window.location.href = 'login.html';
+              </script>";
     }
 }
 ?>

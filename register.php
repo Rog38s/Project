@@ -10,7 +10,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // ตรวจสอบว่ารหัสผ่านและยืนยันรหัสผ่านตรงกันหรือไม่
     if ($password !== $confirm_password) {
-        echo "<script>alert('รหัสผ่านไม่ตรงกัน');</script>"; // แจ้งเตือนหากรหัสผ่านไม่ตรงกัน
+        echo "<script>
+                alert('รหัสผ่านไม่ตรงกัน');
+                window.location.href = 'register.html'; // กลับไปที่หน้าเดิม
+              </script>";
         exit;
     }
 
@@ -24,7 +27,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute();
 
     if ($stmt->rowCount() > 0) {
-        echo "<script>alert('ชื่อผู้ใช้หรืออีเมลนี้ถูกใช้ไปแล้ว');</script>"; // แจ้งเตือนเมื่อ username หรือ email มีอยู่แล้ว
+        echo "<script>
+                alert('ชื่อผู้ใช้หรืออีเมลนี้ถูกใช้ไปแล้ว');
+                window.location.href = 'register.html'; // กลับไปที่หน้าเดิม
+              </script>";
     } else {
         // กำหนด role เป็น 'user' สำหรับผู้ใช้ใหม่
         $role = 'user';
@@ -37,11 +43,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bindParam(':role', $role);
 
         if ($stmt->execute()) {
-            echo "<script>alert('ลงทะเบียนสำเร็จ');</script>"; // แจ้งเตือนเมื่อสมัครสมาชิกสำเร็จ
-            echo "<script>window.location.href = 'index.html';</script>"; // นำไปยังหน้าอื่น
+            echo "<script>
+                    alert('ลงทะเบียนสำเร็จ');
+                    window.location.href = 'login.html'; // เปลี่ยนไปหน้า login.html
+                  </script>";
             exit();
         } else {
-            echo "<script>alert('เกิดข้อผิดพลาดในการลงทะเบียน');</script>"; // แจ้งเตือนหากเกิดข้อผิดพลาด
+            echo "<script>
+                    alert('เกิดข้อผิดพลาดในการลงทะเบียน');
+                    window.location.href = 'register.html'; // กลับไปที่หน้าเดิม
+                  </script>";
         }
     }
 }
