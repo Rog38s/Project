@@ -94,16 +94,12 @@
         }
 
         .navbar {
-            background-color: #ffffff;
+            background-color: #F8F1E5;
             display: flex;
             align-items: center;
-            justify-content: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 20px;
+            justify-content: space-between;
+            padding: 10px 5%;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            background-size:contain;
         }
 
         .navbar img.logo {
@@ -111,23 +107,22 @@
         }
 
         .navbar .search-box {
-            width: 300px;
+            flex: 1;
             margin: 0 20px;
             display: flex;
             align-items: center;
             border-radius: 20px;
-            padding: 5px 10px;
         }
 
         .navbar .nav-links {
             display: flex;
             align-items: center;
+            gap: 15px;
         }
 
         .navbar .nav-links a {
             text-decoration: none;
             color: #000;
-            margin-left: 20px;
             font-size: 16px;
             display: flex;
             align-items: center;
@@ -140,7 +135,6 @@
 
         .navbar .nav-links a.login {
             color: red;
-        
         }
 
         .navbar .profile-pic {
@@ -149,6 +143,31 @@
             border-radius: 50%;
             object-fit: cover;
             margin-right: 5px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .navbar .search-box {
+                width: 100%;
+                margin: 10px 0;
+            }
+
+            .navbar .nav-links {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                width: 100%;
+            }
+
+            .navbar .nav-links a {
+                width: 100%;
+                justify-content: flex-start;
+            }
         }
 
         #notification-count {
@@ -302,6 +321,13 @@
     </div>
 
     <script>
+        // ฟังก์ชันแปลงวันที่เป็นภาษาไทย
+        function formatDateThai(dateString) {
+            const date = new Date(dateString);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('th-TH', options);
+        }
+
         // ดึงค่า recipe_id จาก URL
         const urlParams = new URLSearchParams(window.location.search);
         const recipeId = urlParams.get('recipe_id');
@@ -321,8 +347,7 @@
                         document.getElementById('recipe-name').innerText = data.recipe_name;
                         document.getElementById('recipe-rating').innerText = `⭐ ${data.rating}`;
                         document.getElementById('recipe-source').innerText = `โดย ${data.source}`;
-                        document.getElementById('recipe-date').innerText = 
-                            `เมื่อ ${new Date(data.created_at).toLocaleDateString()}`;
+                        document.getElementById('recipe-date').innerText = `เมื่อ ${formatDateThai(data.created_at)}`;
                     }
                 })
                 .catch(error => console.error('เกิดข้อผิดพลาด:', error));
