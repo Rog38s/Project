@@ -13,34 +13,41 @@
             height: 100vh;
             justify-content: center;
             align-items: center;
-            background-color: #f4f4f4;
-            overflow: hidden; /* Prevent scrolling */
+            background-color: #F8F1E5;
         }
 
         .sign-in-container {
             display: flex;
-            width: 100vw;
-            height: 100vh;
-            background-color: #fff;
+            width: 100%;
+            height: 100%;
+            max-width: 1200px;
+            background-color: #ffffff;
             box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
         }
 
         .image-column {
-            width: 55%;
-            background-image: url('img/สำรับไทย.jpg'); 
+            flex: 1;
+            background-image: url('img/สำรับไทย.jpg');
             background-size: cover;
             background-position: center;
-            height: 100%; /* Full height */
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #000;
-            text-align: center;
-
         }
-        
+
+        .image-column .text {
+            font-size: 30px;
+            font-weight: bold;
+            animation: fadeIn 3s ease-in-out;
+            background-color: rgba(130, 130, 130, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            color: #000000;
+            text-align: center;
+        }
+
         .form-column {
-            width: 45%;
+            flex: 1;
             padding: 40px;
             display: flex;
             flex-direction: column;
@@ -58,7 +65,6 @@
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 30px;
-            text-align: center; /* Center title */
         }
 
         .form-input {
@@ -83,10 +89,19 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            margin-bottom: 10px;
         }
 
         .submit-button:hover {
             background-color: #6cb3de;
+        }
+
+        .green-button {
+            background-color: #90EE90;
+        }
+
+        .blue-button {
+            background-color: #ADD8E6;
         }
 
         .forgot-password {
@@ -106,25 +121,6 @@
             text-decoration: underline;
         }
 
-        .green-button {
-            background-color: #90EE90;
-            margin-bottom: 10px;
-        }
-
-        .blue-button {
-            background-color: #ADD8E6;
-        }
-    
-
-        .image-column .text {
-            font-size: 30px;
-            font-weight: bold;
-            animation: fadeIn 3s ease-in-out;
-            background-color: rgba(130, 130, 130, 0.7);
-            padding: 20px;
-            border-radius: 10px;
-            
-        }
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -136,6 +132,32 @@
             }
         }
 
+        @media (max-width: 768px) {
+            .sign-in-container {
+                flex-direction: column;
+            }
+
+            .image-column {
+                height: 40vh;
+                flex: none;
+            }
+
+            .form-column {
+                padding: 20px;
+            }
+
+            .form-input {
+                max-width: 100%;
+            }
+
+            .submit-button {
+                max-width: 100%;
+            }
+
+            .forgot-password {
+                max-width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -144,15 +166,14 @@
             <div class="text">สำรับคาว - หวานของไทย</div>
         </div>
         <div class="form-column">
-            <form class="form-column" action="login.php" method="post"> <!-- จัดฟอร์มแบบตรงกลาง -->
-                <img src="img/logo.png" alt="Company logo" class="logo"> <!-- เพิ่มโลโก้ -->
+            <form class="form-column" action="login.php" method="post">
+                <img src="img/logo.png" alt="Company logo" class="logo">
                 <h2 class="form-title">เข้าสู่ระบบ</h2>
                 <input type="email" name="email" class="form-input" placeholder="อีเมล" required>
                 <input type="password" name="password" class="form-input" placeholder="รหัสผ่าน" required>
                 <div class="forgot-password">
                     <a href="forgot_password.html">ลืมรหัสผ่าน?</a>
                 </div>
-                
                 <button type="submit" class="submit-button green-button">ลงชื่อเข้าใช้</button>
                 <button type="button" class="submit-button blue-button" onclick="location.href='register.html'">สมัครสมาชิก</button>
             </form>

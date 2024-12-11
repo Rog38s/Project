@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>สมัครสมาชิก</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;700&display=swap" rel="stylesheet">
-    
     <style>
         body {
             margin: 0;
@@ -14,34 +13,41 @@
             height: 100vh;
             justify-content: center;
             align-items: center;
-            background-color: #f4f4f4;
-            overflow: hidden; /* Prevent scrolling */
+            background-color: #F8F1E5;
         }
 
         .sign-up-container {
             display: flex;
-            width: 100vw;
-            height: 100vh;
-            background-color: #fff;
+            width: 100%;
+            height: 100%;
+            max-width: 1200px;
+            background-color: #ffffff;
             box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
         }
 
         .image-column {
-            width: 55%;
-            background-image: url('img/สำรับไทย.jpg'); 
+            flex: 1;
+            background-image: url('img/สำรับไทย.jpg');
             background-size: cover;
             background-position: center;
-            height: 100%; /* Full height */
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #fff;
-            text-align: center;
-
         }
-        
+
+        .image-column .text {
+            font-size: 30px;
+            font-weight: bold;
+            animation: fadeIn 3s ease-in-out;
+            background-color: rgba(130, 130, 130, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            color: #000000;
+            text-align: center;
+        }
+
         .form-column {
-            width: 45%;
+            flex: 1;
             padding: 40px;
             display: flex;
             flex-direction: column;
@@ -71,33 +77,38 @@
             font-size: 16px;
         }
 
-        .submit-button {
+        .submit-button,
+        .cancle-button {
             width: 100%;
             max-width: 300px;
             padding: 15px;
-            background-color: #87cefa;
-            color: #000;
             font-weight: 700;
             text-align: center;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            margin-bottom: 10px; /* ลดระยะห่างระหว่างปุ่ม */
+        }
+
+        .submit-button {
+            background-color: #87cefa;
+            color: #000;
         }
 
         .submit-button:hover {
             background-color: #6cb3de;
         }
 
-        .image-column .text {
-            font-size: 30px;
-            font-weight: bold;
-            animation: fadeIn 3s ease-in-out;
-            background-color: rgba(130, 130, 130, 0.7);
-            padding: 20px;
-            border-radius: 10px;
-            
+        .cancle-button {
+            background-color: #45a049;
+            color: #000000;
         }
+
+        .cancle-button:hover {
+            background-color: #45a049;
+        }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -108,6 +119,30 @@
                 transform: translateY(0);
             }
         }
+
+        @media (max-width: 768px) {
+            .sign-up-container {
+                flex-direction: column;
+            }
+
+            .image-column {
+                height: 40vh;
+                flex: none;
+            }
+
+            .form-column {
+                padding: 20px;
+            }
+
+            .form-input {
+                max-width: 100%;
+            }
+
+            .submit-button,
+            .cancle-button {
+                max-width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -116,14 +151,15 @@
             <div class="text">สำรับคาว - หวานของไทย</div>
         </div>
         <div class="form-column">
-            <form class="form-column" action="register.php" method="post"> <!-- เปลี่ยน action เป็น register.php -->
-                <img src="img/logo.png" alt="Company logo" class="logo"> <!-- Replace with your logo path -->
+            <form class="form-column" action="register.php" method="post">
+                <img src="img/logo.png" alt="Company logo" class="logo">
                 <h2 class="form-title">สมัครสมาชิก</h2>
-                <input type="text" name="username" class="form-input" placeholder="ชื่อผู้ใช้" required> <!-- เพิ่มช่องชื่อผู้ใช้ -->
+                <input type="text" name="username" class="form-input" placeholder="ชื่อผู้ใช้" required>
                 <input type="email" name="email" class="form-input" placeholder="อีเมล" required>
                 <input type="password" name="password" class="form-input" placeholder="รหัสผ่าน" required>
                 <input type="password" name="confirm_password" class="form-input" placeholder="ยืนยันรหัสผ่าน" required>
                 <button type="submit" class="submit-button">สมัครสมาชิก</button>
+                <button type="button" class="cancle-button" onclick="location.href='login.html'">ยกเลิก</button>
             </form>
         </div>
     </div>

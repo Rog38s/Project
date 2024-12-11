@@ -17,44 +17,77 @@
             background-color: #F8F1E5;
             display: flex;
             align-items: center;
-            justify-content: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 20px;
+            justify-content: space-between;
+            padding: 10px 5%;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            background-size:contain;
         }
 
         .navbar img.logo {
             height: 70px;
         }
+
         .navbar .search-box {
-            width: 300px;
+            flex: 1;
             margin: 0 20px;
             display: flex;
             align-items: center;
             border-radius: 20px;
-            padding: 5px 10px;
         }
+
         .navbar .nav-links {
             display: flex;
             align-items: center;
+            gap: 15px;
         }
+
         .navbar .nav-links a {
             text-decoration: none;
             color: #000;
-            margin-left: 20px; 
             font-size: 16px;
             display: flex;
             align-items: center;
         }
+
         .navbar .nav-links img.icon {
             margin-right: 5px;
             height: 24px;
         }
+
         .navbar .nav-links a.login {
             color: red;
+        }
+
+        .navbar .profile-pic {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 5px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .navbar .search-box {
+                width: 100%;
+                margin: 10px 0;
+            }
+
+            .navbar .nav-links {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                width: 100%;
+            }
+
+            .navbar .nav-links a {
+                width: 100%;
+                justify-content: flex-start;
+            }
         }
         /* Recipe styles */
         .recipe-container {
@@ -138,14 +171,7 @@
             margin-bottom: 10px;
         }
 
-        /* Navbar profile picture */
-        .navbar .profile-pic {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 5px;
-        }
+       
         .comments-section {
             max-width: 1000px;
             margin: 20px auto;
@@ -490,12 +516,15 @@
     <div class="recipe-container">
         <div class="recipe-image">
             <img id="recipe-image" src="" alt="รูปอาหาร">
+            <input type="file" id="image-upload" accept="image/*" style="display: none;">
+            <button id="upload-image-btn" class="btn btn-edit">+ เลือกรูปภาพ</button>
         </div>
+        
         <div class="recipe-details">
-            <h1 id="recipe-name">ชื่อสูตร</h1>
+            <h1 id="recipe-name" class="editable">ชื่อสูตร</h1>
             <div class="rating">
                 <p id="recipe-rating">⭐</p>
-                <p id="recipe-source">สร้างโดย </p>
+                <p><strong>สร้างโดย:</strong> <span id="recipe-source" class="editable"></span></p>
                 <p id="recipe-date">วันที่สร้าง </p>
                 <p id="recipe-updated-date" style="display: none;">วันที่ปรับปรุง </p>
             </div>
@@ -744,126 +773,159 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const editBtn = document.getElementById('editBtn');
+            // Add event listeners for image upload and editable fields
+            const uploadImageBtn = document.getElementById('upload-image-btn');
+            const imageUploadInput = document.getElementById('image-upload');
+            const recipeImage = document.getElementById('recipe-image');
+            const recipeName = document.getElementById('recipe-name');
+            const recipeSource = document.getElementById('recipe-source');
+            const ingredientsList = document.getElementById('ingredients-list');
+            const stepsList = document.getElementById('steps-list');
             const saveBtn = document.getElementById('saveBtn');
+            const editBtn = document.getElementById('editBtn');
             const cancelBtn = document.getElementById('cancelBtn');
             const deleteBtn = document.getElementById('deleteBtn');
             const deleteModal = document.getElementById('deleteModal');
             const confirmDelete = document.getElementById('confirmDelete');
             const cancelDelete = document.getElementById('cancelDelete');
-
-            // Elements that can be edited
-            const recipeName = document.getElementById('recipe-name');
-            const ingredientsList = document.getElementById('ingredients-list');
-            const stepsList = document.getElementById('steps-list');
-
+        
             let originalData = {};
-
-            // Function to make elements editable
+        
+            // Hide upload image button initially
+            uploadImageBtn.style.display = 'none';
+        
+            uploadImageBtn.addEventListener('click', () => {
+                imageUploadInput.click();
+            });
+        
+            imageUploadInput.addEventListener('change', () => {
+                const file = imageUploadInput.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        recipeImage.src = reader.result; // Display uploaded image
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        
             function makeEditable() {
-                // Store original data
+                // Save original data
                 originalData = {
                     recipeName: recipeName.innerText,
+                    source: recipeSource.innerText, // ดึงค่า source จากฐานข้อมูล
+                    imagePath: recipeImage.src,
                     ingredients: Array.from(ingredientsList.children).map(li => li.innerText),
-                    steps: Array.from(stepsList.children).map(div => div.innerText)
+                    steps: Array.from(stepsList.children).map(div => div.innerText),
                 };
-
-                // Make recipe name editable
+        
+                // Enable editing
                 recipeName.contentEditable = true;
                 recipeName.classList.add('editing');
-
-                // Make ingredients editable
+        
+                recipeSource.contentEditable = true; // เปิดให้แก้ไข source
+                recipeSource.classList.add('editing');
+        
                 ingredientsList.classList.add('editing');
                 Array.from(ingredientsList.children).forEach(li => {
                     li.contentEditable = true;
                 });
-
-                // Make steps editable
+        
                 stepsList.classList.add('editing');
                 Array.from(stepsList.children).forEach(div => {
                     div.contentEditable = true;
                 });
-
+        
+                // Show upload image button
+                uploadImageBtn.style.display = 'inline-block';
+        
                 // Show/hide buttons
                 editBtn.style.display = 'none';
-                deleteBtn.style.display = 'none';
                 saveBtn.style.display = 'inline-block';
                 cancelBtn.style.display = 'inline-block';
             }
-
-            // Function to restore original data
+        
             function restoreOriginal() {
+                // Restore original data
                 recipeName.innerText = originalData.recipeName;
-                
+                recipeSource.innerText = originalData.source; // คืนค่า source จาก originalData
+                recipeImage.src = originalData.imagePath;
+        
                 ingredientsList.innerHTML = '';
                 originalData.ingredients.forEach(ingredient => {
                     const li = document.createElement('li');
                     li.innerText = ingredient;
                     ingredientsList.appendChild(li);
                 });
-
+        
                 stepsList.innerHTML = '';
                 originalData.steps.forEach(step => {
                     const div = document.createElement('div');
                     div.innerText = step;
                     stepsList.appendChild(div);
                 });
-
+        
                 exitEditMode();
             }
-
-            // Function to exit edit mode
+        
             function exitEditMode() {
+                // Disable editing
                 recipeName.contentEditable = false;
                 recipeName.classList.remove('editing');
-
+        
+                recipeSource.contentEditable = false; // ปิดการแก้ไข source
+                recipeSource.classList.remove('editing');
+        
                 ingredientsList.classList.remove('editing');
                 Array.from(ingredientsList.children).forEach(li => {
                     li.contentEditable = false;
                 });
-
+        
                 stepsList.classList.remove('editing');
                 Array.from(stepsList.children).forEach(div => {
                     div.contentEditable = false;
                 });
-
+        
+                // Hide upload image button
+                uploadImageBtn.style.display = 'none';
+        
+                // Show/hide buttons
                 editBtn.style.display = 'inline-block';
-                deleteBtn.style.display = 'inline-block';
                 saveBtn.style.display = 'none';
                 cancelBtn.style.display = 'none';
             }
-
-            // Event Listeners
-            editBtn.addEventListener('click', makeEditable);
-            
-            cancelBtn.addEventListener('click', restoreOriginal);
-
-            saveBtn.addEventListener('click', function() {
+        
+            saveBtn.addEventListener('click', function () {
                 const updatedData = {
                     recipe_id: recipeId,
                     recipe_name: recipeName.innerText,
-                    ingredients: Array.from(ingredientsList.children)
-                        .map(li => li.innerText)
-                        .join('\n'),
-                    steps: Array.from(stepsList.children)
-                        .map(div => div.innerText)
-                        .join('\n')
+                    source: recipeSource.innerText, // บันทึก source ที่แก้ไขแล้ว
+                    image_path: recipeImage.src, // Path เดิมถ้าไม่มีการเปลี่ยนแปลงรูป
+                    ingredients: Array.from(ingredientsList.children).map(li => li.innerText).join('\n'),
+                    steps: Array.from(stepsList.children).map(div => div.innerText).join('\n'),
                 };
-
+        
+                const formData = new FormData();
+                formData.append('data', JSON.stringify(updatedData));
+        
+                const file = imageUploadInput.files[0];
+                if (file) {
+                    formData.append('image', file); // แนบไฟล์รูปภาพหากมีการอัปโหลดใหม่
+                }
+        
                 fetch('update_recipe.php', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(updatedData)
+                    body: formData,
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        document.getElementById('recipe-updated-date').innerText = `วันที่ปรับปรุง ${formatDateThai(data.updated_at)}`;
+                        document.getElementById('recipe-updated-date').style.display = "block";
                         alert('บันทึกการแก้ไขเรียบร้อยแล้ว');
                         exitEditMode();
                     } else {
-                        alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' + data.error);
+                        alert('เกิดข้อผิดพลาด: ' + data.error);
                     }
                 })
                 .catch(error => {
@@ -871,44 +933,50 @@
                     alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
                 });
             });
-
-            deleteBtn.addEventListener('click', function() {
+        
+            cancelBtn.addEventListener('click', restoreOriginal);
+        
+            editBtn.addEventListener('click', makeEditable);
+        
+            // Handle delete button
+            deleteBtn.addEventListener('click', function () {
                 deleteModal.style.display = 'block';
             });
-
-            confirmDelete.addEventListener('click', function() {
+        
+            confirmDelete.addEventListener('click', function () {
                 fetch(`delete_recipe.php?recipe_id=${recipeId}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('ลบสูตรเรียบร้อยแล้ว');
-                        window.location.href = 'myrecipes.html'; // กลับไปยังหน้ารายการสูตรของฉัน
-                    } else {
-                        alert('เกิดข้อผิดพลาดในการลบสูตร: ' + data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('เกิดข้อผิดพลาดในการลบสูตร');
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('ลบสูตรเรียบร้อยแล้ว');
+                            window.location.href = 'myrecipes.html'; // กลับไปยังหน้ารายการสูตรของฉัน
+                        } else {
+                            alert('เกิดข้อผิดพลาดในการลบสูตร: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('เกิดข้อผิดพลาดในการลบสูตร');
+                    });
                 deleteModal.style.display = 'none';
             });
-
-            cancelDelete.addEventListener('click', function() {
+        
+            cancelDelete.addEventListener('click', function () {
                 deleteModal.style.display = 'none';
             });
-
-            // ปิด Modal เมื่อคลิกภายนอก
-            window.addEventListener('click', function(event) {
-                if (event.target == deleteModal) {
+        
+            // Close modal when clicking outside
+            window.addEventListener('click', function (event) {
+                if (event.target === deleteModal) {
                     deleteModal.style.display = 'none';
                 }
             });
         });
-    </script>
+        
 
+    </script>
 
 
 </body>
