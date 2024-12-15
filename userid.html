@@ -279,28 +279,34 @@
     <div class="form-container">
         <h2>ข้อมูลสมาชิก</h2>
         <img id="profile-image" src="img/usericon.png" alt="User Profile Image">
-
+    
         <div class="user-data" id="name">ชื่อ: <span id="user-name"></span></div>
         <div class="user-data" id="email">อีเมล: <span id="user-email"></span></div>
         <div class="user-data" id="phone">เบอร์โทรศัพท์: <span id="user-phone"></span></div>
         <div class="user-data" id="gender">เพศ: <span id="user-gender"></span></div>
         <div class="user-data" id="birth_date">วันเดือนปีเกิด: <span id="user-birth_date"></span></div>
         <div class="user-data" id="calculated-age">อายุ: <span id="user-age"></span></div><br>
-
+    
         <button class="btn btn-blue" onclick="location.href='user_edit.html'">แก้ไขข้อมูลส่วนตัว</button><br>
         <button class="btn btn-green" onclick="location.href='myrecipes.html'">สูตรอาหารของฉัน</button>
         <button class="btn btn-orange" onclick="location.href='changepassword.html'">เปลี่ยนรหัสผ่าน</button>
     </div>
-
+    
     <script>
-        function formatDate(dateString) {
+        // ฟังก์ชันแปลงวันที่เป็นภาษาไทย
+        function formatDateThai(dateString) {
             const date = new Date(dateString);
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-            return `${day}/${month}/${year}`;
+            const day = date.getDate();
+            const monthNamesThai = [
+                'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+                'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+            ];
+            const month = monthNamesThai[date.getMonth()];
+            const year = date.getFullYear() + 543; // เพิ่ม 543 ปีให้เป็นปี พ.ศ.
+            return `${day} ${month} ${year}`;
         }
-
+    
+        // ฟังก์ชันคำนวณอายุ
         function calculateAge(birthDate) {
             const today = new Date();
             const birth = new Date(birthDate);
@@ -311,7 +317,8 @@
             }
             return age;
         }
-
+    
+        // ดึงข้อมูลผู้ใช้จาก backend
         fetch('get_user_data.php')
             .then(response => response.json())
             .then(data => {
@@ -319,26 +326,25 @@
                     console.error(data.error);
                     alert('เกิดข้อผิดพลาด: ' + data.error);
                 } else {
+                    // ใส่ข้อมูลผู้ใช้ใน HTML
                     document.getElementById('user-name').innerText = data.username;
                     document.getElementById('user-email').innerText = data.email;
                     document.getElementById('user-phone').innerText = data.phone;
                     document.getElementById('user-gender').innerText = data.gender;
-                    document.getElementById('user-birth_date').innerText = formatDate(data.birth_date);
+                    document.getElementById('user-birth_date').innerText = formatDateThai(data.birth_date);
                     document.getElementById('user-age').innerText = calculateAge(data.birth_date);
-
-                    const usernameDisplay = document.getElementById('username-display');
-                    usernameDisplay.innerText = data.username;
-
+    
+                    // อัปเดตรูปโปรไฟล์
                     const navbarProfileImage = document.getElementById('navbar-profile-image');
                     const profileImage = document.getElementById('profile-image');
                     const profileImageSrc = data.profile_image ? data.profile_image : 'img/usericon.png';
                     navbarProfileImage.src = profileImageSrc;
                     profileImage.src = profileImageSrc;
-
                 }
             })
             .catch(error => console.error('เกิดข้อผิดพลาด:', error));
     </script>
+    
     
     
 </body>

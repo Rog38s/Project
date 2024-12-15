@@ -272,91 +272,111 @@
         .catch(error => console.error('เกิดข้อผิดพลาด:', error));
     </script>
 
-    <!-- Form Section -->
-    <div class="form-container">
-        <h2>ข้อมูลสมาชิก</h2>
-        <img id="profile-image" src="img/usericon.png" alt="User Profile Image">
-        <label for="file-upload">+ เลือกภาพ</label>
-        <input id="file-upload" type="file" accept="image/*" onchange="previewImage(event)"><br>
-        
-        <input type="text" id="name" placeholder="ชื่อ">
-        <input type="text" id="phone" placeholder="เบอร์โทรศัพท์">
-        <input type="text" id="gender" placeholder="เพศ"><br>
-        <input type="date" id="birth_date" placeholder="วันเดือนปีเกิด"><br>
-        
-        <button class="btn btn-blue" onclick="saveUserData()">บันทึก</button><br>
-        <button class="btn btn-orange" onclick="location.href='userid.html'">ยกเลิก</button>
-    </div>
+   <!-- เพิ่ม flatpickr CSS และ JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
 
-    <script>
-        // ฟังก์ชันแสดงภาพโปรไฟล์ที่อัปโหลด
-        function previewImage(event) {
-            const file = event.target.files[0];
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('profile-image').src = e.target.result;
-                document.getElementById('navbar-profile-image').src = e.target.result; // เปลี่ยนรูปโปรไฟล์ใน navbar
-            }
-            reader.readAsDataURL(file);
+<!-- Form Section -->
+<div class="form-container">
+    <h2>ข้อมูลสมาชิก</h2>
+    <img id="profile-image" src="img/usericon.png" alt="User Profile Image">
+    <label for="file-upload">+ เลือกภาพ</label>
+    <input id="file-upload" type="file" accept="image/*" onchange="previewImage(event)"><br>
+    
+    <input type="text" id="name" placeholder="ชื่อ">
+    <input type="text" id="phone" placeholder="เบอร์โทรศัพท์">
+    <input type="text" id="gender" placeholder="เพศ"><br>
+    <input type="text" id="birth_date" placeholder="วัน/เดือน/ปี" onchange="convertDateToThai()"><br>
+    <span id="formatted_date" style="display: block; margin-top: 10px; font-weight: bold; color: #666;"></span>
+    
+    <button class="btn btn-blue" onclick="saveUserData()">บันทึก</button><br>
+    <button class="btn btn-orange" onclick="location.href='userid.html'">ยกเลิก</button>
+</div>
+
+<script>
+    // แสดงปฏิทินแบบวัน/เดือน/ปี ภาษาไทยด้วย flatpickr
+    flatpickr("#birth_date", {
+        dateFormat: "d/m/Y", // รูปแบบวันที่
+        locale: "th", // ใช้ภาษาไทย
+        altInput: true, // แสดงอินพุตที่แปลงเป็นวัน/เดือน/ปี
+        altFormat: "d/m/Y"
+    });
+
+    // ฟังก์ชันแสดงภาพโปรไฟล์ที่อัปโหลด
+    function previewImage(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('profile-image').src = e.target.result;
+            document.getElementById('navbar-profile-image').src = e.target.result; // เปลี่ยนรูปโปรไฟล์ใน navbar
         }
+        reader.readAsDataURL(file);
+    }
 
-        // ฟังก์ชันบันทึกข้อมูลผู้ใช้
-        function saveUserData() {
-            const name = document.getElementById('name').value;
-            const phone = document.getElementById('phone').value;
-            const gender = document.getElementById('gender').value;
-            const birth_date = document.getElementById('birth_date').value;
-            const fileInput = document.getElementById('file-upload');
-        
-            const formData = new FormData();
-            formData.append('name', name);
-            formData.append('phone', phone);
-            formData.append('gender', gender);
-            formData.append('birth_date', birth_date); // เพิ่ม birth_date
-            formData.append('profile_image', fileInput.files[0]);
-        
-            fetch('save_user_data.php', {
-                method: 'POST',
-                body: formData
-            })
+    // ฟังก์ชันบันทึกข้อมูลผู้ใช้
+    function saveUserData() {
+        const name = document.getElementById('name').value;
+        const phone = document.getElementById('phone').value;
+        const gender = document.getElementById('gender').value;
+        const birth_date = document.getElementById('birth_date').value;
+        const fileInput = document.getElementById('file-upload');
+    
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('phone', phone);
+        formData.append('gender', gender);
+        formData.append('birth_date', birth_date); // เพิ่ม birth_date
+        formData.append('profile_image', fileInput.files[0]);
+    
+        fetch('save_user_data.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('ข้อมูลของคุณได้ถูกบันทึก');
+                location.href = 'userid.html';
+            } else {
+                alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' + data.error);
+            }
+        })
+        .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+    }
+
+    // เรียกใช้ flatpickr และดึงข้อมูลผู้ใช้เมื่อโหลดหน้าเว็บ
+    function loadUserData() {
+        fetch('get_user_data.php')
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    alert('ข้อมูลของคุณได้ถูกบันทึก');
-                    location.href = 'userid.html';
+                if (data.error) {
+                    console.error(data.error);
+                    alert('เกิดข้อผิดพลาด: ' + data.error);
                 } else {
-                    alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' + data.error);
+                    // ตั้งค่าข้อมูลผู้ใช้ในฟอร์ม
+                    document.getElementById('name').value = data.username;
+                    document.getElementById('phone').value = data.phone;
+                    document.getElementById('gender').value = data.gender;
+
+                    if (data.birth_date) {
+                        const [year, month, day] = data.birth_date.split('-');
+                        document.getElementById('birth_date').value = `${day}/${month}/${year}`;
+                    }
+
+                    // แสดงภาพโปรไฟล์
+                    const profileImageSrc = data.profile_image ? data.profile_image : 'img/usericon.png';
+                    document.getElementById('profile-image').src = profileImageSrc;
                 }
             })
-            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
-        }
-        
-        // ฟังก์ชันดึงข้อมูลผู้ใช้และแสดงในฟอร์ม
-        function loadUserData() {
-            fetch('get_user_data.php')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        console.error(data.error);
-                        alert('เกิดข้อผิดพลาด: ' + data.error);
-                    } else {
-                        // ตั้งค่าข้อมูลผู้ใช้ในฟอร์ม
-                        document.getElementById('name').value = data.username;
-                        document.getElementById('phone').value = data.phone;
-                        document.getElementById('gender').value = data.gender;
-                        document.getElementById('birth_date').value = data.birth_date;
+            .catch(error => console.error('เกิดข้อผิดพลาดในการดึงข้อมูล:', error));
+    }
 
-                        // แสดงภาพโปรไฟล์
-                        const profileImageSrc = data.profile_image ? data.profile_image : 'img/usericon.png';
-                        document.getElementById('profile-image').src = profileImageSrc;
-                    }
-                })
-                .catch(error => console.error('เกิดข้อผิดพลาดในการดึงข้อมูล:', error));
-        }
-
-        // เรียกใช้ฟังก์ชัน loadUserData เมื่อโหลดหน้าเว็บ
-        window.onload = loadUserData;
+    // เรียกใช้ฟังก์ชัน loadUserData เมื่อโหลดหน้าเว็บ
+    window.onload = loadUserData;
 </script>
+
+
 
 </body>
 </html>

@@ -21,10 +21,24 @@ $userId = $_SESSION['user_id']; // รับ user_id จาก session
 $name = $conn->real_escape_string($_POST['name']);
 $phone = $conn->real_escape_string($_POST['phone']);
 $gender = $conn->real_escape_string($_POST['gender']);
-$birthDate = $conn->real_escape_string($_POST['birth_date']); // รับวันเดือนปีเกิด
+$birthDate = $conn->real_escape_string($_POST['birth_date']); // รับวันเดือนปีเกิด (วัน/เดือน/ปี)
+
+// แปลงวันที่จาก 'วัน/เดือน/ปี' เป็น 'ปี-เดือน-วัน' สำหรับฐานข้อมูล
+$birthDateParts = explode('/', $birthDate);
+if (count($birthDateParts) === 3) {
+    $birthDate = "{$birthDateParts[2]}-{$birthDateParts[1]}-{$birthDateParts[0]}";
+} else {
+    echo json_encode(['success' => false, 'error' => 'Invalid date format']);
+    exit;
+}
 
 // ตรวจสอบว่ามีไฟล์รูปภาพหรือไม่
 if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+    // ดึงรูปภาพเดิมจากฐานข้อมูล
+    $oldImageQuery = $conn->query("SELECT profile_image FROM users WHERE id = $userId");
+    $oldImageData = $oldImageQuery->fetch_assoc();
+    $oldImagePath = $oldImageData['profile_image'];
+
     $target_dir = "uploads/";
     $file_name = basename($_FILES['profile_image']['name']);
     $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
@@ -45,7 +59,12 @@ if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPL
         exit;
     }
 
-    // เพิ่มส่วนอัปเดตรูปภาพหากมีการอัปโหลดไฟล์
+    // ลบรูปภาพเดิมถ้ามีและไม่ใช่ค่าเริ่มต้น
+    if (!empty($oldImagePath) && file_exists($oldImagePath) && strpos($oldImagePath, 'usericon.png') === false) {
+        unlink($oldImagePath);
+    }
+
+    // อัปเดตข้อมูลรวมถึงรูปภาพ
     $sql = "UPDATE users SET username='$name', phone='$phone', gender='$gender', birth_date='$birthDate', profile_image='$new_file_name' WHERE id=$userId";
 } else {
     // หากไม่มีการอัปโหลดไฟล์รูปภาพ ให้ข้ามการอัปเดตรูปภาพ
