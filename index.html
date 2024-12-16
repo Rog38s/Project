@@ -321,7 +321,7 @@
 
             <!-- Text and recipe items (right side) -->
             <div class="text-container">
-                <h1>ใหม่และเป็นกระแส</h1><br>
+                <h1>สูตรอาหารมาใหม่</h1><br>
 
                 <!-- Container for dynamic recipes -->
                 <div id="new-recipes"></div>
@@ -336,8 +336,15 @@
             const day = date.getDate();
             const month = date.toLocaleString('th-TH', { month: 'long' });
             const year = date.getFullYear() + 543; // แปลงเป็น พ.ศ.
-            return `${day} ${month} ${year}`;
+            
+            // เพิ่มเวลา
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+        
+            return `${day} ${month} ${year} เวลา ${hours}:${minutes}:${seconds}`;
         }
+        
 
         // ดึงข้อมูลสูตรใหม่
         fetch('get_recipes.php')
@@ -355,7 +362,7 @@
                     <div>
                         <h2>${recipe.recipe_name}</h2>
                         <p>⭐ ${rating.toFixed(1)} (${commentCount})</p>
-                        <p>สร้างโดย ${recipe.source}</p>
+                        <p>แหล่งข้อมูลอ้างอิง : ${recipe.source}</p>
                         <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
                         ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
                         <a href="indexrecipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
@@ -404,7 +411,7 @@
                         <div>
                             <h2>${recipe.recipe_name}</h2>
                             <p>⭐ ${rating.toFixed(1)} (${commentCount})</p>
-                            <p>สร้างโดย ${recipe.source}</p>
+                            <p>แหล่งข้อมูลอ้างอิง : ${recipe.source}</p>
                             <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
                             ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
                             <a href="indexrecipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
@@ -431,7 +438,7 @@
                         <div>
                             <h2>${recipe.recipe_name}</h2>
                             <p>⭐ ${rating.toFixed(1)} (${commentCount})</p>
-                            <p>สร้างโดย ${recipe.source}</p>
+                            <p>แหล่งข้อมูลอ้างอิง : ${recipe.source}</p>
                             <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
                             ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
                             <a href="indexrecipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>

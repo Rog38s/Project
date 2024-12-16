@@ -312,11 +312,18 @@
         // ฟังก์ชันแปลงวันที่เป็น วัน/เดือน/ปี (พ.ศ.)
         function formatDateThai(dateStr) {
             const date = new Date(dateStr);
-            const day = date.getDate(); // วันที่
-            const month = date.toLocaleString('th-TH', { month: 'long' }); // เดือน (ชื่อเต็ม)
+            const day = date.getDate();
+            const month = date.toLocaleString('th-TH', { month: 'long' });
             const year = date.getFullYear() + 543; // แปลงเป็น พ.ศ.
-            return `${day} ${month} ${year}`; // รูปแบบ วัน เดือน ปี
+            
+            // เพิ่มเวลา
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+        
+            return `${day} ${month} ${year} เวลา ${hours}:${minutes}:${seconds}`;
         }
+        
 
         // ตรวจสอบการล็อกอิน
         fetch('get_user_data.php')
@@ -358,7 +365,7 @@
                                 <div>
                                     <h3>${recipe.recipe_name}</h3>
                                     <p>⭐ ${rating.toFixed(1)} (${commentCount})</p>
-                                    <p>สร้างโดย ${recipe.source}</p>
+                                    <p>แหล่งข้อมูลอ้างอิง : ${recipe.source}</p>
                                     <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
                                     ${
                                         recipe.updated_at 

@@ -42,10 +42,11 @@ try {
 
     // ตรวจสอบว่ามีผลลัพธ์หรือไม่
     if (empty($recipes)) {
-        echo json_encode(['message' => 'ไม่พบผลลัพธ์ที่ตรงกับคำค้นหา']);
+        echo json_encode(['status' => 'no_results', 'message' => 'ไม่พบผลลัพธ์ที่ตรงกับคำค้นหา']);
     } else {
-        echo json_encode($recipes);
+        echo json_encode(['status' => 'success', 'data' => $recipes]);
     }
+    
 
 } catch (Exception $e) {
     // ส่งข้อความแสดงข้อผิดพลาดเมื่อมีปัญหากับฐานข้อมูล

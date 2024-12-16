@@ -147,6 +147,19 @@
             text-align: center;
             line-height: 20px;
         }
+
+        .search-header {
+            background-color: #ffffff; /* สีพื้นหลัง */
+            color: #000; /* สีข้อความ */
+            padding: 5px 10px; /* ลดความสูงของกรอบ */
+            border-radius: 5px; /* ลดความโค้งของมุม */
+            margin: 10px auto; /* ระยะห่างกรอบ */
+            width: 100%; /* ให้กรอบเต็มความกว้าง */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-size: 16px;
+            font-weight: bold;
+            text-align: left; /* ชิดซ้ายข้อความ */
+        }
         
 
 
@@ -256,7 +269,9 @@
 
 
     <div class="search-results" id="search-results">
-        <!-- Results will be appended here -->
+        <div class="search-header">
+            <h2 id="search-title"></h2>
+        </div>
     </div>
     
     <script>
@@ -266,22 +281,42 @@
             const day = date.getDate();
             const month = date.toLocaleString('th-TH', { month: 'long' });
             const year = date.getFullYear() + 543; // แปลงเป็น พ.ศ.
-            return `${day} ${month} ${year}`;
+            
+            // เพิ่มเวลา
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+        
+            return `${day} ${month} ${year} เวลา ${hours}:${minutes}:${seconds}`;
         }
+        
         
         // Get the search query from the URL
         const urlParams = new URLSearchParams(window.location.search);
         const query = urlParams.get('query');
     
+        // แสดงข้อความหัวข้อคำค้นหา
+        const searchTitle = document.getElementById('search-title');
+        searchTitle.textContent = `ผลลัพธ์ของ "${query}"`;
+    
         // Fetch search results
         fetch(`search_recipes.php?query=${encodeURIComponent(query)}`)
-            .then(response => response.json())
-            .then(data => {
-                const searchResultsContainer = document.getElementById('search-results');
-                data.forEach(recipe => {
+        .then(response => response.json())
+        .then(data => {
+            const searchResultsContainer = document.getElementById('search-results');
+            
+            // ตรวจสอบสถานะที่ส่งกลับมาจาก PHP
+            if (data.status === 'no_results') {
+                searchResultsContainer.innerHTML = `
+                    <div class="search-header">
+                <h2 style="color: black;">ไม่พบผลลัพธ์ของ "${query}"</h2>
+                    </div>`;
+            } else if (data.status === 'success') {
+                // วนลูปสร้างผลลัพธ์การค้นหา
+                data.data.forEach(recipe => {
                     const rating = isNaN(recipe.rating) ? 0 : parseFloat(recipe.rating);
-                    const commentCount = recipe.comment_count || 0; // แสดง 0 หากไม่มีคอมเมนต์
-    
+                    const commentCount = recipe.comment_count || 0;
+
                     const recipeElement = document.createElement('div');
                     recipeElement.classList.add('recipe-item');
                     recipeElement.innerHTML = `
@@ -289,16 +324,29 @@
                         <div class="recipe-details">
                             <h2>${recipe.recipe_name}</h2>
                             <p>⭐ ${rating.toFixed(1)} (${commentCount})</p>
-                            <p>สร้างโดย ${recipe.source}</p>
+                            <p>แหล่งข้อมูลอ้างอิง : ${recipe.source}</p>
                             <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
-                            ${recipe.updated_at ? `<p>วันที่ปรับปรุง ${formatDateThai(recipe.updated_at)}</p>` : ''}
-                            <a href="recipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
+                            <a href="indexrecipe.html?recipe_id=${recipe.id}">ดูวิธีทำเพิ่มเติมคลิก >></a>
                         </div>
                     `;
                     searchResultsContainer.appendChild(recipeElement);
                 });
-            })
-            .catch(error => console.error('เกิดข้อผิดพลาด:', error));
+            } else if (data.error) {
+                // กรณีเกิดข้อผิดพลาดอื่น ๆ
+                searchResultsContainer.innerHTML = `
+                    <div class="search-header" style="color: red;">
+                        ${data.error}
+                    </div>`;
+            }
+        })
+        .catch(error => {
+            console.error('เกิดข้อผิดพลาด:', error);
+            document.getElementById('search-results').innerHTML = `
+                <div class="search-header">
+            <h2 style="color: red;">เกิดข้อผิดพลาดในการดึงข้อมูล</h2>
+                </div>`;
+        });
+
     </script>
 
 </body>

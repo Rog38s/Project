@@ -340,7 +340,7 @@
             </h1>
             <div class="rating">
                 <p id="recipe-rating">⭐</p>
-                <p id="recipe-source">สร้างโดย </p>
+                <p id="recipe-source">แหล่งข้อมูลอ้างอิง :</p>
                 <p id="recipe-date">วันที่สร้าง </p>
                 <p id="recipe-updated-date" style="display: none;">วันที่ปรับปรุง </p>
             </div>
@@ -523,9 +523,19 @@
     
         // ฟังก์ชันสำหรับแปลงวันที่เป็นภาษาไทยโดยไม่แสดงเวลา
         function formatDateThai(dateString) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString('th-TH', options);
+            const date = new Date(dateString);
+        
+            // แปลงวันที่
+            const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = date.toLocaleDateString('th-TH', dateOptions);
+        
+            // แปลงเวลา
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            const formattedTime = date.toLocaleTimeString('th-TH', timeOptions);
+        
+            return `${formattedDate} เวลา ${formattedTime}`;
         }
+        
 
     
         if (recipeId) {
