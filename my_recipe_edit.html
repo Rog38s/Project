@@ -828,29 +828,25 @@
             const deleteModal = document.getElementById('deleteModal');
             const confirmDelete = document.getElementById('confirmDelete');
             const cancelDelete = document.getElementById('cancelDelete');
-        
+            
             let originalData = {};
-        
+            const recipeId = new URLSearchParams(window.location.search).get('recipe_id');
+    
             // ซ่อนปุ่ม upload image ในตอนแรก
             uploadImageBtn.style.display = 'none';
-        
-            // ฟังก์ชันสำหรับ upload รูปภาพ
-            uploadImageBtn.addEventListener('click', () => {
-                imageUploadInput.click();
-            });
-        
+    
+            uploadImageBtn.addEventListener('click', () => imageUploadInput.click());
+    
             imageUploadInput.addEventListener('change', () => {
                 const file = imageUploadInput.files[0];
                 if (file) {
                     const reader = new FileReader();
-                    reader.onload = () => {
-                        recipeImage.src = reader.result;
-                    };
+                    reader.onload = () => (recipeImage.src = reader.result);
                     reader.readAsDataURL(file);
                 }
             });
-        
-            // ฟังก์ชันสำหรับเข้าสู่โหมดแก้ไข
+    
+            // เข้าสู่โหมดแก้ไข
             function makeEditable() {
                 originalData = {
                     recipeName: recipeName.innerText,
@@ -859,39 +855,40 @@
                     ingredients: Array.from(ingredientsList.children).map(li => li.innerText).join('\n'),
                     steps: Array.from(stepsList.children).map(div => div.innerText).join('\n'),
                 };
-        
-                // เปิดให้แก้ไขชื่อสูตรและแหล่งข้อมูล
+            
+                // เพิ่มคลาส editable.editing ให้กับชื่อสูตรและแหล่งข้อมูล
                 recipeName.contentEditable = true;
                 recipeName.classList.add('editing');
                 recipeSource.contentEditable = true;
                 recipeSource.classList.add('editing');
-        
+            
                 // โอนข้อมูลไปยัง textarea
                 ingredientsTextarea.value = originalData.ingredients;
                 stepsTextarea.value = originalData.steps;
-        
+            
                 // ซ่อน ul/div และแสดง textarea
                 ingredientsList.style.display = 'none';
                 stepsList.style.display = 'none';
                 ingredientsTextarea.style.display = 'block';
                 stepsTextarea.style.display = 'block';
-        
+            
                 // แสดงปุ่ม upload และปุ่มควบคุม
                 uploadImageBtn.style.display = 'inline-block';
                 editBtn.style.display = 'none';
                 saveBtn.style.display = 'inline-block';
                 cancelBtn.style.display = 'inline-block';
             }
-        
-            // ฟังก์ชันสำหรับคืนค่าสถานะเดิม
+            
+    
+            // คืนค่าสถานะเดิม
             function restoreOriginal() {
                 recipeName.innerText = originalData.recipeName;
                 recipeSource.innerText = originalData.source;
                 recipeImage.src = originalData.imagePath;
-        
+    
                 ingredientsTextarea.style.display = 'none';
                 stepsTextarea.style.display = 'none';
-        
+    
                 ingredientsList.innerHTML = originalData.ingredients
                     .split('\n')
                     .map(item => `<li>${item.trim()}</li>`)
@@ -900,49 +897,80 @@
                     .split('\n')
                     .map(step => `<div>${step.trim()}</div>`)
                     .join('');
-        
+    
                 ingredientsList.style.display = 'block';
                 stepsList.style.display = 'block';
-        
+    
                 exitEditMode();
             }
-        
-            // ฟังก์ชันสำหรับบันทึกการแก้ไข
+    
+            // บันทึกข้อมูลและส่งไปยัง Backend
             function saveChanges() {
-                const updatedIngredients = ingredientsTextarea.value.split('\n');
-                const updatedSteps = stepsTextarea.value.split('\n');
-        
-                // อัปเดต ul และ div
-                ingredientsList.innerHTML = updatedIngredients
-                    .map(item => `<li>${item.trim()}</li>`)
-                    .join('');
-                stepsList.innerHTML = updatedSteps
-                    .map(step => `<div>${step.trim()}</div>`)
-                    .join('');
-        
-                exitEditMode();
+                const updatedData = {
+                    recipe_id: recipeId,
+                    recipe_name: recipeName.innerText.trim(),
+                    source: recipeSource.innerText.trim(),
+                    ingredients: ingredientsTextarea.value.trim(),
+                    steps: stepsTextarea.value.trim(),
+                    image_path: recipeImage.src, // ใช้ path เดิมหากไม่มีอัปโหลดใหม่
+                };
+    
+                const formData = new FormData();
+                formData.append('data', JSON.stringify(updatedData));
+    
+                // แนบไฟล์รูปภาพหากมีการอัปโหลดใหม่
+                if (imageUploadInput.files[0]) {
+                    formData.append('image', imageUploadInput.files[0]);
+                }
+    
+                fetch('update_recipe.php', {
+                    method: 'POST',
+                    body: formData,
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('บันทึกการแก้ไขเรียบร้อยแล้ว');
+                            location.reload();
+                            document.getElementById('recipe-updated-date').innerText = `วันที่ปรับปรุง ${data.updated_at}`;
+                            restoreOriginal();
+                            exitEditMode();
+                        } else {
+                            alert(`เกิดข้อผิดพลาด: ${data.error}`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์');
+                    });
             }
-        
-            // ฟังก์ชันสำหรับออกจากโหมดแก้ไข
+    
+            // ออกจากโหมดแก้ไข
             function exitEditMode() {
                 recipeName.contentEditable = false;
+                recipeName.classList.remove('editing'); // เอาคลาส editing ออก
                 recipeSource.contentEditable = false;
-                recipeName.classList.remove('editing');
-                recipeSource.classList.remove('editing');
-        
+                recipeSource.classList.remove('editing'); // เอาคลาส editing ออก
+            
+                ingredientsTextarea.style.display = 'none';
+                stepsTextarea.style.display = 'none';
+                ingredientsList.style.display = 'block';
+                stepsList.style.display = 'block';
+            
                 uploadImageBtn.style.display = 'none';
                 saveBtn.style.display = 'none';
                 cancelBtn.style.display = 'none';
                 editBtn.style.display = 'inline-block';
             }
-        
+            
+    
             // Event Listeners
             editBtn.addEventListener('click', makeEditable);
             saveBtn.addEventListener('click', saveChanges);
             cancelBtn.addEventListener('click', restoreOriginal);
-        
-            // การจัดการ Modal ลบสูตร
-            deleteBtn.addEventListener('click', () => deleteModal.style.display = 'block');
+    
+            // จัดการ Modal การลบ
+            deleteBtn.addEventListener('click', () => (deleteModal.style.display = 'block'));
             confirmDelete.addEventListener('click', function () {
                 fetch(`delete_recipe.php?recipe_id=${recipeId}`, { method: 'DELETE' })
                     .then(response => response.json())
@@ -951,7 +979,7 @@
                             alert('ลบสูตรเรียบร้อยแล้ว');
                             window.location.href = 'myrecipes.html';
                         } else {
-                            alert('เกิดข้อผิดพลาด: ' + data.error);
+                            alert(`เกิดข้อผิดพลาด: ${data.error}`);
                         }
                     })
                     .catch(error => {
@@ -960,14 +988,15 @@
                     });
                 deleteModal.style.display = 'none';
             });
-            cancelDelete.addEventListener('click', () => deleteModal.style.display = 'none');
-        
+    
+            cancelDelete.addEventListener('click', () => (deleteModal.style.display = 'none'));
+    
             window.addEventListener('click', function (event) {
                 if (event.target === deleteModal) deleteModal.style.display = 'none';
             });
         });
-        
     </script>
+    
 
 
 </body>
