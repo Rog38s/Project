@@ -181,6 +181,19 @@
                 width: 100%;
             }
         }
+
+        .recipe-item h3 a.recipe-link {
+            color: #000; /* สีใหม่สำหรับชื่อสูตร */
+            font-size: 18px;
+            text-decoration: none; /* ลบเส้นใต้ */
+            font-weight: bold; /* ทำให้ตัวอักษรหนา */
+        }
+        
+        .recipe-item h3 a.recipe-link:hover {
+            color: #000;
+            text-decoration: underline; /* เพิ่มเส้นใต้เมื่อชี้เมาส์ */
+        }
+
     </style>
 </head>
 <body>
@@ -363,7 +376,7 @@
                             recipeElement.innerHTML = `
                                 <img src="${recipe.image_path}" alt="${recipe.recipe_name}">
                                 <div>
-                                    <h3>${recipe.recipe_name}</h3>
+                                    <h3><a href="my_recipe_edit.html?recipe_id=${recipe.id}" class="recipe-link">${recipe.recipe_name}</a></h3>
                                     <p>⭐ ${rating.toFixed(1)} (${commentCount})</p>
                                     <p>แหล่งข้อมูลอ้างอิง : ${recipe.source}</p>
                                     <p>วันที่สร้าง ${formatDateThai(recipe.created_at)}</p>
